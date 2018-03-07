@@ -1,0 +1,194 @@
+%===================================== CHAP 3 =================================
+
+\chapter{Literature Review}
+This literature review focuses primarily on academic work related to prediction of match scorelines and prediction of the performance of football players. Section \ref{Opt_Models_for_Fantasy_Sports} focuses on existing research concerning Fantasy Sports. Next, in Section \ref{Scoreline_prediction}, methods for forecasting of football results using historical data are introduced. Since the amount of research on Fantasy Sports is restricted, Section \ref{other_relevant_research} discusses semi-scientific work.  Here the work performed on the concept of Expected Goals Model (xG) is explained, and the biggest Fantasy Premier League blogs are presented. 
+
+
+
+\section{Optimization Models for Fantasy Sports} \label{Opt_Models_for_Fantasy_Sports}
+
+\cite{Fry} define a stochastic dynamic programming model for NFL fantasy  draft, focusing on the weekly performance of each player. However, as they state that it is intractable to solve this model by classical solution methods, they suggest an alternative solution approach. By modeling the problem as a dynamic deterministic problem and reducing the sample set of players, they obtain a solution for optimizing a team in the NFL fantasy draft. Further, they simplified their model by not considering the actions of the competitors in a NFL fantasy draft. A draft Fantasy Sports is quite different from the Fantasy Premier League, as only one manager can own a given player in a draft league. Hence this approach can not be totally applied to FPL. However, as a FPL manager has to make decisions in every gameweek accounting for recent player performance, the dynamic aspect of the model suggested by \cite{Fry} should be considered in this project. 
+\newpar
+\cite{Gibson} expanded the work of \cite{Fry} by taking account for the competitor's actions. They presented a hybrid metaheuristic for addressing a multi-period stochastic knapsack problem in which the availability of items in future periods is uncertain due to the presence of competitors. This was solved by introducing a beam search algorithm that simulates the actions of the competitors, which are unknown to the decision-makers. As the actions of the competitors does not affect the team selection in Fantasy Premier League, this approach is not considered in this project. 
+\newpar
+\cite{Matthews} proposed a model for optimization of a Fantasy Premier League team, modelling FPL as a Markov decision problem (MDP). Further, they expanded their model as a belief-state MDP, solving it using Bayesian Q-learning. Their model outperformed multiple FPL managers on predicting the points of a FPL squad over an entire season, as their model finished among the top 20, 000 players for the 2010/2011 season. However, there are lack of information on their approach. The authors were contacted on mail, but without success of gaining more information than provided in the article. Therefore, their model is not considered for this project report. 
+
+\begin{comment}
+There is limited research available on optimization of a Fantasy Premier League team. However, due to the large amount of active NFL Fantasy Sports players, literature is available for both season- and weekly format. \cite{King} suggested a model for predicting points for the quarterbacks in the NFL, using Backward Stepwise regression and Support Vector regression models in his research. Further, he predicted fantasy points by use of Artificial Neural Networks. Similar approaches can be used in order to predict the performance of the Premier League players.
+\end{comment}
+
+
+
+\section{Scoreline Prediction} \label{Scoreline_prediction} 
+A model for forecasting football results using the Poisson distribution was first suggested by \cite{Maher}. He argues that there are reasons to believe why the Poisson distribution is a good modelling choice. A team often has a lot of possession in a match, but the probability \textit{p} of an attack ending in a goal is very small. If \textit{p} is constant and the number of attacks independent, the number of goals will be binomial and hence the Poisson distribution is to a high degree appropriate. It differs from earlier work, where \cite{Moroney} and \cite{Reep} use a single distribution to fit scores from \textit{all} matches. Now, \textit{each} match has a different distribution. First, an independent Poisson distribution is adopted, but with a semi-degree of success. The model underestimates the number of times one or two goals are scored, and at the same time overestimates the number of times zero or over three goals are scored. The assumption of independence is not valid. Next a bivariate Poisson model is adopted, where a correlation parameter $\varrho$ is introduced. Setting the correlation parameter to 0.2 yields best results and by modelling the dependence of scores, the fit improved significantly. 
+\newpar
+The model was successfully expanded by \cite{Dixon}, as they derived a strategy for profitable gambling. They provided possibilities for different match outcomes, and thus compared their results to the professional bookmakers' odds. Some of the challenges of \cite{Maher}'s model are further discussed and attempts of solutions are presented. 
+\newpar
+Firstly, the effect of home advantage. To every person watching sports, it is no secret that teams playing at home are generally performing better than those playing away. \cite{Maher} uses an exclusion approach for home and away parameters, and discusses whether it is important to have different parameters for those. Based on the results from a maximum likelihood estimation, he reaches to the conclusion that the "home effect" applies equal to all teams. This statement seems somehow questionable, as it states that every team has the same home record. It is clear from historic data that some teams in English Premier League have very strong home records compared to others. This is taken into account by \cite{Dixon}, where the mean of the Poisson Distribution is multiplied  with a parameter. They found an empirical probability for the outcomes of home win, away win and draw, with probabilities of 0.46, 0.27 and 0.27 respectively. 
+\newpar
+Secondly, the sets of observed results seem to imply a dependency between the number of goals scored by the two teams. Nevertheless, this dependency becomes weaker after a certain number of goals scored. The bivariate Poisson model captured this in a way by investigating the difference in scores and use a correlation coefficient, but \cite{Dixon} argues that this model is unable to describe the departure from independence for low-scoring games. They introduce a dependency variable that comes into account for the scorelines that are underrepresented in the Poisson distribution. More precisely for games with less than or equal to 2 goals scored(i.e. 0-0, 0-1, 1-0 and 1-1). 
+\newpar
+Another concern is the assumption of constant team strengths, which the model of \cite{Maher} is based upon. In reality, a team's performance is much more likely to be dynamic and fluctuating over time and this type of trend should be integrated in a model. The parameters should in principle be represented and formalized stochastic, but \cite{Dixon} find a smart and simplistic alternative. Since a team's performance is seemingly more linked to their most recent performances than in earlier matches, a weighting function is incorporated to catch the dynamical team strength. The function is time-dependent, so that recent information has a heavier weight on the model parameters than older historical data. This allows for a more "locally constant" team strength parameter in the model, and is making the model more flexible.  
+
+\section{Other Relevant Research} \label{other_relevant_research}
+
+This section presents literature that focuses primarily on blogs and fan posts which is not regarded as academic work. It aims attention on player performance and is therefore related to the subject of this project. 
+
+\subsection{xG Model}\label{xG_model}
+The Expected Goals Model(xG) was first introduced in football by \cite{samgreen}, and have since seen an incredible rise. It is now one of the most used metrics in football analysis and it is slowly breaking through in sports media. For instance, big sport channels as SkySports\citep{skysports} in England and TV2\citep{tv2} in Norway have recently adopted the term in their after-match analysis.  
+\newpar
+This is a method that provides an estimate of the quality of a scoring opportunity. It asks the question; what is the likelihood that a shot from this distance in this game situation converts into a goal. There exist several models on both blogs and fan communities, and all use similar set of variables such as distance from goal, angle, type of shot and type of pass that assisted the shot. It has been used both to rank teams and individual players in different sports. \cite{macdonald} and \cite{vabo} use this approach in ice hockey and football, respectively. As FPL managers are generally interested in the expected player performances, rankings of players play an important role when selecting the team. 
+\newpar 
+xG have been under criticism for being too naive and not catching all aspects of a scoring chance\citep{michaelcaley1}. The biggest fallacy is that does not take into consideration defender's location on the pitch. This is mainly due to the lack of data, where the only available data are ball actions and not player locations. \cite{lucey} explains the huge difference in accuracy of expected goals by knowing defender proximity and the number of defenders between the ball and the goal. Another weakness is that it does not consider the player's finishing skills. It does not distinguish if it is a defender or an attacker taking the shot, a big difference in terms of quantifying a goal chance. 
+
+
+
+\subsection{Fantasy Blogs} \label{Fantasy_Blogs} 
+The following provides an introduction of existing semi-scientific work presented in order to help FPL managers select their team. There are several blogs containing suggestions for which players one should select for the upcoming gameweeks. The main purpose of this subsection is to bring awareness of the great interest that exist for Fantasy Premier League. 
+\newpar
+For instance, \cite{Glover} created the the blog plfantasy.com where he calculates the expected points gained by players, thus giving recommendations for which players to select. In this blog, expected goals and expected assists are calculated for each player based on data for the current season. Unfortunately, Glover does not present how the forecasts of expected values for assists and goals are calculated.
+\newpar
+Another relevant blog is the one presented on fantasyoverlord.com. This blog uses the model suggested by \citep{Matthews} in order to forecast the expected points for a player. In addition, fantasyoverlord.com provide the opportunity of rating a FPL team. Hence, the blog readers can import their team to the webpage where an algorithm is run, yielding which transfers the reader should make based on his team's rating. 
+\newpar
+Further, it is worth mentioning that the home page of Fantasy Premier League provides a scout for player selections and recommendations of which players one should add to the squad. These scouts are solely based on experts' personal opinions.
+
+\section{New Literature Study} \label{new} 
+
+\subsection{An analytical approach for fantasy football draft
+and lineup management}
+The scope of the paper is to develop a methodology for Fantasy Football NFL that \textit{"predicts team and player performance based on the rich historical data, and builds a mixed-integer optimization model using such predictions for the draft selection as well as weekly line-up management that incorporates the entire objective of winning a fantasy football season"}. A difference worth noting is that in the NFL draft the managers have very limited time, so the speed of the model is more relevant than for us. Furthermore, most of the is effort devoted to handle the draft, and is not directly relevant. However, player performance for each week is predicted, and could be of relevance. It turns out the predictions are based on expert opinion of score over an entire season. Most of the paper is focused on distributing these points over each gameweek. Therefore, it is not directly relevant. 
+\newpar
+
+\subsection{The Football Team Composition Problem: A Stochastic Programming approach}
+\textit{In this paper we consider a football club’s strategic problem of investing an available budget to purchase football players. The scope is that of maximizing the expected value of the team - represented by the sum of the transfer market appreciation of the players in the team}. The problem is referred to as the Football Team Composition Problem (FTCP). In some sense a motivation for our thesis.
+
+\subsection{Valuing Individual Player Involvements in
+Norwegian Association Football}
+
+3 research questions are formulated:
+\begin{enumerate}
+    \item Is it possible to create a statistically significant xG model that assesses the quality of all shots in Tippeligaen in order to evaluate the efficiency of primarily offensive players?
+    \item Is it possible to create a Markov game model for football that is able to evaluate all player involvements in a match and rate players over the course of a season?
+    \item Is it possible to reveal undiscovered talent or identify under- and overvalued players based on the evaluation of individual player involvements?
+\end{enumerate} 
+
+\textbf{Litterature}\newline
+In McHale et al. (2012) this index is described, and it consists of six subindices from which individual players get scores: match contributions, winning performance, match appearances, goals scored, assists and clean sheets.\newpar
+
+All in all, what appears to be most relevant is the literature review, and perhaps how the thesis is built up. The methodology is not directly relevant.
+
+\subsection{Predicting the Future Performance of Soccer Players}
+Propose a multitask, regression-based approach for predicting future performances of soccer players. Appears to be to difficult.
+
+\subsection{Mathematical programming as a tool for virtual soccer coaches: a case study of a fantasy sport game, Bonomo et al(2014)}
+
+This paper is highly relevant to our project, as their objective is not so different from ours. Their objective is to develop is to develop two mathematical programming models that act as virtual coaches that choose a virtual team lineup for each round of the Argentinian soccer league. The two models are called \textit{a priori} and \textit{a posteriori}. \textit{A priori} creates a competitive team for each game taken into consideration which transfers to complete, while the \textit{a posteriori} determines what would have been its optimal lineup once the season is over and we have the perfect information. 
+
+\newpar
+
+The points are allocated in the same way, both objective statistics(goals scored, shutouts, yellow and red cards shown) and subjective statistics(individual player performance in each match). The subjective statistics can resemble the Bonus Point System in Fantasy Premier League. To their knowledge there are no optimization or mathematical programming algorithm applications of the sort proposed in the present work that provide real support for real or virtual coaches. Some of the game rules differs from FPL: 
+\begin{enumerate}
+    \item A player that is on the field for less than 20 minutes of a match is deemed not to have played that match and hence substituted by a substitution player in the same position. In FPL, if a player plays a minute in a game, everything from 1 to end of match, is regarded as one of the 11 playing players. 
+    \item The amount of transfers in each round is maximum four, while in FPL the amount of free transfers given each week is 1 and maximum accumulated free transfers is 2. It also has the possibility of doing point-punishing transfers. 
+    \item Seems like you have to choose the team formation in advance, while in FPL the team formation is adjusted afterwards according to initial formation chosen before the gameweek is played and after taken into account if any player was substituted. 
+\end{enumerate}
+
+They conclude that using player's average in recent rounds does not give a predictor of the points, and hence some factors were weighted and included. A player's point prediction was calculated by taking the point average in the rounds already played and weighted by three factors: 
+\begin{enumerate}
+    \item home/away status of next round match(1.05 for home games and 0.95 for away games) 
+    \item league table position of the next round competitor(1 to 1.05 if in the bottom five of the table, 0.95 to 1 if in the top five)
+    \item current performance or situation of the player or the club (up to 5 \% more if in a scoring or winning streak, respectively; up to 5 \% less if on a scoreless or winless streak, or tired after, for example, a recent league or international match)
+    \item "starting lineup" factor. This factor is 1 for those players assumed to be starters in the next round(based on coaches' announcements, press reports, or information posted on the game website) and 0 for all other players. 
+\end{enumerate}
+
+The second-last factor seems like a rather subjective assessment, and it should be quantified what it means to be "tired". For example that a player is labelled "tired" if they play more than \textit{X} minutes in \textit{Y} gameweeks. After testing various factors, they use a weight factor of 0.1 to substitutes in the objective function. The same could be applied to our optimization model and test for various cases. By such, one could determine beforehand the level of importance of the substitutes. Setting high weight factor means the model would choose more good performing substitutes, and setting the weight factor low implies choosing more low performing substitutes.   
+
+\newpar
+
+The \textit{a priori} model generates the initial team by maximizing the total expected points in the first round of the game. This is what is called a "myopic initial team". The model also runs for a "non-myopic initial team" where the initial team is based on the first three gameweeks. The "non-myopic initial team" gives better results, which suggests that there are value in future data. The possible drawback is that the model do not use real scores, but predictions which may be increasingly inaccurate the later the round is considered. 
+
+\newpar
+
+By fixing a formation which is held throughout the whole season, it is possible to find which formation gives highest points. The best formations are a 1-4-3-3 and 1-3-4-3. Their results places them among the tip 0.2 \% in of the whole tournament. They suggest an interesting use of such tool, by saying that this model could be used as a complementary support tool. It could in each round propose the \textit{k} transfer for the team in each round and the expert could then choose among them. This could easily be done, by running the model \textit{k} times and each time restrict the previous optimal solution.  
+
+\begin{comment}
+De skriver hvilke formasjoner som er mulig å bruke. Det burde vi også gjøre. 
+\end{comment}
+
+\subsection{Optimization modelling for analyzing fantasy sport games, Beliën et al(2013)(Står i dokumentet MathSport2013Proceedings)}
+
+This paper presents an mixed integer programming model for finding an optimal set of decisions in fantasy sport games under the assumption that all data are known beforehand. Thus, the model allows to identify ex post an optimal team selection and player transfers. They argue that an ex-post analysis gives both \textit{information value} and \textit{commercial value} of the results. The \textit{information value} is that it would answer questions to readers and fans such as "what is the optimal team of this week?", "what is the optimal team so far?" and not only the top X best performing teams of the specific gameweek. The \textit{commercial value} is argued to be that by showing the big difference in points by perfect team and the best performer, that it would attract more participants. 
+
+\newpar
+
+Further, it discusses the common characteristics in fantasy sports games where the common game rules characteristics are most relevant. A table of the main characteristics is presented which includes factors such as budget, player distribution, fantasy team composition and calculation of points. A MIP model is presented for finding optimal ex-post decisions in fantasy sport games. The objective function maximizes the points collected collected over all games. In case several solutions exist with maximal points, the solution with the highest remaining budget in the final period is selected.  With modification, the model can be used for FTCP. However, there are some main differences: 
+
+\begin{enumerate}
+    \item The concept of substitution priority is not considered, but only one substitution per player position is modelled. In Fantasy Premier League it is possible to have more than one substitution per player position, hence the need of modelling substitution priority. 
+    \item The inclusion of the game chips is something extraordinary for FTCP. 
+\end{enumerate}
+
+
+\begin{comment}
+\textbf{INSPO}
+
+INTRODUCTION 
+A fantasy sport game allows ordinary people to act like a team manager building a team of real individual
+professional sport athletes. The real-world performances of these athletes (or their teams) are translated into
+points for their team managers. The managers’ aim is to collect as many points as possible thereby defeating
+the fantasy teams of opponents. In the remainder of this paper we will use the word 'participant' to describe a
+virtual team manager while the word 'player' solely refers to a real-world athlete.
+Fantasy sports found their origin in the United States in the 1980s. American journalists Glen Waggoner
+& Daniel Okrent developed a game in which a handful of participants would draft from a pool of active
+baseball players (Davis & Duncan, 2006). From the 1990s on, the Internet made game results more
+accessible, and virtual leagues easier to manage. But fantasy sports really took off around the turn of the
+millennium, when the internet transformed fantasy sports into a mainstream phenomenon. Fantasy sports are
+now being played by tens of millions of people worldwide. Fantasy American football has become the most
+popular fantasy sport league, with a market share of 80% in the United States and Canada
+(http://www.fantasysportsadnetwork.com). In Europe, soccer is the most popular fantasy sport subject. The
+enormous success of fantasy sports has a lot to do with the fact that it allows online participants to assume an
+active role of a team owner or a team manager in a sport they are heavily interested in, thereby intensifying
+the way live sport is consumed. As a result, many sports enthusiasts are now obtaining their sports
+entertainment through fantasy sports rather than solely by watching games on television (Nesbit & King,
+2011).
+
+LITERATURE STUDY 
+The growth of fantasy sports has made it an important part of the sports industry. The booming popularity
+also stimulated research on fantasy sports and from 2005 on literature on fantasy sports really started to
+grow. Two directions of research are currently dominant. The first line of research is economically oriented.
+It sees fantasy sports as a new form of sport consumption and studies how this affects the behavior of sports
+fans. Randle & Nyland (2008), Drayer et al. (2010) and Karg & McDonald (2011) all take a rather global
+view and look at the impact of fantasy sport participation on the various media sources fantasy sport
+participants use. The specific impact of fantasy sport on television ratings is analyzed by Nesbit & King
+(2010), Dwyer (2011a) and Fortunato (2011), while the live attendance impact is taken up by Nesbit & King
+(2011). Most of these studies basically conclude that instead of competing with traditional ways of sport
+consumption, fantasy sport appears to be a complementary and value-adding activity (Dwyer, 2011a). Fan
+loyalty and how fantasy sports can be used in customer relationship management are studied by Dwyer
+(2011b) and Smith, Synowka & Smith (2010).
+\end{comment}
+
+
+\subsection{Optimizing Tiered Daily Fantasy Sports - Mathematically Modelling DraftKings NFL MIllionaire Maker Tournament, Sarah Newell et al(2017)}
+
+The problem described in this paper resembles FPL, with the main difference that a Daily Fantasy Sports lasts for a single day rather than a full season. Hence, transfers are never considered in their model. It gives the first model to optimize the expected payout of a tiered DFS contest through a stochastic integer program. They also discuss some interesting metrics on how much money participants spend on decision tools. An estimated 30 \% of fantasy sports participants use additional websites to research athletes and other factors. Together, these participants spend \$ $656$ million annually to purchase additional information and decision-making tools. 
+
+\newpar
+
+In the model each player is assumed to be independent random variable from a normal distribution, and consequently the team is normally distributed with mean and variance that is the sum of each athlete's mean and variance. The team's standard deviation is estimated through a piecewise linear function of the team's variance. 
+\begin{comment}
+INSPO: 
+Approximately 56.8 million people worldwide played fantasy sports in 2015 [1]. The fantasy sports industry is
+expected to grow annually by 41% and generate $14.4 billion by the year 2020 [2]. The large number of fantasy sport
+participants has impacted the sports industry positively, as research shows that fantasy sport participation increases
+game attendance and sports media viewership [3].
+\end{comment}
+
+
+\subsection{Decision making in online fantasy sports communities}
+In this paper, the authors attempt to provide information about decision-strategies that fantasy sports managers use when selecting their roster for an upcoming gameweek. The paper is based on data collected from the 2004-05 NBA season. 
+\newpar
+In order to decide managers' decision-strategies, posts from discussion forums and chat rooms were analyzed. In total, more than 80 000 messages were downloaded and processed. The chat room conversations analyzed in this research showed few (if any) instances of formal decision-making relying on extensive computation. Managers mainly determine their fantasy sports rosters by terms of reputations, team loyalty or personal predictions of future performance. 
+\newpar
+This should be a part of the motivation for our master thesis, not a part of the literature review. BK will write this better, and has collected the most important aspects of this paper in a word-document. 
+
+

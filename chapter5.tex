@@ -1,0 +1,51 @@
+%===================================== CHAP 5 =================================
+
+
+\chapter{Solution Approach} \label{chapter_solution_approach}
+
+In this chapter a solution approach for the FTCP is suggested. 
+
+\section{Solution structure}
+\section{Player performance prediction}
+\subection{Processing of players data}
+\subsection{Player prediction using regression}
+One way of predicting Fantasy Premier League points is by use of regression. By running a regression model, one can figure out which data that is most related to a player's performance. For instance, it is interesting to see how a player's achieved points are related to the opponent of which team he is facing, as well as how his position on the field is relevant for the amount of points he receives. This can be done for numerous factors influencing the outcome of a football match. Some of the factors are predetermined and available for the managers throughout the season, while others may vary during the season. In the following, some interesting regression variables are presented: 
+\newpar
+\textit{Dynamic factors influencing FPL points:}
+\newpar
+\begin{itemize}
+    \item A \textbf{realized points} variable can be used as the dependent variable as which the other variables are measured towards. The realized points are the actual points gained by a player for previous gameweeks.
+    \item Variables for \textbf{previous matches} are incorporated in order to check whether recent performance influence the actual performance of upcoming gameweeks.
+    \item It is reasonable to assume that a player who plays for a good \textbf{team} is expected to gain many points as his team performs well. For instance, defenders playing for teams that does not concede many goals are most likely to keep a clean sheet.
+    \item The \textbf{cost} of a player gives an impression of the quality of that particular player. A player listed with a high cost, is expected to gain many points during the season. It would therefore be interesting to check the correlation between a player's cost and his actual point performance. 
+    \item \textbf{Transfers} made by FPL managers gives one an impression of how other managers expect a player to perform in the future.
+    \end{itemize}
+\newpar
+\textit{Constant factors influencing FPL points}
+\newpar
+\begin{itemize}
+    \item The \textbf{position on the field} is worth some attention as well. For instance, it would be interesting to check whether midfielders gain more points than defenders. By figuring out which positions one should focus on, it might be optimal to find an optimal formation for a FPL team.
+    \item An important factor is the \textbf{opponent team} a team is facing for a particular gameweek. It is likely that a player gain more points against a rather poor team than a top-ranked team. 
+\end{itemize}
+
+
+
+
+
+\subsection{Average performance prediction}
+The solution approach suggested by .... can be used for the English Fantasy Premier League as well as for the Argentinian. Initially, one simply look at the average points performance for the recent gameweeks in order to predict the performance for the next gameweek. However, this is probably not sufficient in order to correctly predict a player's performance. In order to improve the prediction, one should take account for team opponent, home advantage and whether a player is in a good performance streak. This is done by weighting a player's performance by three factors. The first issue is corrected by assigning each team in the league with a factor in the range 0.95-1.05, depending on the opponent's position in the league table. Secondly, home teams and away teams are weighted by 1.05 and 0.95 respectively, for their upcoming match. Finally, the current situation for a player is weighted in the range 0.95-1.05, depending on his recent performance. 
+\newpar
+It would be valuable to replicate this solution approach to the Fantasy Premier League how it performs. Further, it would be interesting to improve this model by using different weights, adjusted for historical performance in the English Premier League. For instance, instead of weighting the teams based on their league position, a different but rather interesting approach would be to use an ELO-rating in order to weight the strength of the different opponents. Further, it would be interesting to find an empirical value of home performance in the league, which may yield a different weighting of home teams. As for the current situation of a player, statistical models as xG and xA could be used in order to measure their performance for the past gameweeks.
+\subsection{Prediction using odds}
+A quite different approach for player point prediction is by use of odds created by bookmakers. It is reasonable to assume that bookmakers provide a realistic odds distribution for the different scorelines, in order to avoid gamblers profiting from an incorrectly odds. By acquiring the result outcomes for each Premier League match, a scoreline prediction can be obtained. By summing all the result odds and dividing each individual result odds by that sum, one can obtain the probability of an exact result to occur. Although result odds are mainly displayed for the next gameweek, bookmakers are able to predict scorelines for several gameweeks ahead. Further, these result odds for the upcoming weeks are updated once a match has been played. 
+\newpar
+When the scoreline predictions are acquired by use of result odds, one has to link these predictions to player performances. In order to determine the probability of a defender or midfielder to keep a clean sheet, one simply sum the probabilities of each match outcome where its team does not concede a goal. Further, bookmakers provide odds' for each individual player to score a goal in a particular match. Similar odds may be obtained for a player having an assist or receiving a yellow card. 
+\newpar
+Once different probabilities for scorelines, goalscorers etc. are obtained, one can simulate the actions in a particular game. By using the cumulative distribution of the different scorelines, one simply draw a result from the distribution. Similar approach can be used for each goalscorer and assist giver within that particular match. In addition, one can simulate whether a player receives a yellow card. At the end, when all actions are taken into account, one can translate the simulated actions into Fantasy Premier League points. 
+\section{Solving for the chips}
+\subection{Wildcard}
+\subection{Triple Captain}
+\subection{Bench Boost}
+\subection{Free Hit}
+
+
