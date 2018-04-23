@@ -6,12 +6,54 @@
 In this chapter a solution approach for the FTCP is suggested. 
 
 \section{Solution structure}
+With perfect information, the model formulated in Section \ref{mathematical_model} gives the perfect team to select in each gameweek. However, the perfect information is not available until the gameweek has been played. Thus, the main uncertainty in the problem lies here. To solve for the uncertainty, a forecast of the Premier League player's expected points in a gameweek is generated. This forecast is further used as input in the optimization model which is then solved over a set of gameweek. The forecast is done in such way that recent performance is weighted according to a weighting function, and updated whenever a gameweek is played. By such one captures the dynamic development of team's and player's performances, and thus taking account for which players are in good form. Recent form plays an important role when managers make their FPL decisions, and is considered as an important indicator for future performance.   
+
+\newpar
+\newpage
+When using a forecast to estimate the expected value of a player's points, the objective function described in Section \ref{mathematical_model} changes from: 
+
+\begin{equation*}
+\text{max} \; z = \EX_{\omega} \Big\lbrack\sum_{p \in \mathcal{P}} \sum_{t \in \mathcal{T}} \Big( \mathlarger{\rho}_{pt}(\omega)y_{pt} +  \mathlarger{\rho}_{pt}(\omega)f_{pt} + \epsilon \mathlarger{\rho}_{pt}(\omega)h_{pt} + \sum_{l \in \mathcal{L}}\sigma_{l} \mathlarger{\rho}_{pt}(\omega)g_{ptl} \Big) \Big\rbrack - R\sum_{t \in \mathcal{T}}\alpha_{t}
+\end{equation*}
+
+to 
+
+\begin{equation*}
+\text{max} \; z = \sum_{p \in \mathcal{P}} \sum_{t \in \mathcal{T}} \Big( \hat{\mathlarger{\rho}}_{pt} y_{pt} + \hat{\mathlarger{\rho}}_{pt}f_{pt} + \epsilon \hat{\mathlarger{\rho}}_{pt}h_{pt} + \sum_{l \in \mathcal{L}}\sigma_{l} \hat{\mathlarger{\rho}}_{pt} g_{ptl} \Big) - R\sum_{t \in \mathcal{T}}\alpha_{t}
+\end{equation*}
+
+where $\hat{\rho}_{pt}$ denotes the expected points of each player $p$ in a gameweek $t$.
+
+\newpar
+
+NOTE:TA MED 6.2.2 Test Method FRA PROSJEKTET. JUSTERT. SKRIVE FOR HVORDAN VALGENE FOR CHIP BLUR JUSTERT FOR MELLOM HORISONTENE.
+
+
 \section{Player performance prediction}
-\subection{Processing of players data}
+\subsection{Processing of player data}
+\subsubsection{Injuries and suspensions}
+Once a player is listed as injured and thus unavailable for the upcoming gameweek, it is reasonable to set his expected points to zero. As it is difficult to decide exactly when an injured player will be fit again, it is assumed in the solution approach that once a player is listed as injured, he will be unavailable for the upcoming three gameweeks. However, the injury list is updated for each gameweek, hence a player's injury status might change after a gameweek has been played.  
+\newpar
+In addition, the model takes account for suspensions when optimizing the team for a gameweek. A player may be suspended for up to three games when receiving a red card, depending on whether it was a direct red card or not. Further, a player is subject to a match ban if he receives his 5th, 10th or 15th yellow card of the season. In addition, a player can be suspended by the English Football Association if he is found guilty of unsportsmanlike conduct. As for the injuries, a player that is suspended is rewarded with an expected points of 0 in the gameweeks of his suspensions. 
+
+\subsubsection{Promoted teams}
+Gathering data for newly promoted teams is rather difficult, as this data is not easy obtainable. In addition, it requires a lot of computational work in order to compare performances in the English Championship to the Premier League. Due to these difficulties, some simplifications are made. In general, players on newly promoted teams are not considered in the first gameweek of the 2017/2018 season. However, if a player was transferred to a promoted team ahead of the season, and he played in the Premier League in the previous season, the player would then be considered from the start of the season. It is worth noticing that the newly promoted teams are partly considered in the first gameweek when using the average method. This is solved by using the ELO system. 
+\subsubsection{Players transferred ahead of 2017/2018 season}
+A question that arise with the international transfer window, is how new players is going to perform in another league in a different country. Forecasts of these players performance could be obtained by studying their performance from previous seasons in their respective leagues and hence somehow compare a performance in a different league with a performance in Premier League. However, this is very time consuming as well as it is very difficult to compare one league to another. Further, it must be done for several leagues, for instance the Spanish La Liga, the Italian Serie A, the German Bundesliga, the Dutch Eredivisie etc. For simplicity, this type of work is not considered in this thesis.
+\newpar
+In this project it is assumed that the creators of Fantasy Premier League have assigned new players with a price that is perfectly mirrored by their expected performance. Thus, one can compare the new players with existing FPL players of the same price. For instance, if a new midfielder is listed with a price of 9, it is assumed that this player will have the same expected performance as other midfielders listed with the same price.
+\subsubsection{Irregular gameweeks}
+In general, every gameweek consists of 10 fixtures featuring every team once. However, due to matches in the national and international cups, some of the Premier League matches are postponed or played ahead of the original date. This implies that some of the gameweeks do not consist of exactly 10 fixtures, but perhaps 8 or 12 for instance. Thus, in these gameweeks some players may be featured twice, gaining points for both matches. Similarly, some players will not be feautered in other gameweeks, these gameweeks are hereby refered to as \textit{blanks}.
+
+
+
 \subsection{Player prediction using regression}
+
+\subsubsection{Theory}
+
 One way of predicting Fantasy Premier League points is by use of regression. By running a regression model, one can figure out which data that is most related to a player's performance. For instance, it is interesting to see how a player's achieved points are related to the opponent of which team he is facing, as well as how his position on the field is relevant for the amount of points he receives. This can be done for numerous factors influencing the outcome of a football match. Some of the factors are predetermined and available for the managers throughout the season, while others may vary during the season. In the following, some interesting regression variables are presented: 
 \newpar
-\textit{Dynamic factors influencing FPL points:}
+\textit{Stochastic factors influencing FPL points:}
 \newpar
 \begin{itemize}
     \item A \textbf{realized points} variable can be used as the dependent variable as which the other variables are measured towards. The realized points are the actual points gained by a player for previous gameweeks.
@@ -21,7 +63,7 @@ One way of predicting Fantasy Premier League points is by use of regression. By 
     \item \textbf{Transfers} made by FPL managers gives one an impression of how other managers expect a player to perform in the future.
     \end{itemize}
 \newpar
-\textit{Constant factors influencing FPL points}
+\textit{Deterministic factors influencing FPL points}
 \newpar
 \begin{itemize}
     \item The \textbf{position on the field} is worth some attention as well. For instance, it would be interesting to check whether midfielders gain more points than defenders. By figuring out which positions one should focus on, it might be optimal to find an optimal formation for a FPL team.
@@ -33,19 +75,353 @@ One way of predicting Fantasy Premier League points is by use of regression. By 
 
 
 \subsection{Average performance prediction}
-The solution approach suggested by .... can be used for the English Fantasy Premier League as well as for the Argentinian. Initially, one simply look at the average points performance for the recent gameweeks in order to predict the performance for the next gameweek. However, this is probably not sufficient in order to correctly predict a player's performance. In order to improve the prediction, one should take account for team opponent, home advantage and whether a player is in a good performance streak. This is done by weighting a player's performance by three factors. The first issue is corrected by assigning each team in the league with a factor in the range 0.95-1.05, depending on the opponent's position in the league table. Secondly, home teams and away teams are weighted by 1.05 and 0.95 respectively, for their upcoming match. Finally, the current situation for a player is weighted in the range 0.95-1.05, depending on his recent performance. 
+\subsubsection{Theory}
+The solution approach suggested by \cite{Bonomo} can be used for the English Fantasy Premier League as well as for the Argentinian. In general, one simply use the average points performance for the recent gameweeks as the prediction of the performance for the next gameweek. In order to improve the prediction, one can take account for team opponent, home advantage and whether a player is in a good performance streak. This is done by weighting a player's performance by three factors as mentioned in section \ref{Forecasting_of_player_performance}.
 \newpar
-It would be valuable to replicate this solution approach to the Fantasy Premier League how it performs. Further, it would be interesting to improve this model by using different weights, adjusted for historical performance in the English Premier League. For instance, instead of weighting the teams based on their league position, a different but rather interesting approach would be to use an ELO-rating in order to weight the strength of the different opponents. Further, it would be interesting to find an empirical value of home performance in the league, which may yield a different weighting of home teams. As for the current situation of a player, statistical models as xG and xA could be used in order to measure their performance for the past gameweeks.
+In general, a player's point prediction is calculated according to the following equation:
+\begin{equation}
+    \textrm{Expected points} = \textrm{Adjusted avg. points} \times \textrm{Team strength} \times \textrm{Home advantage} \times \textrm{Point streak}
+\end{equation}
+\newpar
+It would be valuable to replicate this solution approach fir the Fantasy Premier League, using the numerical values suggested by \cite{Bonomo}. In addition, it would be interesting to modify and improve the model by using different weights adjusted for historical performance in the English Premier League. Instead of weighting the teams based on their league position, a different but rather interesting approach is to use an Elo-rating in order to weight the relative team strengths in the league. In addition, an empirical value of home field advantage in the Premier League may be used as a factor for the home advantage. In order to measure a player's recent performance, one can decide whether a player is in a positive or negative point streak. 
+\subsubsection{The Elo system}
+
+The Elo system introduced in section \ref{Strength_of_football_teams} is a rating system used for measuring the relative strength level of sport teams and individual athletes. Within football, the ELO system can be used in order to determine a club's Elo value. The great advantage of the ELO system lies in its simplicity, there is only one value per club at each point in time, the higher the better. 
+\newpar
+The performance of a team is not measured absolutely; it's inferred from wins, losses and draws against other teams. A club's Elo value is calculated by the ELO-equation: 
+\begin{equation}\label{eq5.1}
+    E = \frac{1}{1+10^{\frac{dr}{400}}}
+\end{equation}
+where dr is the Elo point difference between the two teams.
+\newpar
+When teams play each other and win or lose, they exchange points. The number of points exchanged is determined so that a certain win rate between two clubs makes the Elo difference between both clubs converge towards the Elo difference that corresponds to this win rate. This is satisfied by the following constraint:
+\begin{equation} \label{eq5.2}
+    \Delta Elo = (R-E) \times k
+\end{equation}
+where R is the result (1 for win, 0.5 for draw and 0 for loss). 
+\newpar
+The k-factor determines how fast the Elo value will converge. A higher k-value will have the values converging quicker to their true values, but will suffer from more variation. For smaller k-values, more stable Elo values are created which take longer time to converge. In chess, FIDE suggest that a value of k=20 should be used for players with an Elo value below 2400. 
+\newpar
+In the following, an illustrating example provide how the Elo value of two teams are updated once a match between them has been played:
+\newpar
+Assume that team A has an Elo value of 1881 and that team B has a value of 1650. If A faces B, the Elo difference between the two teams is calculated according to equation \ref{eq5.1}:
+\begin{equation*}
+    E = \frac{1}{1+10^{\frac{231}{400}}} = 0.2092
+\end{equation*}
+Further, if team A won the match, its Elo value will increase with a value according to equation \ref{eq5.2}: 
+\begin{equation*}
+   \Delta \textrm{Team A} = (1-0.2092) \times 20 = 15.81
+\end{equation*}
+Thus, A's new Elo value increases to 1897 while team B's value decreases to 1634. 
+
+\subsubsection{Using Elo values to rate Premier League teams}
+The Elo values provide a sophisticated measurement of the relative strength between the Premier League teams. Further, as the values are updated once a match has been played, the Elo system somehow catches which teams that are in a good form. Elo values can be obtained according to equation \ref{eq5.1} and \ref{eq5.2}. Clubelo.com provide historical Elo values for most of the professional football teams in the world, including teams in the English Premier League, English 1st division etc. These values are used in order to compute the relative team strength in this project, using a k-value of 20. A great advantage of the ratings provided by Clubelo is the fact that these values are modified, taking account for home field advantage, goal difference and inter-league adjustments. In addition, the Elo values from Clubelo incorporates all fixtures and not only league matches.
+\newpar
+Once the Elo values are obtained, they can be used in order to weight the previous performance of each Fantasy Premier League player. It is likely to suggest that a player playing for a top-rated team has a greater probability of scoring many points than a player playing for a poor team. In addition, a player is more likely to gain many points against a weak opponent than against a top-rated team. Hence, one should consider both the opponent and the team of a player when calculating his previous average. 
+\newpar
+In table \ref{Elo.1617} some Elo values for the first gameweeks of the English Premier League 2016/17 season are listed. Note that the values are calculated ahead of each gameweek, so that the values in the GW1 column are the Elo values of the teams before gameweek 1 has been played. 
+
+\begin{table}[H]
+\centering
+\caption{Elo ratings for Premier League 2016/2017}
+\label{Elo.1617}
+\begin{tabular}{|l|l|l|l|l|l|}
+\cline{2-6}
+\multicolumn{1}{l|}{} & \multicolumn{1}{l|}{} & \multicolumn{4}{c|}{Elo value}  \\ \cline{2-6} 
+\hline
+                      & Team                  & GW1    & GW2    & GW3  & GW4    \\
+                      \hline
+1                     & Chelsea               & 1793   & 1800   & 1798 & 1804   \\
+2                     & Tottenham             & 1804   & 1804   & 1800 & 1798   \\
+3                     & Man City              & 1848   & 1856   & 1858 & 1863   \\
+4                     & Man Utd               & 1789   & 1797   & 1799 & 1804   \\
+-                     &                       &        &        &      &        \\
+-                     &                       &        &        &      &        \\
+-                     &                       &        &        &      &        \\
+17                    & Watford               & 1624   & 1631   & 1618 & 1612   \\
+18                    & Hull                  & 1589   & 1603   & 1613 & 1608   \\
+19                    & Middlesbrough         & 1595   & 1597   & 1601 & 1604   \\
+20                    & Sunderland            & 1655   & 1654   & 1636 & 1641   \\
+\hline
+\end{tabular}
+\end{table}
+
+Values from table \ref{Elo.1617} can be used in order to weight the performance of a player. For instance, if a forward received many points against Chelsea, that is more impressive than if the same player equally many points against Sunderland. Hence, one should weight the performances appropriately. In the following, an approach for weighting historical performance is suggested. For instance, let's assume that Paul Pogba, a midfielder at Manchester United received the following points for the first three gameweeks: 
+
+
+\begin{table}[H]
+\centering
+\caption{Paul Pogba imaginary points}
+\label{my-label}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+\multicolumn{1}{|c|}{} & \multicolumn{4}{c|}{Points Gained} \\ \hline
+Opponent               & GW1        & GW2       & GW3    & GW4   \\
+\hline
+Chelsea                & 6          &           &        &       \\
+Sunderland             &            & 9         &        &       \\
+Watford                &            &           & 10     &         \\
+Tottenham              &            &           &        & ?      \\
+\hline
+\end{tabular}
+\end{table}
+
+If one simply used his average score for the past three gameweeks in order to predict his performance for the next gameweek, one would predict Pogba to gain 8.33 points in gameweek 4. However, in this case one do not take account for the fact that Manchester United were facing teams of different quality. In addition, one does not consider the fact that Pogba plays for Manchester United, a team that in general performs better than most other teams. As mentioned above, these factors should be considered. Hence, it is necessary to weight the previous performance taking account for the opponent team and the player's team. This can be solved in the following way: 
+\newpar
+In gameweek 1, Manchester United were facing Chelsea and Pogba earned 6 points. In order to take account for the fact that Pogba plays for Manchester United and were facing Chelsea (a higher ranked team), one simply mulitply his score with Chelseas Elo value and divide it by Manchester Uniteds Elo value. Thus, Paul Pogbas adjusted points should be set to:
+\begin{equation*}
+    \textrm{Paul Pogba GW1} = 6 \times \frac{1793}{1789} = 6.013 
+\end{equation*}
+As can be observed, his actual points increases when facing an opponent that is assumed to be better than his team. In contrary, when facing a weaker team, for instance Sunderland his realistic points decreases: 
+\begin{equation*}
+    \textrm{Paul Pogba GW2} = 9 \times \frac{1654}{1797} = 8.284 
+\end{equation*}
+
+In general a players realistic points gained can be calculated by the following equation: 
+\begin{equation} \label{actualpoints}
+\textrm{Realistic points} = \textrm{Adjusted points} \times \frac{\textrm{Opponent Elo value}}{\textrm{Player's team Elo value}}    
+\end{equation}
+
+By calculating realistic points according to equation \ref{actualpoints}, Paul Pogbas adjusted average for the first three gameweeks would be 7.764. The following equation is used in order to calculate the expected points for an upcoming gameweek: 
+\begin{equation}
+    \textrm{Expected points} = \textrm{Adjusted average} \times \frac{\textrm{Player's team Elo value}}{\textrm{Opponent Elo value}}
+\end{equation}
+In this way, players are rewarded with an increased expected points when playing for a team with a higher Elo value than its opponent. Hence, his expected performance against Tottenham in the upcoming gameweek 4 would be: 
+\begin{equation*}
+    \textrm{Expected points for Pogba GW4} = 7.764 \times \frac{1804}{1798} = 7.790
+\end{equation*}
+
+
+\subsubsection{Home field advantage}
+As pointed out in section \ref{HomeFieldAdvantage} numerous studies have proven that some kind of home field advantage exist when football games are being played. Football teams have a tendency of performing better when playing at their home field then when playing at their opponents ground. This home field advantage has to be considered when one are to forecast the upcoming performance of the Premier League players. 
+\newpar
+Usually when one are to determine the home field advantage in a football league, one focuses on the outcome of the game, i.e.  win, draw or loss. In Fantasy Premier League, the outcome of a match has no impact in the point system. As the most important point-factor in FPL is goals scored, the home field advantage has to be calculated in terms of goals. 
+\newpar
+The home field advantage can be calculated according to the approach suggested by \cite{Pollard}. However, instead of focusing of match outcomes, one determine the advantage by looking into goals. Imagine that each team plays 38 matches during the season, equally divided between home and away games. With 20 teams facing each other twice a season, that implies a total of 380 matches a season. Further, assume that a total of 1000 goals were scored during a particular season. If there were no home field advantage, one would expect that 500 of the goals were scored by the home team and 500 by the away team, yielding a factor of 0.5. However, the results show that 620 of the goals were scored by the home team, which represents 62 \% of the goals scored. With an expected value of 50 \% and an actual value of 62 \% the home field advantage in terms of goals scored can be calculated by: 
+\begin{equation*}
+    \textrm{Home field advantage} = \frac{\textrm{Actual goals scored home}}{\textrm{Expected goals scored away}} = \frac{0.62}{0.5} = 1.24 
+\end{equation*}
+
+Similarly, the away field advantage is calculated according to:
+\begin{equation*}
+    \textrm{Away field advantage} = \frac{\textrm{Actual goals scored away}}{\textrm{Expected goals scored away}} = \frac{0.38}{0.5} = 0.76
+\end{equation*}
+\newpar
+In this thesis the home field advantage is calculated as an empirical value for the entire Premier League. Hence, each team's home field advantage is not considered. The idea is that the empirical home field advantage along with the relative team strengths calculated by use of the Elo system will give an appropriate representation of a team's performance both home and away. 
+\newpar
+In order to find an appropriate empirical value for the home field advantage, several previous seasons should be considered. In this project thesis, the empirical value is set to the average of the home field advantage over the past five Premier League seasons. This is due to the fact that the home field advantage value has been stabilized over the past seasons. 
+
+\subsubsection{Player point streak}
+Fantasy Premier League managers have a tendency of selecting players that are on a great point streak. As mentioned in section \ref{Forecasting_of_player_performance} \cite{Bonomo} add a factor in order to take account for players point streak. This factor can take a value between 0.95 and 1.05, depending on the duration of a player's point streak. Unfortunately, they do not describe how they determine the value of the point streak factor. Intuitively, the point streak value can be determined in the following way: 
+\newpar
+If a player receives more than X points 2 gameweeks in a row, his point streak value will be set to 1.01. Further, if the streak continues, the value will increase by 0.01 for each match that his points exceed the X number of points. When a player has received more than X points 6 gameweeks in a row, his point streak value is set to the maximum of 1.05. Hence, the value does not increase if his streak exceeds 6 matches. The same rule applies for players scoring less than Y points 2 gameweeks in a row; then his streak value will be set to 0.99. When scoring less than Y points 6 matches in a row, the point streak value is set to a minimum of 0.95. Once the scoring streak is broken, the player's value is set to 1. 
+
+\subsubsection{Experimental setup}
+In this thesis, the relative team strength factor are calculated according to the Elo values provided by clubelo.com. As the Elo values are updated for every gameweek, each Premier League team is assigned with 38 different Elo values, depending on the results in their previous games. An overview of the Elo values is attached in the appendix. 
+\newpar
+Table \ref{Field advantage} provides the calculated values for field advantages for the past five Premier League seasons. As can easily be observed, the field advantages seems to be somewhat constant, ranging from 1.105 to 1.149. Hence, simply taking the average over the past five years seems to yield an appropriate field advantage factor. 
+
+\begin{table}[H]
+\centering
+\caption{Field advantages for previous 5 seasons}
+\label{Field advantage}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+          & 16-17    & 15-16    & 14-15    & 13-14    & 12 13 & \textbf{Average}   \\
+          \hline
+        
+Home field advantage & 1.141 & 1.105 & 1.149 & 1.137 & 1.114 & \textbf{1.129} \\
+\hline
+Away field advantage & 0.859 & 0.895 & 0.851 & 0.863 & 0.886 & \textbf{0.871} \\
+\hline
+\end{tabular}
+\end{table}
+
+As for the point streak factor, the variables X and Y has to be decided. As goalkeepers and defenders receive 4 points for keeping a clean sheet, all players get 3 points for an assist and midfielders and forwards get 5 and 4 points respectively for scoring a goal, the X variable should be set according to these numbers. Further, as a player gets 2 points for playing more than 60 minutes, it is appropriate to let the X variable take a value of 5. Hence, if a player has an assist or scores a goal and in addition plays 60 minutes or more that player will receive enough points to be on a positive point streak given that he did not receive a yellow or red card. As for the Y variable, a player that does not contribute with neither a goal, assist nor a clean sheet is awarded maximum 2 points. Thus, it is reasonable to set the Y to equal 2 points. 
+\newpar
+
+
+
+
+
 \subsection{Prediction using odds}
+\subsubsection{Theory}
 A quite different approach for player point prediction is by use of odds created by bookmakers. It is reasonable to assume that bookmakers provide a realistic odds distribution for the different scorelines, in order to avoid gamblers profiting from an incorrectly odds. By acquiring the result outcomes for each Premier League match, a scoreline prediction can be obtained. By summing all the result odds and dividing each individual result odds by that sum, one can obtain the probability of an exact result to occur. Although result odds are mainly displayed for the next gameweek, bookmakers are able to predict scorelines for several gameweeks ahead. Further, these result odds for the upcoming weeks are updated once a match has been played. 
 \newpar
-When the scoreline predictions are acquired by use of result odds, one has to link these predictions to player performances. In order to determine the probability of a defender or midfielder to keep a clean sheet, one simply sum the probabilities of each match outcome where its team does not concede a goal. Further, bookmakers provide odds' for each individual player to score a goal in a particular match. Similar odds may be obtained for a player having an assist or receiving a yellow card. 
+When the scoreline predictions are acquired by use of result odds, one has to link these predictions to player performances. In order to determine the probability for a defender or midfielder to keep a clean sheet, one simply sum the probabilities of each match outcome where its team does not concede a goal. Further, bookmakers provide odds' for each individual player to score a goal in a particular match. Similar odds may be obtained for a player having an assist or receiving a yellow card. 
 \newpar
 Once different probabilities for scorelines, goalscorers etc. are obtained, one can simulate the actions in a particular game. By using the cumulative distribution of the different scorelines, one simply draw a result from the distribution. Similar approach can be used for each goalscorer and assist giver within that particular match. In addition, one can simulate whether a player receives a yellow card. At the end, when all actions are taken into account, one can translate the simulated actions into Fantasy Premier League points. 
-\section{Solving for the chips}
-\subection{Wildcard}
-\subection{Triple Captain}
-\subection{Bench Boost}
-\subection{Free Hit}
+
+\subsubsection{Experimental setup}
+
+
+
+\begin{table}[H]
+\centering
+\caption{Result odds for Leicester-Burnley 14.04.18}
+\label{Leicester-Burnley}
+\begin{tabular}{|ll|ll|ll|}
+\multicolumn{6}{c}{Odds}                   \\
+\hline
+1-0 & 7.00   & 0-0 & 7.50   & 0-1 & 8.00   \\
+2-0 & 11.00  & 1-1 & 6.00   & 0-2 & 13.00  \\
+2-1 & 9.50   & 2-2 & 15.00  & 1-2 & 10.50  \\
+3-0 & 23.00  & 3-3 & 67.00  & 0-3 & 29.00  \\
+3-1 & 21.00  & 4-4 & 301.00 & 1-3 & 23.00  \\
+3-2 & 31.00  &     &        & 2-3 & 35.00  \\
+4-0 & 61.00  &     &        & 0-4 & 81.00  \\
+4-1 & 56.00  &     &        & 1-4 & 67.00  \\
+4-2 & 81.00  &     &        & 2-4 & 91.00  \\
+4-3 & 181.00 &     &        & 3-4 & 201.00 \\
+5-0 & 201.00 &     &        & 0-5 & 276.00 \\
+5-1 & 181.00 &     &        & 1-5 & 226.00 \\
+5-2 & 276.00 &     &        &     &        \\
+\hline
+\end{tabular}
+\end{table}
+
+The odds provided in table \ref{Leicester-Burnley} can be translated into match result probabilities. This is done by summarizing all the inverse odds and afterwards dividing each inverse odds by the sum. The results are shown in table \ref{Prob.Lei-Bur}.
+
+
+\begin{table}[H]
+\centering
+\caption{Probabilities for Leicester-Burnley 14.04.18}
+\label{Prob.Lei-Bur}
+\begin{tabular}{|ll|ll|ll|}
+\multicolumn{6}{c}{Odds}                         \\
+\hline
+1-0 & 0.104388 & 0-0 & 0.097429 & 0-1 & 0.09134  \\
+2-0 & 0.066429 & 1-1 & 0.121786 & 0-2 & 0.056209 \\
+2-1 & 0.076918 & 2-2 & 0.048714 & 1-2 & 0.069592 \\
+3-0 & 0.03177  & 3-3 & 0.010906 & 0-3 & 0.025197 \\
+3-1 & 0.034796 & 4-4 & 0.002428 & 1-3 & 0.03177  \\
+3-2 & 0.023571 &     &          & 2-3 & 0.020878 \\
+4-0 & 0.011979 &     &          & 0-4 & 0.009021 \\
+4-1 & 0.013049 &     &          & 1-4 & 0.010906 \\
+4-2 & 0.009021 &     &          & 2-4 & 0.00803  \\
+4-3 & 0.004037 &     &          & 3-4 & 0.003635 \\
+5-0 & 0.003635 &     &          & 0-5 & 0.002648 \\
+5-1 & 0.004037 &     &          & 1-5 & 0.003233 \\
+5-2 & 0.002648 &     &          &     &         \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\section{Expected Value/Variance trade-off}
+
+In financial optimization it is common to examine the expected return/variance trade-off (Markowitz). According to Zenios, the variance of a portfolio of \textit{n} assets with weight \textit{w} can be expressed as 
+
+\begin{equation}
+    \sigma^2(w) = \sum_{i = 1}^{n}\sum_{i' = 1}^{m}\sigma_{ii'}w_iw_{i'} = \sum_{i = 1}^{n}\sigma_{i}^2w_i^2 + \sum_{i = 1}^{n}\sum_{\substack{i' = 1;\\ i' \neq i}}^{n}\sigma_{ii'}w_iw_{i'}
+    \label{eq:port_var}
+\end{equation}
+
+where, $w_i$ is the portfolio weight of asset $i$, $\sigma_{i}^2$ is the variance of asset \textit{i} and $\sigma_{ii'}$ is the covariance between assets $i$ and $j$. \newpar
+
+In our case, we can rewrite Equation \ref{eq:port_var} by utilizing the fact that each portfolio weight is either $\frac{1}{11}$ or $0$. If we also substitute the expression for covariance with correlation, the expression simplifies to
+
+\begin{equation}
+    \sigma^2(y) = (\frac{1}{11})^2\sum_{i = 1}^{n}\sigma_i^2y_i + (\frac{1}{11})^2\sum_{i = 1}^{n}\sum_{\substack{i' = 1;\\ i' \neq i}}^{n} \sigma_i^2\sigma_j^2y_iy_j\rho_{i,j}
+    \label{eq:team_var}
+\end{equation}
+
+where $\sigma_{i}^2$ is the variance of asset \textit{i}, $\sigma_{j}^2$ is the variance of asset \textit{j} and $\rho_{i,j}$ is the correlation between asset $i$ and asset $j$. In addition, $y_i$ and $y_j$ are binary variables indicating whether player $i$ and player $j$ is included in the starting team (portfolio) of players.\newline
+
+In the optimization, we now may determine an upper threshold for the variance of the team at time $t$ as described below. Note that in Equation \ref{eq:team_var} two binary variables are multiplied. In order to linearize the expression, the following set of equations are inferred.
+
+\begin{equation}
+    \sigma^2_{t} = (\frac{1}{11})^2\sum_{p = 1}^{P}\sigma_p^2 y_{pt} + (\frac{1}{11})^2\sum_{p = 1}^{P}\sum_{p' = 1}^{P} \sigma_p^2\sigma_p'^2\rho_{p,p',t} \delta_{pp't} \qquad\qquad t \in \mathcal{T}
+\end{equation}
+
+\begin{equation}
+    \sigma^2_{t} \leq THRESHOLD \qquad\qquad t \in \mathcal{T}
+\end{equation}
+
+\begin{equation}
+    \delta_{pp't} \leq y_{pt}  \qquad\qquad p \in \mathcal{P}, p' \in \mathcal{P}, \enskip t \in \mathcal{T}
+\end{equation}
+
+\begin{equation}
+    \delta_{pp't} \leq y_{p't}  \qquad\qquad p \in \mathcal{P}, p' \in \mathcal{P}, \enskip t \in \mathcal{T}
+\end{equation}
+
+\begin{equation}
+    \delta_{pp't} \geq y_{pt} + y_{p't} - 1  \qquad\qquad p \in \mathcal{P}, p' \in \mathcal{P}, \enskip t \in \mathcal{T}
+\end{equation}
+
+
+\subsection{Variance estimation}
+By variance, the variability in each players performance (points obtained) is meant. Some midfielders are known to be consistently starting, but seldom contribute in term of assists or goals. Such players probably have a low expected value of points, but also a low variability in points earned. Other players might contribute a lot in terms of assists and goals when they are playing, but is perhaps often injured. Such players could have a high predicted value, but also a high variance in points obtained.\newpar
+
+In order to estimate the variance of each player, their historical performance is considered. The variance is calculated as the empirical variance in points obtained for each individual player. All previous available data from the 2016/2017 and the 2017/2018 season is used. That is, for game-week 10 of the 2017/2018, data from all rounds of the 2016/2017 as well as the first nine round of the 2017/2018 season is used.\newpar
+
+\subsubsection{Special cases}
+\textit{Lack of historical data}\newline
+As mentioned in ... data for all players of the 2016/2017 season is not available for all players. If only one data point is available for a player (i.e he has only played one match), it is impossible to calculate his variance. In these cases, the variance is set equal to the average variance of all other players. (Mention that this is only problematic in 1 round, at least for average/regression?). Only a few data points are obviously a limitation of the accuracy of the variance estimation, and constitutes a significant weakness of the method. As the variance trade-off is considered a mean to reduce overall risk, another approach/improvement might consider only picking players with a history of say 10 matches. \newpar
+
+\textit{Zero Variance}\newline
+Some players have never played, but can be selected. These players might be interesting to choose for instance to fulfill the budget/number of players constraints. However, their empirical variance would equal 0. This is not desirable, as the future performance is not deterministic (they are \textit{not} analogous the the risk-free asset in a portfolio optimization setting). Therefore, their variance is set equal the lowest non-zero variance obtained by other players.
+
+\subsection{Correlation Estimation}
+The variance of each player only considers each player's individual contribution to the team's total variance. However, it is natural to assume that there exists a correlation between the performance of players. For instance, as both a goalkeeper and defenders of the same team receive a bonus for a clean sheet, their performances are expected to be positively correlated. Similarly, it is intuitive that the goalkeeper and forwards of two opposing teams are negatively correlated. Weather or not there exists correlation between defenders of opposing teams are perhaps not so obvious. \newpar
+
+In order to determine the correlation between two players on the same or opposing teams, historical data for the 2016/2017 season is considered. Note that data is aggregated such that only the correlation coefficient between different positions overall is considered. It is not calculated between individual players or teams. Therefore, the correlation between players in the same position in the same team is set equal to 1. In order to determine if a correlation coefficient is significantly different from 0, a hypothesis test is performed. The correlation between players that are not on the same team, nor facing each other in a game-week, is assumed to be 0.\newpar
+
+Table \ref{tab:cor_team} and Table \ref{tab:cor_opp} shows the correlation coefficient between different positions as well as the p-value from a hypothesis test with alternative hypothesis of a correlation not equal to 0, for players of the same and opposing teams respectively. In the cases where the correlation is not significant (GLK FWD and DEF FWD of the same teams and GLK GLK of opposing teams), the correlation coefficient is set equal to 0.
+
+\begin{table}[H]
+\centering
+\caption{Correlation coefficient and p-value from significance test for the correlation between players of the same team}
+\label{tab:cor_team}
+\begin{tabular}{llll}
+Position & Position & $\rho$    & p-value  \\
+GLK      & DEF      & 0.689  & 2.20 E-16 \\
+GLK      & MID      & 0.274  & 1.24 E-10 \\
+GLK      & FWD      & 0.0288 & 0.519    \\
+DEF      & MID      & 0.368  & 2.20 E-16 \\
+DEF      & FWD      & 0.0578 & 0.176    \\
+MID      & FWD      & 0.238  & 1.72 E-08
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Correlation coefficient and p-value from significance test for the correlation between players of opposing teams}
+\label{tab:cor_opp}
+\begin{tabular}{llll}
+Position & Position & $\rho$    & p-value  \\
+GLK      & GLK      & 0.0162 & 0.759    \\
+GLK      & DEF      & -0.106 & 0.0374   \\
+GLK      & MID      & -0.312 & 2.78E-10 \\
+GLK      & FWD      & -0.336 & 3.85E-16 \\
+DEF      & DEF      & -0.319 & 2.35E-11 \\
+DEF      & MID      & -0.447 & 2.20E-16 \\
+DEF      & FWD      & -0.292 & 3.35E-09 \\
+MID      & MID      & -0.254 & 1.00E-07 \\
+MID      & FWD      & -0.136 & 0.00632 \\
+FWD      & FWD      & -0.119 & 0.0218  
+\end{tabular}
+\end{table}
+
+\subsection{Further discussion}
+\begin{itemize}
+    \item Na = average (bare aktuelt når spilleren kun har spilt en kamp, før det vil han ikke velges) 
+    \item 0 = min $>$ 0
+    \item tar med alle tilgjengelige observasjoner
+    \item diskutere om fordeling
+    \item varians eller standardavvik
+    \item only non-zero data considered
+    \item what hypotesis test is performed
+\end{itemize}
+
+
+
+
+
+
+
+
+
 
 
