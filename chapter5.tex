@@ -415,6 +415,17 @@ FWD      & FWD      & -0.119 & 0.0218
     \item what hypotesis test is performed
 \end{itemize}
 
+\section{Determining optimal horizon and penalty term}
+
+In the ideal case the horizon would be as long as possible and the penalty term equal to the real case with 4. However, for these parameter settings to be guaranteed optimal, exact forecasts are required. As the forecasts are not, it is important to set the values of the parameters in a smart way. Figure \ref{fig:pen_hor_scale} displays how the mean value of points for the entire 2016/2017 season chagnges with horizon and penalty term. Based on the figure, a combination found in the upper leftmost corner appears to be optimal, and the values $h = 2$ and $p = 18$ are chosen.
+
+\begin{figure}
+\label{fig:pen_hor_scale}
+    \centering
+    \includegraphics[scale=0.50]{fig/chapter_5/pen_hor_scale.png}
+    \caption{The plot shows how the mean value of the entire 2016/2017 season changes depending on horizon and penalty term}
+\end{figure}
+
 
 
 
