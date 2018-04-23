@@ -2,15 +2,13 @@
 
 \chapter{Model Formulation} \label{model_formulation}
 
-In this chapter, the mathematical optimization model of the Fantasy Team Composition Problem (FTCP) is presented. At first, in Section \ref{modelling choices_assumptions} modelling choices and model assumptions are discussed. Here the goal is to simplify and reduce the scope of the problem. In Section \ref{def_sets_ind_par_var}, the sets, indices, parameters and variables used in the model are defined. Finally, the mathematical formulation is presented in Section \ref{mathematical_model} with explanations of the objective function and constraints. 
+In this chapter, the mathematical optimization model of the Fantasy Team Composition Problem (FTCP) is presented. At first, in Section \ref{modelling_choices} modelling choices are discussed. In Section \ref{def_sets_ind_par_var}, the sets, indices, parameters and variables used in the model are defined. Finally, the mathematical formulation is presented in Section \ref{mathematical_model} with explanations of the objective function and constraints. 
 
 
-\section{Modelling Choices and Model Assumption} \label{modelling choices_assumptions}
+\section{Modelling Choices} \label{modelling_choices}
 
-This section outlines the modelling choices and underlying assumptions used to model the FTCP. It starts with describing the problem structure where the aim of the model is also discussed. Next, the modelling choices and assumptions related to game rules are presented. 
+This section outlines the modelling choices used to model the FTCP. It starts with describing the problem structure where the aim of the model is also discussed.
 
-
-\subsection{Problem Structure} \label{prob_struct}
 
 The FTCP resembles a lot the classic Knapsack problem with the exception of some additional constraints. In the Knapsack problem there are a range of items with a specific value and cost, where the goal is to maximize the total value and make sure not to surpass a budget. In this case, there are players where their value is points and their cost is an amount predetermined by the game. The aim is to pick the players in order to maximize the total amount of points while the budget is held. In addition, there are constraints that describe who are the substitutes and who is selected as captain and vice-captain. 
 
@@ -39,7 +37,9 @@ Set           &   &                                                             
 $\mathcal{T}$ & - & Set of gameweeks,                                             \\
 $\mathcal{P}$ & - & Set of players,                                               \\
 $\mathcal{C}$ & - & Set of clubs,                                                 \\
-$\mathcal{L}$ & - & Priority for automatic substitution where 1 = first priority. \\ \bottomrule
+$\mathcal{L}$ & - & Priority for automatic substitution where 1 = first priority. \\
+% $\mathcal{J}$ & - & Set of player positions.\\
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -48,12 +48,16 @@ $\mathcal{L}$ & - & Priority for automatic substitution where 1 = first priority
 \caption{Subsets.}
 \begin{tabular}{@{}llll@{}}
 \toprule
-Subset            &   &                                       &                                                                                         \\ \midrule
-$\mathcal{P}^{D}$ & - & Subset of defenders,                  & \quad  $\mathcal{P}^{D} \ \subset \mathcal{P}$                                            \\
-$\mathcal{P}^{M}$ & - & Subset of midfielders,                & \quad $\mathcal{P}^{M} \ \subset \mathcal{P}$                                             \\
-$\mathcal{P}^{F}$ & - & Subset of forwards,                   & \quad $\mathcal{P}^{F} \ \subset \mathcal{P}$                                             \\
-$\mathcal{P}^{K}$ & - & Subset of goalkeepers,                & \quad $\mathcal{P}^{K} \ \subset \mathcal{P}$                                             \\
-$\mathcal{P}_{c}$ & - & Subset of football players in a club. & \quad $\mathcal{P}_{c} \ \subset \mathcal{P}$, $\enskip c \in \mathcal{C}$  \\ \bottomrule
+Subset            &   &                                       &                                                 \\ 
+\midrule
+$\mathcal{P}^{D}$ & - & Subset of defenders,                  & \quad  $\mathcal{P}^{D} \ \subset \mathcal{P}$  \\
+$\mathcal{P}^{M}$ & - & Subset of midfielders,                & \quad $\mathcal{P}^{M} \ \subset \mathcal{P}$   \\
+$\mathcal{P}^{F}$ & - & Subset of forwards,                   & \quad $\mathcal{P}^{F} \ \subset \mathcal{P}$   \\
+$\mathcal{P}^{K}$ & - & Subset of goalkeepers,                & \quad $\mathcal{P}^{K} \ \subset \mathcal{P}$   \\
+$\mathcal{P}_{c}$ & - & Subset of football players in a club, & \quad $\mathcal{P}_{c} \ \subset \mathcal{P}$, $\enskip c \in \mathcal{C}$  \\ 
+$\mathcal{T}_{FH}$ & - & Subset of the gameweeks in the first half of the season,                & \quad $\mathcal{T}_{FH} \ \subset \mathcal{T}$   \\
+$\mathcal{T}_{SH}$ & - & Subset of the gameweeks in the second half of the season,                & \quad $\mathcal{T}_{SH} \ \subset \mathcal{T}$   \\
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -80,7 +84,7 @@ $l$   & - & Priority  \\ \bottomrule
 Parameters                       &   &                                                                                                \\ \midrule
 $\mathlarger{\rho_{pt}(\omega)}$ & - & Points for a player $p$ in a gameweek $t$ dependent on realization of a random event $\omega$. \\
 $\epsilon$                       & - & Constant such that $\epsilon$ $<<$ 1.                                                                     \\
-$\sigma_{l}$                     & - & Constants such that $\sigma_{l}$ $<<$ $\epsilon$ for all $l$.                                               \\
+$\sigma_{l}$                     & - & Constants such that $\sigma_{l}$ $<<$ $\epsilon$ for all $l$, and $\sigma_{1} > \sigma_{2} > \ldots > \sigma_{l}$. .                                               \\
 $C_{pt}^{S}$                     & - & Sell price of player $p$ in a gameweek $t$.                                                    \\
 $C_{pt}^{B}$                     & - & Buy price of player $p$ in a gameweek $t$.                                                     \\
 $R$                              & - & Number of points deducted if number of free transfers is exceeded.        \\
@@ -94,9 +98,12 @@ $E^{K}$                          & - & Number of goalkeepers required in the sta
 $E^{D}$                          & - & Minimum number of defenders required in the starting line-up.                                     \\
 $E^{M}$                          & - & Minimum number of midfielders required in the starting line-up.                                   \\
 $E^{F}$                          & - & Minimum number of forwards required in the starting line-up.                                      \\
-$S^{C}$                          & - & Number of captains required in the starting line-up.                                              \\
-$S^{VC}$                         & - & Number of vice-captains required in the starting line-up.                                         \\
 $B^{S}$                          & - & Starting budget.                                                                               \\
+$\beta$                          & - & Sufficiently high constant.                                                                                  \\          
+$\bar{\alpha}$                   & - & Sufficiently high constant.                                                                      \\
+
+$\phi$                         & - & Number of players which are substitutes.                                                         \\
+$\phi^{K}$                   & - & Number of keepers which are subsitutes.                                                          \\
 $\overline{Q}$                   & - & Maximum number of free transfers possible to accumulate over gameweeks.                        \\
 $\underline{Q}$                  & - & Number of free transfers given every gameweek.                                                 \\ \bottomrule
 \end{tabular}
@@ -110,13 +117,19 @@ $\underline{Q}$                  & - & Number of free transfers given every game
 \begin{tabular}{@{}lll@{}}
 \toprule
 Variables    &   &                                                                                                    \\ \midrule
-${x_{pt}}$   & - & 1 if a player $p$ is picked in a gameweek $t$, 0 otherwise.                                        \\
+${x_{pt}}$   & - & 1 if a player $p$ is picked for selected squad in a gameweek $t$, 0 otherwise.       \\
+${x^{free hit}_{pt}}$   & - & 1 if a player $p$ is picked for selected squad in the gameweek $t$ free hit is used, 0 otherwise.     \\
 $y_{pt}$     & - & 1 if a player $p$ is picked for starting line-up in a gameweek $t$, 0 otherwise.                    \\
 $f_{pt}$     & - & 1 if a player $p$ is picked as captain in a gameweek $t$, 0 otherwise.                             \\
 $h_{pt}$     & - & 1 if a player $p$ is picked as vice-captain in a gameweek $t$, 0 otherwise.                         \\
 $g_{ptl}$    & - & 1 if a player $p$ in a gameweek $t$ is picked as substitution priority $l$, 0 otherwise. \\
 $u_{pt}$     & - & 1 if a player $p$ is transferred out in a gameweek $t$, 0 otherwise.                               \\
 $e_{pt}$     & - & 1 if a player $p$ is transferred in a gameweek $t$, 0 otherwise.                                   \\
+$w_{t}$     & - & 1 if wildcard chip is used gameweek $t$ , 0 otherwise.                                   \\
+$c_{pt}$     & - & 1 if triple captain chip is used on a player $p$ in a gameweek $t$, 0 otherwise.                    \\
+$b_{t}$     & - & 1 if bench boost chip is used in a gameweek $t$, 0 otherwise.                                   \\
+$r_{t}$     & - & 1 if free hit chip is used in a gameweek $t$, 0 otherwise.                                   \\
+${\lambda_{pt}}$   & - & Binary auxiliary variable.      \\
 $v_{t}$      & - & Remaining budget in a gameweek $t$.                                                                \\
 $q_{t}$      & - & Number of  free transfers available in a gameweek $t$.                                             \\
 $\alpha_{t}$ & - & Number of transfers which is not free in a gameweek $t$.                                      \\ \bottomrule
@@ -130,13 +143,14 @@ $\alpha_{t}$ & - & Number of transfers which is not free in a gameweek $t$.     
 \begin{equation}
 \smaller
 \begin{aligned}
-\text{max} \; z ={} 
-& \EX_{\omega} \Big\lbrack\sum\limits_{p \in \mathcal{P}} \sum\limits_{t \in \mathcal{T}} \Big( \mathlarger{\rho}_{pt}(\omega)y_{pt} + \mathlarger{\rho}_{pt}(\omega)f_{pt} + \epsilon  \mathlarger{\rho}_{pt}(\omega)h_{pt} + \sum_{l \in \mathcal{L}}\sigma_{l} \mathlarger{\rho}_{pt}(\omega)g_{ptl} \Big)  \Big\rbrack \\
+\text{max} \; z ={} & \EX_{\omega} \Big\lbrack\sum\limits_{p \in \mathcal{P}} \sum\limits_{t \in \mathcal{T}} \Big( \mathlarger{\rho}_{pt}(\omega)y_{pt} + \mathlarger{\rho}_{pt}(\omega)f_{pt} + 2 \mathlarger{\rho}_{pt}(\omega)c_{pt} + \epsilon  \mathlarger{\rho}_{pt}(\omega)h_{pt} \\ 
+& + \sum_{l \in \mathcal{L}}\sigma_{l} \mathlarger{\rho}_{pt}(\omega)g_{ptl} \Big)  \Big\rbrack \\ 
 & - R\sum_{t \in \mathcal{T}}\alpha_{t}
 \end{aligned}
 \end{equation}
+
 \newpar
-The objective function is defined as to maximize expected points over a set of gameweeks $\mathcal{T}$ for the starting line-up in each gameweek. As mentioned earlier, the squad selection is of greatest interest. In addition, the choice of captain, vice-captain and the substitution priority are important outputs. These choices are obtained by use of the parameters $\epsilon$ and  $\sigma_{l}$. The term $\mathlarger{\rho}_{pt}(\omega)f_{pt}$ describes who is picked as captain, while $\epsilon \mathlarger{\rho}_{pt}(\omega)h_{pt}$ describes who is picked as vice-captain. Further, $\sum_{l \in \mathcal{L}}\sigma_{l} \mathlarger{\rho}_{pt}(\omega)g_{ptl}$ describes the substitution priority. Intuitively, among the substitutions, the player with the highest expected points is given the first priority, the player with the second highest expected points is given the second priority and so on. Hence, $\sigma_{l}$ is defined as $\sigma_{1} > \sigma_{2} > \ldots > \sigma_{l}$. 
+The objective function is defined as to maximize expected points over a set of gameweeks $\mathcal{T}$ for the starting line-up in each gameweek. The choice of captain, vice-captain and the substitution priority are important outputs in each gameweek. The triple captain chip awards triple points for one player in a gameweek and is described by the term $2 \mathlarger{\rho}_{pt}(\omega)c_{pt}$. The term $\mathlarger{\rho}_{pt}(\omega)f_{pt}$ describes who is picked as captain, while $\epsilon \mathlarger{\rho}_{pt}(\omega)h_{pt}$ who is picked as vice-captain. Further, $\sum_{l \in \mathcal{L}}\sigma_{l} \mathlarger{\rho}_{pt}(\omega)g_{ptl}$ describes the substitution priority. Naturally, among the substitutions the player with the highest expected points is given the first priority, the player with the second highest expected points is given the second priority and so on. Hence, $\sigma_{l}$ is defined as $\sigma_{1} > \sigma_{2} > \ldots > \sigma_{l}$. 
 
 \newpar
 
@@ -144,6 +158,36 @@ If more transfers are made than number of free transfers  imposed by the rules, 
 
 
 \subsection{Constraints}
+
+\subsubsection{Gamechips} \label{gamechips}
+
+
+\begin{equation} \label{eq:wildcard_first_half_of_the_season}
+    \sum_{t \in \mathcal{T}_{FH}} w_{t} \leq 1
+\end{equation}
+
+\begin{equation} \label{eq:wildcard_second_half_of_the_season}
+    \sum_{t \in \mathcal{T}_{SH}} w_{t} \leq 1
+\end{equation}
+
+
+\begin{equation} \label{eq:triple_captain} 
+    \sum_{p \in \mathcal{P}} \sum_{t \in \mathcal{T}} c_{pt} \leq 1
+\end{equation}
+
+\begin{equation} \label{eq:bench_boost}
+    \sum_{t \in \mathcal{T}} b_{t} \leq 1
+\end{equation}
+
+\begin{equation} \label{eq:free_hit}
+    \sum_{t \in \mathcal{T}} r_{t} \leq 1
+\end{equation}
+
+\begin{equation} \label{eq:all_gamechips}
+    \sum_{p \in \mathcal{P}} c_{pt} + b_{t} + w_{t} + r_{t} \leq 1 \qquad \qquad t \in \mathcal{T}
+\end{equation}
+
+These constraints impose the rules on gamechips in the model. The first two constraints specify that the wildcard chip can maximum be used one time in the first half of the season, and maximum one time in the other half of the season. Constraints \eqref{eq:triple_captain} to \eqref{eq:free_hit} state that the chips triple captain, bench boost and free hit can be used maximum one time through the season, respectively. The last constraints ensures that only one gamechip can be used in a gameweek.  
 
 \subsubsection{Selected Squad Constraints} \label{team_sel}
 \begin{equation} \label{eq:sel_keeper}
@@ -153,6 +197,7 @@ If more transfers are made than number of free transfers  imposed by the rules, 
 \begin{equation} \label{eq_sel_defender}
     \sum_{p \in \mathcal{P}^{D}} x_{pt} = M^{D} \qquad\qquad t \in \mathcal{T}
 \end{equation}
+
 
 \begin{equation} \label{eq:sel_midfielder}
     \sum_{p \in \mathcal{P}^{M}} x_{pt} = M^{M} \qquad\qquad t \in \mathcal{T}
@@ -166,16 +211,41 @@ If more transfers are made than number of free transfers  imposed by the rules, 
     \sum_{p \in \mathcal{P}_{c}} x_{pt} \leq M^{C} \qquad\qquad t \in \mathcal{T}, \enskip   c \in \mathcal{C}
 \end{equation}
 
-Constraints (\ref{eq:sel_keeper}) to (\ref{eq:sel_forward}) explain the number of players in the different team positions required in the selected squad. Explicitly, it is necessary to have $M^{K}$ goalkeepers, $M^{D}$ defenders, $M^{M}$ midfielders and $M^{F}$ forwards, respectively. The last constraints (\ref{eq:sel_club}) states that the maximum number of players allowed from same club is $M^{C}$. 
+These constraints explain the number of players in the different team positions required in the selected squad. Explicitly, it is necessary to have $M^{K}$ goalkeepers, $M^{D}$ defenders, $M^{M}$ midfielders and $M^{F}$ forwards, respectively. Constraints (\ref{eq:sel_club}) ensures that the maximum number of players allowed from same club is $M^{C}$. 
+
+\begin{equation} \label{eq:free_hit_sel_keeper}
+    \sum_{p \in \mathcal{P}^{K}} x^{free hit} = M^{K}r_{t}  \qquad\qquad t \in \mathcal{T}
+\end{equation}
+
+\begin{equation} \label{eq:free_hit_sel_defender}
+    \sum_{p \in \mathcal{P}^{D}} x^{free hit} = M^{D}r_{t} \qquad\qquad t \in \mathcal{T}
+\end{equation}
+
+\begin{equation} \label{eq:free_hit_sel_midfielder}
+    \sum_{p \in \mathcal{P}^{M}} x^{free hit} = M^{M}r_{t} \qquad\qquad t \in \mathcal{T}
+\end{equation}
+
+\begin{equation} \label{eq:free_hit_sel_forward}
+    \sum_{p \in \mathcal{P}^{F}} x^{free hit} = M^{F}r_{t} \qquad\qquad t \in \mathcal{T}
+\end{equation}
+
+\begin{equation} \label{eq:free_hit_sel_club}
+    \sum_{p \in \mathcal{P}_{c}} x^{free hit} \leq M^{C}r_{t} \qquad\qquad t \in \mathcal{T}, \enskip   c \in \mathcal{C}
+\end{equation}
+
+% \begin{equation} 
+    % \sum_{p \in \mathcal{P}^{j}} x^{free hit} = M^{j}r_{t} \qquad\qquad t \in \mathcal{T}, \enskip j \enskip \in \mathcal{J}
+%  \end{equation}
+Constraints \eqref{eq:free_hit_sel_keeper} - \eqref{eq:free_hit_sel_club} are the same as those above, with the exception that they are only active in the gameweek the free hit gamechip is used. This mean that they enforce $x^{freehit}_{pt}$ to only take value in that particular gameweek, while in the other gameweeks are zero. 
 
 \subsubsection{Starting Line-up Constraints}\label{team_start}
 
 \begin{equation} \label{eq:start_team}
-    \sum_{p \in \mathcal{P}}y_{pt}= E \qquad\qquad t \in \mathcal{T}
+    \sum_{p \in \mathcal{P}}y_{pt}= E  + \phi b_{t} \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
 \begin{equation}\label{eq:start_keeper}
-    \sum_{p \in \mathcal{P}^{K}} y_{pt}= E^{K} \qquad\qquad t \in \mathcal{T}
+    \sum_{p \in \mathcal{P}^{K}} y_{pt}= E^{K} + \phi^{K} b_{t} \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
 \begin{equation} \label{eq:start_defender}
@@ -190,32 +260,57 @@ Constraints (\ref{eq:sel_keeper}) to (\ref{eq:sel_forward}) explain the number o
     \sum_{p \in \mathcal{P}^{F}} y_{pt}\geq E^{F} \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
-\begin{equation}\label{eq:start_sel}
-    y_{pt} \leq x_{pt} \qquad\qquad  p \in \mathcal{P}, \enskip t \in \mathcal{T}
+These constraints enforces team position on players which are picked from the selected squad to start in each gameweek. Constraints (\ref{eq:start_team}) explains the total number of players that start, while constraints (\ref{eq:start_keeper}) to (\ref{eq:start_forward}) state the minimum number of players in the different positions. Respectively, the starting line-up must consist of $E$ players, with exactly $E^{K}$ goalkeepers and a minimum of $E^{D}$ defenders, $E^{M}$ midfielders and $E^{F}$ forwards. Also when the bench boost gamechip is used, all the substitutes are regarded in the starting line-up. This is ensured by the term $\phi b_{t}$ and $\phi^{K} b_{t}$ in constraints \eqref{eq:start_team} and \eqref{eq:start_keeper}, respectively.  
+
+\begin{equation} \label{eq:nonlinear_starting}
+    y_{pt} \leq x^{free hit} + x_{pt}(1-r_{t}) \qquad\qquad  p \in \mathcal{P}, \enskip t \in \mathcal{T}
 \end{equation}
 
-These constraints explain which of the players in the selected squad that are picked to start in each gameweek. Additionally, they impose the team formation criteria. Constraints (\ref{eq:start_team}) explains the total number of players that start, while constraints (\ref{eq:start_keeper}) to (\ref{eq:start_forward}) state the minimum number of players in the different positions. Respectively, the starting line-up must consist of $E$ players, with exactly $E^{K}$ goalkeepers and a minimum of $E^{D}$ defenders, $E^{M}$ midfielders and $E^{F}$ forwards. Constraints (\ref{eq:start_sel}) enforces that only players that are initially in the selected squad can be picked in the starting line-up.
+Constraints \eqref{eq:nonlinear_starting} enforces that only players that are initially in the selected squad can be picked in the starting line-up. Remember that when a free hit gamechip is used, the whole team can be changed for one gameweek, but in the next gameweek it changes back. This means that the gameweek the free hit gamechip is used, $r_{t} = 1$, $y_{pt}$ only takes value from $x_{pt}^{free hit}$ and not $x_{pt}$. In all the other gameweeks when the free hit gamechip is not used, $r_{t} = 0$, constraints \eqref{eq:free_hit_sel_keeper} - \eqref{eq:free_hit_sel_club} ensure that $x_{pt}^{free hit}$ do not take value. This constraint is non-linear, and the linearization is presented with constraints \eqref{eq:start_sel} - \eqref{eq:auxiliary_variable_free_hit} where $\lambda_{pt}$ is an auxiliary binary variable.
+
+
+\begin{equation}\label{eq:start_sel}
+    y_{pt} \leq x^{free hit} + \lambda_{pt} \qquad\qquad  p \in \mathcal{P}, \enskip t \in \mathcal{T}
+\end{equation}
+
+\begin{equation} \label{eq:auxiliary_variable_x}
+    \lambda_{pt} \leq {x}_{pt}  \qquad\qquad  p \in \mathcal{P}, \enskip t \in \mathcal{T}
+\end{equation}
+
+\begin{equation} \label{eq:auxiliary_variable_free_hit}
+    \lambda_{pt} \leq (1-r_{t}) \qquad\qquad  p \in \mathcal{P}, \enskip t \in \mathcal{T}
+\end{equation}
+
+Constraints \eqref{eq:start_sel} - \eqref{eq:auxiliary_variable_free_hit} present a linearization of the constraints \eqref{eq:nonlinear_starting}. As mentioned earlier, in the gameweeks when the free hit gamechip is not used 
 
 \subsubsection{Captain and Vice-captain Constraints}
 
 \begin{equation} \label{eq:captain}
-    \sum_{p \in \mathcal{P}} f_{pt} = S^{C} \qquad\qquad t \in \mathcal{T}
+    \sum_{p \in \mathcal{P}} f_{pt} + \sum_{p \in \mathcal{P}} c_{pt} = 1 \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
 \begin{equation} \label{eq:vicecaptain}
-    \sum_{p \in \mathcal{P}} h_{pt} = S^{VC} \qquad\qquad t \in \mathcal{T}
+    \sum_{p \in \mathcal{P}} h_{pt} = 1 \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
 \begin{equation} \label{eq:cap_vice_only_one}
-   f_{pt}+h_{pt} \leq y_{pt}  \qquad\qquad p \in \mathcal{P}, \enskip t \in \mathcal{T}
+   f_{pt} + c_{pt} + h_{pt} \leq y_{pt}  \qquad\qquad p \in \mathcal{P}, \enskip t \in \mathcal{T}
 \end{equation}
 
-These constraints set restrictions for how many captains and vice-captains it is possible to have in the starting line-up. Constraints (\ref{eq:captain}) states that there can only be $S^{C}$ captains, and constraints (\ref{eq:vicecaptain}) states there can only be $S^{VC}$ vice-captains. The last constraints (\ref{eq:cap_vice_only_one}) enforces that a player in each gameweek can not be both captain and vice-captain at the same time. 
+These constraints set restrictions for captains and vice-captains in the starting line-up. Constraints (\ref{eq:captain}) states that there can only be 1 captain in a gameweek. It also ensures that in the gameweek the triple captain is used, no captain is picked. Further, constraints (\ref{eq:vicecaptain}) states there can only be 1 vice-captain in a gameweek. The last constraints (\ref{eq:cap_vice_only_one}) enforces that a player in a gameweek can only be a captain, triple captain or vice-captain. 
 
 \subsubsection{Substitution Constraints}
 
+% \begin{equation}
+        % y_{pt} + \sum_{l \in \mathcal{L}} g_{ptl} \leq x_{pt} (1-r_{t}) + x^{free hit}_{pt} r_{t} \qquad\qquad p \in \mathcal{P}\setminus\mathcal{P}^{K}, \enskip t \in \mathcal{T}\
+% \end{equation}
+
 \begin{equation} \label{eq:subst}
-    \sum_{l \in \mathcal{L}} g_{ptl} = x_{pt}-y_{pt} \qquad\qquad p \in \mathcal{P}\setminus\mathcal{P}^{K}, \enskip t \in \mathcal{T}\
+    y_{pt} + \sum_{l \in \mathcal{L}} g_{ptl} \leq x_{pt} + \beta r_{t} \qquad\qquad p \in \mathcal{P}\setminus\mathcal{P}^{K}, \enskip t \in \mathcal{T}\
+\end{equation}
+
+\begin{equation} \label{eq:free_hit_subst}
+    y_{pt} + \sum_{l \in \mathcal{L}} g_{ptl} \leq x^{free hit} + \beta (1-r_{t}) \qquad\qquad p \in \mathcal{P}\setminus\mathcal{P}^{K}, \enskip t \in \mathcal{T}\
 \end{equation}
 
 \begin{equation} \label{eq:subst_priority}
@@ -223,7 +318,7 @@ These constraints set restrictions for how many captains and vice-captains it is
     g_{ptl} \leq 1 \qquad\qquad t \in \mathcal{T}, \enskip l \in \mathcal{L}\ 
 \end{equation}
 
-These constraints explain how the substitutions are handled in the model. Constraints (\ref{eq:subst}) states that all the players who are not picked in the starting line-up are regarded as substitutions. Constraints (\ref{eq:subst_priority}) handles that all the substitutions do not have more than one priority.
+These constraints explain how the substitutions are handled in the model. Both constraints \eqref{eq:subst} and \eqref{eq:free_hit_subst} state that all the players who are not picked in the starting line-up are regarded as substitutions. A parameter $\beta$ is used as a big M, such that when the free hit gamechip is exercised constraints \eqref{eq:free_hit_subst} is restricting, while in the other gameweeks constraints \eqref{eq:subst} is restricting. Constraints (\ref{eq:subst_priority}) handles that all the substitutions do not have more than one priority.
 
 \subsubsection{Budget Constraints}
 
@@ -236,14 +331,29 @@ These constraints explain how the substitutions are handled in the model. Constr
 \end{equation}
 
 \begin{equation} \label{eq:var_handl}
-  x_{p(t-1)} + e_{pt} - u_{pt} = x_{pt} \qquad\qquad p \in \mathcal{P}, \enskip t \in \mathcal{T}\setminus\{1\} 
+  x_{p,(t-1)} + e_{pt} - u_{pt} = x_{pt} \qquad\qquad p \in \mathcal{P}, \enskip t \in \mathcal{T}\setminus\{1\} 
 \end{equation}
 
 \begin{equation} \label{eq:sell_buy}
    e_{pt} + u_{pt} \leq 1  \qquad\qquad p \in \mathcal{P}, \enskip t \in \mathcal{T} 
 \end{equation}
 
-These constraints handle the budget and the budget flow. Constraints (\ref{eq:start_budg}) assigns the remaining budget of the starting budget $B^{S}$ in the first gameweek to the variable $v_{1}$. Next, constraints (\ref{eq:budg_flow}) handles the  flow in the variable $v_{t}$ for all gameweeks except the first one. It says that the remaining budget from the previous gameweek plus the difference generated by transferring out and transferring in players, is the remaining budget in the next gameweek. Further, constraints (\ref{eq:var_handl}) states that a player which was in the selected squad in the previous gameweek can either be transferred out or not for the next gameweek. Constraints (\ref{eq:sell_buy}) ensures that a player can not be both transferred in and transferred out in the same gameweek. 
+These constraints handle the budget and the budget flow. Constraints (\ref{eq:start_budg}) assigns the remaining budget of the starting budget $B^{S}$ in the first gameweek to the variable $v_{1}$. Next, constraints (\ref{eq:budg_flow}) handles the  flow in the variable $v_{t}$ for all gameweeks except the first one. More specific, this means that the remaining budget from the previous gameweek plus the difference in budget generated by transferring out and transferring in players, is the remaining budget in the next gameweek. Further, constraints (\ref{eq:var_handl}) states that a player which was in the selected squad in the previous gameweek can either be transferred out or not for the next gameweek. Constraints (\ref{eq:sell_buy}) ensures that a player can not be both transferred in and transferred out in the same gameweek.
+
+
+\begin{equation} \label{eq:free_hit_budget}
+  \sum_{p \in \mathcal{P}}C_{pt}^{S}x_{p(t-1)} + v_{t-1} \geq \sum_{p \in \mathcal{P}}C_{pt}^{B} x^{free hit} \qquad\qquad t \in \mathcal{T}\setminus\{1\}
+\end{equation}
+
+\begin{equation} \label{eq:free_hit_sell}
+  \sum_{p \in \mathcal{P}}u_{pt} \leq E (1-r_{t}) \qquad\qquad t \in \mathcal{T}\setminus\{1\}
+\end{equation}
+
+\begin{equation} \label{eq:free_hit_buy}
+  \sum_{p \in \mathcal{P}}e_{pt} \leq E (1-r_{t}) \qquad\qquad t \in \mathcal{T}\setminus\{1\}
+\end{equation}
+
+Constraints \eqref{eq:free_hit_budget} ensure that the selected team for free hit do not exceed the value of the initially selected team and remaining budget in the previous gameweek. The selected team in the gameweek after the free hit gamechip is used shall be  the same as the selected team in the gameweek before. This is enforced by the use of constraints \eqref{eq:free_hit_sell} and \eqref{eq:free_hit_buy}. 
 
 \subsubsection{Transfer Constraints} \label{cons:trans}
 
@@ -252,7 +362,12 @@ These constraints handle the budget and the budget flow. Constraints (\ref{eq:st
 \end{equation}
 
 \begin{equation} \label{eq:trans_flow}
-    q_{t}-\sum_{p \in \mathcal{P}}e_{pt} + \underline{Q} + \alpha_{t} \geq q_{t+1} \qquad\qquad t \in T\setminus\{1\}
+   E w_{t} + q_{t}-\sum_{p \in \mathcal{P}}e_{pt} + \underline{Q} + \alpha_{t} \geq q_{t+1} \qquad\qquad t \in T\setminus\{1\}
+\end{equation}
+
+
+\begin{equation} \label{eq:trans_flow_illegal_transfers}
+    \bar{\alpha}(\overline{Q}-q_{t+1}) \geq \alpha_{t} \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
 \begin{equation} \label{eq:trans_min}
@@ -260,40 +375,24 @@ These constraints handle the budget and the budget flow. Constraints (\ref{eq:st
 \end{equation}
 
 \begin{equation} \label{eq:trans_max}
-    q_{t+1} \leq \overline{Q} \qquad\qquad t \in \mathcal{T}
+    q_{t+1} \leq \overline{Q} + (\underline{Q}-\overline{Q})w_{t} + (\underline{Q}-\overline{Q})r_{t} \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
-The purpose of these constraints is to describe how transfers are handled over the set of gameweeks $\mathcal{T}$. The first constraints (\ref{eq:trans_second_gw}) sets the number of free transfers in the second gameweek to $\underline{Q}$. This is the first time the decision of transferring players is considered. Consequently, this is also the first time the limitation of free transfers is treated. Hence, the number of free transfers in the second gameweek equals the minimum number of free transfers available. Constraints (\ref{eq:trans_flow}) handles how many free transfers are available next gameweek. This is further explained with an example. The last constraints (\ref{eq:trans_min}) and (\ref{eq:trans_max}) state the minimum and maximum number of free transfers available in a gameweek. 
+The purpose of these constraints is to describe how transfers are handled over the set of gameweeks $\mathcal{T}$. The first constraints (\ref{eq:trans_second_gw}) sets the number of free transfers in the second gameweek to $\underline{Q}$. This is the first time the decision of transferring players is considered, and consequently the first time the limitation of free transfers is treated. Constraints (\ref{eq:trans_flow}) handles how many free transfers are available next gameweek. Each gameweek, a number of $\underline{Q}$ free transfers is given. If this is not used, it is moved to the next gameweek. However, if the number of transferred out players exceeds the number of free transfers available, the variable $\alpha_{t}$ takes a value and each extra transfer gets punished by $R$ points in the objective function. The exception is when the wildcard gamechip is used and the number of free transfers is limitless. This is handled by the term $E w_{t}$ which causes $\alpha_{t}$ to not take a value in the gameweek the wildcard gamechip is used. The last constraints \eqref{eq:trans_min} and \eqref{eq:trans_max} impose an upper and lower bound on the number of free transfers available in a gameweek. The terms $(\underline{Q}-\overline{Q})w_{t}$ and $(\underline{Q}-\overline{Q})r_{t}$ ensures that there is only $\underline{Q}$ free transfers the gameweek after the gamechips wildcard and free hit are used. 
 
-\newpar
-\textbf{Constraints (\ref{eq:trans_flow}), with an example:}  \\ 
-
-Each gameweek, a number of $Q$ free transfers is given. If this is not used, it is moved to the next gameweek. However, if the number of transferred out players exceeds the number of free transfers available, the variable $\alpha_{t}$ takes a value and each extra transfer gets punished by $R$ points in the objective function. This can be illustrated with an example. 
-
-\begin{table}[H]
-\centering
-\scalebox{0.8}{
-\begin{tabular}{@{}ll@{}}
-\toprule
-\textbf{Example}                    &                                                                                 \\ \midrule
-$q_{3}$ = 1,                          & - \quad one free transfer available in a gameweek 3.                            \\
-$\sum\limits_{p \in \mathcal{P}}e_{p3}$ = 4, & - \quad four players transferred out in gameweek 3.                             \\
-$\overline{Q}$ = 2,                   & - \quad maximum number of free transfers possible to accumulate over gameweeks. \\ 
-$\underline{Q}$  = 1,                 & - \quad number of free transfers given each gameweek.                           \\
-\\
-Thus, constraints (\ref{eq:trans_flow}) is written as: \\ 
-   $1 - 4 + 1 + \alpha_{3} \geq q_{4}$ \\
-\bottomrule
-\end{tabular}
-}
-\end{table}
-
-Constraints (\ref{eq:trans_min}) and (\ref{eq:trans_max}) force $\alpha_{3}$ to take the value of 3. 
-
+ 
 \subsubsection{Binary, Integer and Non-negativity Constraints}
 
 \begin{equation} \label{eq:bin_x}
     x_{pt} \in \{0,1\} \qquad\qquad p \in \mathcal{P}, \enskip t \in \mathcal{T}
+\end{equation}
+
+\begin{equation} \label{eq:free_hit_bin_x}
+    x^{free hit}_{pt} \in \{0,1\} \qquad\qquad p \in \mathcal{P}, \enskip t \in \mathcal{T}
+\end{equation}
+
+\begin{equation} \label{eq:auxiliary_variable_binary}
+    \lambda_{pt} \in \{0,1\} \qquad\qquad p \in \mathcal{P}, \enskip t \in \mathcal{T}
 \end{equation}
 
 \begin{equation} \label{eq:bin_y}
@@ -320,6 +419,22 @@ Constraints (\ref{eq:trans_min}) and (\ref{eq:trans_max}) force $\alpha_{3}$ to 
     g_{ptl} \in \{0,1\} \qquad\qquad p \in \mathcal{P}, \enskip t \in \mathcal{T},\enskip l \in \mathcal{L}
 \end{equation}
 
+\begin{equation} \label{eq:wildcard_bin_w}
+    w_{t} \in \{0,1\} \qquad\qquad  t \in \mathcal{T}
+\end{equation}
+
+\begin{equation} \label{eq:bench_boost_bin_b}
+    b_{t} \in \{0,1\} \qquad\qquad  t \in \mathcal{T}
+\end{equation}
+
+\begin{equation} \label{eq:free_hit_bin_r}
+    r_{t} \in \{0,1\} \qquad\qquad  t \in \mathcal{T}
+\end{equation}
+
+\begin{equation} \label{eq:triple_captain_bin_c}
+    c_{pt} \in \{0,1\} \qquad\qquad p \in \mathcal{P}, \enskip t \in \mathcal{T} 
+\end{equation}
+
 \begin{equation} \label{eq:nonn_v}
     v_{t} \geq 0 \qquad\qquad t \in \mathcal{T} 
 \end{equation}
@@ -331,4 +446,36 @@ Constraints (\ref{eq:trans_min}) and (\ref{eq:trans_max}) force $\alpha_{3}$ to 
 \begin{equation} \label{eq:int_alpha}
     \alpha_{t} \in \mathbb{Z}^{+}  \qquad\qquad t \in \mathcal{T}
 \end{equation}
+
+
+\newpage
+
+\subsection{Value increase/decrease constraint}
+
+\begin{equation*}
+    S_{p,t_{2}} = V_{p,t_{2}}(1-x_{p,t_{2}}) + (V_{p,t_{1}} + \triangle V_{p,t_{1},t_{2}}) (\sum_{\tau:\{ t_{1} \dots t_{2}\}} e_{p\tau}) x_{pt_{2}} \qquad\qquad t_{1}, t_{2} \in \mathcal{T}, t_{2} > t_{1}, \enskip p \in \mathcal{P}
+\end{equation*}
+
+where 
+
+
+\begin{table}[H]
+\centering
+\caption{Explanation.}
+\begin{tabular}{@{}lll@{}}
+\toprule
+$S_{p,t_{2}}$ & - & Sales price for a player p in gameweek $t_{2}$.\\
+$\triangle V_{p,t_{1},t_{2}}$  & - & the rounded half price increase from gameweek $t_{1}$ to $t_{2}$ for a player p. \\ 
+$V_{p,t_{1}}$   & - & Value of player p in gameweek $t_{1}$.                                             \\
+$V_{p,t_{2}}$   & - & Value of player p in gameweek $t_{2}$.                                             \\
+$e_{p\tau}$     & - & 1 if a player $p$ is transferred in a gameweek $\tau$, 0 otherwise                  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Some words: I know the constraint is non-linear. There is a difference between sales price and value of a player. A player on the team can be bought for a price $V_{p,t_{1}}$ in a earlier gameweek $t_{1}$ and sold for a sales price $S_{p,t_{2}}$ in a later gameweek $t_{2}$.
+
+\newpar
+
+Issue: It is possible that a player can be bought and sold more than one time. Hence, when you stand in gameweek $t_{2}$, the sum $\sum_{\tau:\{ t_{1} \dots t_{2}\}} e_{p\tau})$ can be higher than 1 and hence the sales price too high. Do you understand the problem? If so, how can the constraint be adjusted? 
 

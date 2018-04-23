@@ -3,7 +3,7 @@
 \chapter{Problem Description}
 In Fantasy Premier League a manager attempts to maximize his total score over an entire season. For each gameweek, decisions must be made on which players to include in the squad and which players to be selected for a starting line-up. In addition, a captain- and vice-captain choice must be made. Further, one has to set a substitution priority for the players that are not selected for the starting line-up. As pointed out in Chapter \ref{introduction}, the manager is allowed to perform transfers during the season. Therefore, a manager must also decide whether to make a transfer, and which players to be transferred in and out for each gameweek.
 \newpar
-The FTCP consists of optimizing the decisions mentioned above for every gameweek. As new decisions are made every gameweek, the FTCP is a multi-week problem. 
+The FTCP consists of optimizing the decisions mentioned above for every gameweek. As new decisions are made every gameweek, the FTCP is a multi-week problem. Although the ultimate target would be to finish on top of Fantasy Premier League, winning requires a great amount of luck due to the high uncertainty in football. Hence, the scope of this project is to create an optimization model that is competitive to the top rated Fantasy Premier League players. 
 
 \section{Rules of Fantasy Premier League} \label{rules of fpl}
 
@@ -28,7 +28,7 @@ Figure \ref{Figure_2.1} illustrates how a squad is selected in FPL. By hitting t
 
 
 \section{The Point System} \label{point_system}
-In the following, the point system of FPL is presented. 
+The Premier League players are rewarded with fantasy points depending on their performance during a gameweek. The main point factors are related to goals scored, i.e. goalscorers, players with assists and players that do not concede any goals. In the following, the point system according to fantasypremierleague.com is presented. 
 
 \begin{table}[H]
 \centering
@@ -60,14 +60,17 @@ For each own goal              & -2          & -2        & -2          & -2     
     \item If a goal is scored on a direct free kick or a penalty, the player that got the free kick/penalty is awarded with an assist. 
     \item For each round, you choose a captain and a vice-captain. If the captain is playing, he will be awarded with double points for the entire round. However, if the captain is not playing, your vice captain will be awarded double points. 
 \end{itemize}
+Notice that the point system does not consider the outcome of a match. Hence, players are not rewarded with points for playing on a team that wins or loses. 
+\newpar
 In addition to the regular scoring system, each manager is awarded four chips, where only one chip can be used in a gameweek: 
 \begin{enumerate} [label=(\roman*)]
 
-\item \textbf{Wildcard}. The wildcard can be used twice a season, once before New Years and once after. The wildcard allows the manager to replace his entire squad for free.
+\item \textbf{Wildcard}. The wildcard can be used twice a season, once before New Years and once after. A wildcard allows the manager to replace his entire squad for free. As for the wildcard squad selection, the same rules applies as for the regular fantasy team composition. Hence, one can only select a maximum of three players from each team and the formation constraints must be held. When playing a wildcard, a manager's budget is set to the sell price of his original squad at that particular Gameweek. Further, when playing a wildcard, any saved transfers will be lost. One will be back to the usual 1 free transfer the following Gameweek.
 
 \item \textbf{Bench boost}. With the bench boost you receive points for all the 15 players of your squad. The bench boost chip can only be used once. 
 
-\item \textbf{One hit}. The one hit chip allows the manager to replace his entire squad for one gameweek. However, for the next gameweek your original team will return.  This chip can only be used once a season. 
+\item \textbf{Free hit}. The free hit chip allows the manager to replace his entire squad for one gameweek. However, for the next gameweek your original team will return.  This chip can only be used once a season. As for the wildcard chip, the same transfer- and budget rules applies for the free hit chip.
 
 \item \textbf{Triple captain}. Triples the points of your captain for a gameweek. If the captain does not play, the triple points are awarded to the vice captain. The triple captain chip can only be used once a season. 
 \end{enumerate}
+
