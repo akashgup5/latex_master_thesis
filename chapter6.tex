@@ -1,136 +1,58 @@
-%===================================== CHAP 8 =================================
-
-\chapter{Computational Study}
-
-
-In this chapter, a computational study based on the solution approach outlined in Chapter 5 is presented. First, in Section \ref{sec:exact}, the optimal solution with perfect information is presented. Secondly, in Section \ref{sec:inexact}, the performance of each of different solution approaches are presented. 
-
-\section{Exact Solution Method}\label{sec:exact}
+%===================================== CHAP 6 =================================
+\chapter{Experimental Setup}
 
 
-\begin{table}[H]
-    \centering
-    \caption{Problem size of exact solution method}
-    \begin{tabular}{c|c}
-        Total number of variables & Total number of constraints  \\
-         & 
-    \end{tabular}
-\end{table}
-\begin{figure}
-    \centering
-    \includegraphics{}
-    \caption{figure of when the solutions are found after how long time.}
-\end{figure}
 
-\begin{table}[H]
-    \centering
-    \caption{Results of implementation of exact solution method.}
-    \begin{tabular}{c|c}
-        LP Bound & Best solution & Best bound & Gap  \\
-         & 
-    \end{tabular}
-\end{table}
- 
-Interesting points:
-\begin{enumerate}
-    \item picture of when the solutions are found after how long time. discuss 
-    \item disc
-    \item When are the chips used
-    \item What is the difference between the best player and the optimal solution
-    \item frequent formation
-    \item How many substitutions
-\end{enumerate}
+\section{Data}
+For this thesis we have mainly used FPL data provided by fantasyoverlord.com. Fantasy overlord contains detailed gameweek data for both the 2016/2017- and the 2017/2018 season. Further, clubelo.com has been used in order to obtain ELO values for each Premier League team. In addition, Sportradar has provided odds and probabilities for the fixtures of the 2017/2018 season. 
+\newpar
+The model presented in chapter \ref{model_formulation} has been run for the first 35 gameweeks of the 2017/2018 season. Ideally, the model should be run for the entire season. However, due to the deadline of the thesis this was not possible. 
+
+\subsection{Processing of player data}
+\subsubsection{Injuries and suspensions}
+Once a player is listed as injured and thus unavailable for the upcoming gameweek, it is reasonable to set his expected points to zero. In order to account for injury status, we created a matrix of 0's and 1's. Fit players are assigned with a value of 1, while injured players are assigned with a value of 0. By multiplying each player's expected points by this injury matrix, injured players' expected points are automatically set to zero. As it is difficult to decide exactly when an injured player will be fit again, it is assumed in the solution approach that once a player is listed as injured, he will be unavailable for the upcoming three gameweeks. However, the injury list is updated for each gameweek, hence a player's injury status might change after a gameweek has been played. During the season we have collected injury data from fantasypremierleague.com ahead of each gameweek. Players that were listed with a 0\% probability of playing were listed as injured for the upcoming gameweek. 
+\newpar
+In addition, the model accounts for suspensions when optimizing the team for a gameweek. A player may be suspended for up to three games when receiving a red card, depending on whether it was a direct red card or not. Further, a player is subject to a match ban if he receives his 5th, 10th or 15th yellow card of the season. In addition, a player can be suspended by the English Football Association if he is found guilty of unsportsmanlike conduct. As for the injuries, a player that is suspended is rewarded with an expected points of 0 in the gameweeks of his suspensions. 
+
+\subsubsection{Promoted teams}
+Gathering data for newly promoted teams is rather difficult, as this data is not easy obtainable. In addition, it requires a lot of computational work in order to compare performances in the English Championship to the Premier League. Due to these difficulties, some simplifications are made. In general, players on newly promoted teams are not considered in the first gameweek of the 2017/2018 season. However, if a player was transferred to a promoted team ahead of the season, and he played in the Premier League in the previous season, the player would then be considered from the start of the season. It is worth noticing that the newly promoted teams are partly considered in the first gameweek when using the average method. This is solved by using the ELO system. 
+\subsubsection{Players transferred ahead of 2017/2018 season}
+A question that arise with the international transfer window, is how new players is going to perform in another league in a different country. Forecasts of these players performance could be obtained by studying their performance from previous seasons in their respective leagues and hence somehow compare a performance in a different league with a performance in Premier League. However, it is very difficult to compare one league to another. Further, it must be done for several leagues, for instance the Spanish La Liga, the Italian Serie A, the German Bundesliga, the Dutch Eredivisie etc. For simplicity, this type of work is not considered in this thesis.
+\newpar
+In this project it is assumed that the creators of Fantasy Premier League have assigned new players with a price that is perfectly mirrored by their expected performance. Thus, one can compare the new players with existing FPL players of the same price. For instance, if a new midfielder is listed with a price of 9, it is assumed that this player will have the same expected performance as other midfielders listed with the same price.
+\subsubsection{Irregular gameweeks}
+In general, every gameweek consists of 10 fixtures featuring every team once. However, due to matches in the national and international cups, some of the Premier League matches are postponed or played ahead of the original date. This implies that some of the gameweeks do not consist of exactly 10 fixtures, but perhaps 8 or 12 for instance. Thus, in these gameweeks some players may be featured twice, gaining points for both matches. Similarly, some players will not be feautered in other gameweeks, these gameweeks are hereby refered to as \textit{blanks}.
 
 
-\section{Inexact Solution Method}\label{sec:inexact}
-\begin{enumerate}
-    \item all the gamechips are explained before this chapter. the implementation of the gamechips do not change in each forecasting method. 
-    \item a parameter study on the average method for horizon, penalty and obj.value on average forecasts on season 2016. This has been done before computational study. Suggestion figure: matrix for horizon and penalty, with green = good obj value, red = bad obj value
-    \item  the decision on the threshold(risk) is explained in Solution method. 
-\end{enumerate}
-
-\subsection{Preliminaries}
-\subsubsection{Forecasting Error}
-The forecasting error of the complete 2017/2018 season based on the two average-based models are summarized in Table \ref{tab:accuracy_average}. Note however, that it is not given that the method with lowest error will performed best. 
-
-\begin{table}[H]
-\centering
-\caption{Summary of forecasting errors on the average methods}
-\label{tab:accuracy_average}
-\begin{tabular}{llll}
-Method & ME & RMSE & MAE\\
-Argentina & 0.00882 & 2.436 & 1.295 \\
-Improved  & 0.0436  & 2.455 & 1.294 \\ 
-Odds  & NA  & NA & NA   \\
-Regression  & NA  & NA & NA \\
-\end{tabular}
-\end{table}
-
-
+\section{Setting Parameters}
+veldig viktig diskusjon: 
+at vi har forstått at det er feil å sette høye penalties, men at vi er ute etter å få en modell som presterer bra. 
 \subsection{Average}
-
-Parameters set in this method: 
-\begin{enumerate}
-    \item HORIZON 
-    \item PENALTY
-\end{enumerate}
-
-Possible metrics: 
-
-Results of total sum, average, predicted points pr round, actual points pr round, computational time, st.dev highest round, lowest round, number of illegal transfers, when gamechips are used, "case-study"
-
-
-
-\begin{table}[H]
-    \centering
-    \begin{tabular}{c|c|c|c|c}
-        Round 10 - 20 & Points avg WITH NO variance & ill transfers WITH NO variance & Points avg WITH variance & ill transfers WITH variance\\
-    \end{tabular}
-    \caption{Results of avg no variance for round 10 -20.}
-\end{table}
-
-- Summarizing conclusion based on the variance/standard deviation of each method.
-- Say something about the computational time for each method. 
+In this thesis, the relative team strength factor are calculated according to the Elo values provided by clubelo.com. As the Elo values are updated for every gameweek, each Premier League team is assigned with 38 different Elo values, depending on the results in their previous games. An overview of the Elo values is attached in the appendix. 
+\newpar
+Table \ref{Field advantage} provides the calculated values for field advantages for the past five Premier League seasons. As can easily be observed, the field advantages seems to be somewhat constant, ranging from 1.105 to 1.149. Hence, simply taking the average over the past five years seems to yield an appropriate field advantage factor. 
 
 \begin{table}[H]
 \centering
-\caption{Results of total sum, average, total sum best player. Model without variance.}
-\begin{tabular}{llllll}
-& Our Method & Our Method w/var  & Average Players & Best Player & Exact\\
-Total sum  & NA  & NA & NA & NA & NA \\
+\caption{Field advantages for previous 5 seasons}
+\label{Field advantage}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+          & 16-17    & 15-16    & 14-15    & 13-14    & 12 13 & \textbf{Average}   \\
+          \hline
+        
+Home field advantage & 1.141 & 1.105 & 1.149 & 1.137 & 1.114 & \textbf{1.129} \\
+\hline
+Away field advantage & 0.859 & 0.895 & 0.851 & 0.863 & 0.886 & \textbf{0.871} \\
+\hline
 \end{tabular}
 \end{table}
 
-
-
-\textit{Case-study of round w/chip to show that the model makes sense}
-
-\subsubsection{Argentina}
-
-
-
-\subsubsection{Improved}
-
-
+As for the point streak factor, the variables X and Y has to be decided. As goalkeepers and defenders receive 4 points for keeping a clean sheet, all players get 3 points for an assist and midfielders and forwards get 5 and 4 points respectively for scoring a goal, the X variable should be set according to these numbers. Further, as a player gets 2 points for playing more than 60 minutes, it is appropriate to let the X variable take a value of 5. Hence, if a player has an assist or scores a goal and in addition plays 60 minutes or more that player will receive enough points to be on a positive point streak given that he did not receive a yellow or red card. As for the Y variable, a player that does not contribute with neither a goal, assist nor a clean sheet is awarded maximum 2 points. Thus, it is reasonable to set the Y to equal 2 points. 
+\subsection{Linear Regression}
 \subsection{Odds}
-\subsection{Regression Model}
-\subsection{Summary}
-
-\begin{table}[H]
-\centering
-\caption{Results of total sum, average, total sum best player. Model without variance.}
-\begin{tabular}{llllllll}
-& Average Argentina & Average Improved & Odds & Regression  & Average Players & Best Player & Exact\\
-Total sum  & NA  & NA & NA & NA & NA & NA & NA \\
-\end{tabular}
-\end{table}
-
-
-\begin{comment}
-Good discussion points: 
-\begin{enumerate}
-    \item hvis man legger restriksjon på formasjon. Hvilke formasjon gir mest poeng?
-    \item når bruker man de forskjellige chippene, og hvor effektive er de?  
-\end{enumerate}
-\end{comment}
-
+In order to obtain necessary data, we have cooperated with Sportradar, a Norwegian company providing data for bookmakers. Sportradar delivers odds and probabilities of several sports events, including English Premier League. They have provided us with all the necessary probabilities, including result outcomes for each Premier League match as well as individual player probabilities. These data made all the computational work a lot easier, as Sportradar exported structured excel files containing all the necessary data. 
+\newpar
+As odds are primarily available for fixtures in the near future, in general for the upcoming gameweek, the suggested solution approach using odds is rather limited. Hence, the horizon on the optimization model is forced to be one gameweek. Compared to the other suggested methods, this is considered a great drawback.
+\section{Game Chips}
+\section{Risk/Variance}

@@ -2,15 +2,16 @@
 
 \chapter{Model Formulation} \label{model_formulation}
 
-In this chapter, the mathematical optimization model of the Fantasy Team Composition Problem (FTCP) is presented. At first, in Section \ref{modelling_choices} modelling choices are discussed. In Section \ref{def_sets_ind_par_var}, the sets, indices, parameters and variables used in the model are defined. Finally, the mathematical formulation is presented in Section \ref{mathematical_model} with explanations of the objective function and constraints. 
+In this chapter the mathematical optimization model of the Fantasy Team Composition Problem (FTCP) is presented. In Section \ref{modelling_choices} modelling choices are discussed. Further, in Section \ref{def_sets_ind_par_var} the sets, indices, parameters and variables used in the model are defined. Finally, the mathematical formulation is presented in Section \ref{mathematical_model} with explanations of the objective function and constraints. 
 
 
 \section{Modelling Choices} \label{modelling_choices}
 
 This section outlines the modelling choices used to model the FTCP. It starts with describing the problem structure where the aim of the model is also discussed.
 
+\newpar
 
-The FTCP resembles a lot the classic Knapsack problem with the exception of some additional constraints. In the Knapsack problem there are a range of items with a specific value and cost, where the goal is to maximize the total value and make sure not to surpass a budget. In this case, there are players where their value is points and their cost is an amount predetermined by the game. The aim is to pick the players in order to maximize the total amount of points while the budget is held. In addition, there are constraints that describe who are the substitutes and who is selected as captain and vice-captain. 
+Part of the FTCP resembles a lot the classic Knapsack problem. In the Knapsack problem there is a range of items with a value and cost,and the goal is to maximize the total value meanwhile not surpass a budget. Whereas in this case there are players where their value is points and their cost is an amount predetermined by the game. The aim is to pick the players such as the total amount of points is maximized while the budget is held in each gameweek. In addition, there are constraints that handle the choices of substitutes, captain and vice-captain each gameweek. The choices on wildcard, bench boost, free hit and triple captain are modelled. 
 
 \newpar
 
@@ -37,7 +38,7 @@ Set           &   &                                                             
 $\mathcal{T}$ & - & Set of gameweeks,                                             \\
 $\mathcal{P}$ & - & Set of players,                                               \\
 $\mathcal{C}$ & - & Set of clubs,                                                 \\
-$\mathcal{L}$ & - & Priority for automatic substitution where 1 = first priority. \\
+$\mathcal{L}$ & - & Priority for automatic substitution where 1 is first priority. \\
 % $\mathcal{J}$ & - & Set of player positions.\\
 \bottomrule
 \end{tabular}
@@ -56,7 +57,7 @@ $\mathcal{P}^{F}$ & - & Subset of forwards,                   & \quad $\mathcal{
 $\mathcal{P}^{K}$ & - & Subset of goalkeepers,                & \quad $\mathcal{P}^{K} \ \subset \mathcal{P}$   \\
 $\mathcal{P}_{c}$ & - & Subset of football players in a club, & \quad $\mathcal{P}_{c} \ \subset \mathcal{P}$, $\enskip c \in \mathcal{C}$  \\ 
 $\mathcal{T}_{FH}$ & - & Subset of the gameweeks in the first half of the season,                & \quad $\mathcal{T}_{FH} \ \subset \mathcal{T}$   \\
-$\mathcal{T}_{SH}$ & - & Subset of the gameweeks in the second half of the season,                & \quad $\mathcal{T}_{SH} \ \subset \mathcal{T}$   \\
+$\mathcal{T}_{SH}$ & - & Subset of the gameweeks in the second half of the season.                & \quad $\mathcal{T}_{SH} \ \subset \mathcal{T}$   \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -84,7 +85,7 @@ $l$   & - & Priority  \\ \bottomrule
 Parameters                       &   &                                                                                                \\ \midrule
 $\mathlarger{\rho_{pt}(\omega)}$ & - & Points for a player $p$ in a gameweek $t$ dependent on realization of a random event $\omega$. \\
 $\epsilon$                       & - & Constant such that $\epsilon$ $<<$ 1.                                                                     \\
-$\sigma_{l}$                     & - & Constants such that $\sigma_{l}$ $<<$ $\epsilon$ for all $l$, and $\sigma_{1} > \sigma_{2} > \ldots > \sigma_{l}$. .                                               \\
+$\sigma_{l}$                     & - & Constants such that $\sigma_{l}$ $<<$ $\epsilon$ for all $l$ $\in \mathcal{L}$, and $\sigma_{1} > \sigma_{2} > \ldots > \sigma_{\mathcal{L}}$.                                               \\
 $C_{pt}^{S}$                     & - & Sell price of player $p$ in a gameweek $t$.                                                    \\
 $C_{pt}^{B}$                     & - & Buy price of player $p$ in a gameweek $t$.                                                     \\
 $R$                              & - & Number of points deducted if number of free transfers is exceeded.        \\
@@ -211,32 +212,30 @@ These constraints impose the rules on gamechips in the model. The first two cons
     \sum_{p \in \mathcal{P}_{c}} x_{pt} \leq M^{C} \qquad\qquad t \in \mathcal{T}, \enskip   c \in \mathcal{C}
 \end{equation}
 
-These constraints explain the number of players in the different team positions required in the selected squad. Explicitly, it is necessary to have $M^{K}$ goalkeepers, $M^{D}$ defenders, $M^{M}$ midfielders and $M^{F}$ forwards, respectively. Constraints (\ref{eq:sel_club}) ensures that the maximum number of players allowed from same club is $M^{C}$. 
+Constraints \eqref{eq:sel_keeper} - \eqref{eq:sel_club} handle the number of players in the different team positions required in the selected squad. Explicitly, it is necessary to have $M^{K}$ goalkeepers, $M^{D}$ defenders, $M^{M}$ midfielders and $M^{F}$ forwards, respectively. Constraints (\ref{eq:sel_club}) ensures that the maximum number of players allowed from same club is $M^{C}$. 
 
 \begin{equation} \label{eq:free_hit_sel_keeper}
-    \sum_{p \in \mathcal{P}^{K}} x^{free hit} = M^{K}r_{t}  \qquad\qquad t \in \mathcal{T}
+    \sum_{p \in \mathcal{P}^{K}} x_{pt}^{free hit} = M^{K}r_{t}  \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
 \begin{equation} \label{eq:free_hit_sel_defender}
-    \sum_{p \in \mathcal{P}^{D}} x^{free hit} = M^{D}r_{t} \qquad\qquad t \in \mathcal{T}
+    \sum_{p \in \mathcal{P}^{D}} x_{pt}^{free hit} = M^{D}r_{t} \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
 \begin{equation} \label{eq:free_hit_sel_midfielder}
-    \sum_{p \in \mathcal{P}^{M}} x^{free hit} = M^{M}r_{t} \qquad\qquad t \in \mathcal{T}
+    \sum_{p \in \mathcal{P}^{M}} x_{pt}^{free hit} = M^{M}r_{t} \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
 \begin{equation} \label{eq:free_hit_sel_forward}
-    \sum_{p \in \mathcal{P}^{F}} x^{free hit} = M^{F}r_{t} \qquad\qquad t \in \mathcal{T}
+    \sum_{p \in \mathcal{P}^{F}} x_{pt}^{free hit} = M^{F}r_{t} \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
 \begin{equation} \label{eq:free_hit_sel_club}
-    \sum_{p \in \mathcal{P}_{c}} x^{free hit} \leq M^{C}r_{t} \qquad\qquad t \in \mathcal{T}, \enskip   c \in \mathcal{C}
+    \sum_{p \in \mathcal{P}_{c}} x_{pt}^{free hit} \leq M^{C}r_{t} \qquad\qquad t \in \mathcal{T}, \enskip   c \in \mathcal{C}
 \end{equation}
 
-% \begin{equation} 
-    % \sum_{p \in \mathcal{P}^{j}} x^{free hit} = M^{j}r_{t} \qquad\qquad t \in \mathcal{T}, \enskip j \enskip \in \mathcal{J}
-%  \end{equation}
-Constraints \eqref{eq:free_hit_sel_keeper} - \eqref{eq:free_hit_sel_club} are the same as those above, with the exception that they are only active in the gameweek the free hit gamechip is used. This mean that they enforce $x^{freehit}_{pt}$ to only take value in that particular gameweek, while in the other gameweeks are zero. 
+
+Constraints \eqref{eq:free_hit_sel_keeper} - \eqref{eq:free_hit_sel_club} are the same as constraints \eqref{eq:sel_keeper} - \eqref{eq:sel_club}, with the exception that they are only active in the gameweek the free hit gamechip is used. This mean that they enforce $x^{freehit}_{pt}$ to only take value in that particular gameweek, while in the other gameweeks are zero. 
 
 \subsubsection{Starting Line-up Constraints}\label{team_start}
 
@@ -263,14 +262,14 @@ Constraints \eqref{eq:free_hit_sel_keeper} - \eqref{eq:free_hit_sel_club} are th
 These constraints enforces team position on players which are picked from the selected squad to start in each gameweek. Constraints (\ref{eq:start_team}) explains the total number of players that start, while constraints (\ref{eq:start_keeper}) to (\ref{eq:start_forward}) state the minimum number of players in the different positions. Respectively, the starting line-up must consist of $E$ players, with exactly $E^{K}$ goalkeepers and a minimum of $E^{D}$ defenders, $E^{M}$ midfielders and $E^{F}$ forwards. Also when the bench boost gamechip is used, all the substitutes are regarded in the starting line-up. This is ensured by the term $\phi b_{t}$ and $\phi^{K} b_{t}$ in constraints \eqref{eq:start_team} and \eqref{eq:start_keeper}, respectively.  
 
 \begin{equation} \label{eq:nonlinear_starting}
-    y_{pt} \leq x^{free hit} + x_{pt}(1-r_{t}) \qquad\qquad  p \in \mathcal{P}, \enskip t \in \mathcal{T}
+    y_{pt} \leq x_{pt}^{free hit} + x_{pt}(1-r_{t}) \qquad\qquad  p \in \mathcal{P}, \enskip t \in \mathcal{T}
 \end{equation}
 
-Constraints \eqref{eq:nonlinear_starting} enforces that only players that are initially in the selected squad can be picked in the starting line-up. Remember that when a free hit gamechip is used, the whole team can be changed for one gameweek, but in the next gameweek it changes back. This means that the gameweek the free hit gamechip is used, $r_{t} = 1$, $y_{pt}$ only takes value from $x_{pt}^{free hit}$ and not $x_{pt}$. In all the other gameweeks when the free hit gamechip is not used, $r_{t} = 0$, constraints \eqref{eq:free_hit_sel_keeper} - \eqref{eq:free_hit_sel_club} ensure that $x_{pt}^{free hit}$ do not take value. This constraint is non-linear, and the linearization is presented with constraints \eqref{eq:start_sel} - \eqref{eq:auxiliary_variable_free_hit} where $\lambda_{pt}$ is an auxiliary binary variable.
+Constraints \eqref{eq:nonlinear_starting} enforces that only players that are initially in the selected squad can be picked in the starting line-up. Remember when a free hit gamechip is used, the whole team can be changed for one gameweek, but in the next gameweek it changes back. This means that the gameweek the free hit gamechip is used, $r_{t} = 1$, and $y_{pt}$ only takes value from $x_{pt}^{free hit}$ and not $x_{pt}$. In all the other gameweeks when the free hit gamechip is not used, $r_{t} = 0$, the constraints \eqref{eq:free_hit_sel_keeper} - \eqref{eq:free_hit_sel_club} ensure that $x_{pt}^{free hit}$ do not take value. Constraints \eqref{eq:nonlinear_starting} is non-linear, and the linearization is presented with constraints \eqref{eq:start_sel} - \eqref{eq:auxiliary_variable_free_hit} where $\lambda_{pt}$ is an auxiliary binary variable.
 
 
 \begin{equation}\label{eq:start_sel}
-    y_{pt} \leq x^{free hit} + \lambda_{pt} \qquad\qquad  p \in \mathcal{P}, \enskip t \in \mathcal{T}
+    y_{pt} \leq x_{pt}^{free hit} + \lambda_{pt} \qquad\qquad  p \in \mathcal{P}, \enskip t \in \mathcal{T}
 \end{equation}
 
 \begin{equation} \label{eq:auxiliary_variable_x}
@@ -281,7 +280,8 @@ Constraints \eqref{eq:nonlinear_starting} enforces that only players that are in
     \lambda_{pt} \leq (1-r_{t}) \qquad\qquad  p \in \mathcal{P}, \enskip t \in \mathcal{T}
 \end{equation}
 
-Constraints \eqref{eq:start_sel} - \eqref{eq:auxiliary_variable_free_hit} present a linearization of the constraints \eqref{eq:nonlinear_starting}. As mentioned earlier, in the gameweeks when the free hit gamechip is not used 
+Constraints \eqref{eq:start_sel} - \eqref{eq:auxiliary_variable_free_hit} present a linearization of the constraints \eqref{eq:nonlinear_starting}. In short, $y_{pt}$ only select the players in the starting line-up which are set by $x_{pt}^{freehit}$ in the gameweek the free hit is used, and in all other gameweeks select players which are set by $\lambda_{pt}$. More specifically, the gameweek the free hit is used constraints
+\eqref{eq:auxiliary_variable_free_hit} impose $\lambda_{pt}$ to be zero for all players. Further, constraints \eqref{eq:free_hit_sel_keeper} - \eqref{eq:free_hit_sel_club} become active such that $x_{pt}^{freehit}$ equals 1 for the players selected in the gameweek free hit is used. Constraints \eqref{eq:start_sel} now handle that $y_{pt}$ only selects players in the starting line-up from the selected squad set by $x_{pt}^{freehit}$. In all the other gameweeks, $x_{pt}^{freehit}$ is zero and constraints \eqref{eq:auxiliary_variable_free_hit} now handle $\lambda_{pt}$ can take non-zero values for all players. Furthermore, constraints \eqref{eq:auxiliary_variable_x} make sure $\lambda_{pt}$ is only 1 for players in the selected squad set by $x_{pt}$, and constraints \eqref{eq:start_sel} ensure $y_{pt}$ only selects players in the starting line-up from the selected squad set by $x_{pt}$.
 
 \subsubsection{Captain and Vice-captain Constraints}
 
@@ -310,7 +310,7 @@ These constraints set restrictions for captains and vice-captains in the startin
 \end{equation}
 
 \begin{equation} \label{eq:free_hit_subst}
-    y_{pt} + \sum_{l \in \mathcal{L}} g_{ptl} \leq x^{free hit} + \beta (1-r_{t}) \qquad\qquad p \in \mathcal{P}\setminus\mathcal{P}^{K}, \enskip t \in \mathcal{T}\
+    y_{pt} + \sum_{l \in \mathcal{L}} g_{ptl} \leq x_{pt}^{free hit} + \beta (1-r_{t}) \qquad\qquad p \in \mathcal{P}\setminus\mathcal{P}^{K}, \enskip t \in \mathcal{T}\
 \end{equation}
 
 \begin{equation} \label{eq:subst_priority}
@@ -342,7 +342,7 @@ These constraints handle the budget and the budget flow. Constraints (\ref{eq:st
 
 
 \begin{equation} \label{eq:free_hit_budget}
-  \sum_{p \in \mathcal{P}}C_{pt}^{S}x_{p(t-1)} + v_{t-1} \geq \sum_{p \in \mathcal{P}}C_{pt}^{B} x^{free hit} \qquad\qquad t \in \mathcal{T}\setminus\{1\}
+  \sum_{p \in \mathcal{P}}C_{pt}^{S}x_{p,(t-1)} + v_{t-1} \geq \sum_{p \in \mathcal{P}}C_{pt}^{B} x_{pt}^{free hit} \qquad\qquad t \in \mathcal{T}\setminus\{1\}
 \end{equation}
 
 \begin{equation} \label{eq:free_hit_sell}
@@ -447,6 +447,7 @@ The purpose of these constraints is to describe how transfers are handled over t
     \alpha_{t} \in \mathbb{Z}^{+}  \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
+Constraints \eqref{eq:bin_x} - \eqref{eq:int_alpha} impose binary, integer and non-negativity constraints on the decision variables.
 
 \newpage
 
