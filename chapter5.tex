@@ -30,7 +30,7 @@ NOTE:TA MED 6.2.2 Test Method FRA PROSJEKTET. JUSTERT. SKRIVE FOR HVORDAN VALGEN
 
 
 \section{Player performance prediction}
-The optimization model presented in chapter \ref{model_formulation} uses expected fantasy points as an input. A major uncertainty lies in prediction of football players performances. In this section, we introduce three different methods of predicting future player performance. First, we present a regression model based on the historical Fantasy Premier League performance. Secondly, we replicate and modify the approach suggested by \cite{Bonomo}. Finally, we introduce an approach using bookmakers odds' in order to predict each players expected points. 
+The optimization model presented in chapter \ref{chapter_model_formulation} uses expected fantasy points as an input. A major uncertainty lies in prediction of football players performances. In this section, we introduce three different methods of predicting future player performance. First, we present a regression model based on the historical Fantasy Premier League performance. Secondly, we replicate and modify the approach suggested by \cite{Bonomo}. Finally, we introduce an approach using bookmakers odds' in order to predict each players expected points. 
 
 \subsection{Player prediction using regression}
 
@@ -430,18 +430,6 @@ FWD      & FWD      & -0.119 & 0.0218
     \item what hypotesis test is performed
 \end{itemize}
 
-\section{Determining optimal forecasting horizon, optimization horizon and penalty term for the average base method}
-
-In a case with perfect information available, the optimal optimization horizon is the complete season of 38 weeks. Furthermore, the penalty term would be 4, equal as in the real case. However, we do not operate within the domain of perfect information, so these parameter settings are not guaranteed optimal. In addition, it is important to decide how many matches to look back in the past when calculating the forecasts based on average performance in previous games.\newpar 
-
-In order to set the values of the parameters in a smart way, a number of different combinations of the three parameters are run on the 2016/2017 season. Figure \ref{fig:pen_hor_scale} displays how the mean value of points for the entire 2016/2017 season changes with different forecasting horizons, optimization horizons and penalty terms. Based on the figure, a combination found in the upper leftmost corner appears to be optimal, and the values $h = 2$ and $p = 18$ are chosen.
-
-\begin{figure}
-\label{fig:pen_hor_scale}
-    \centering
-    \includegraphics[scale=0.50]{fig/chapter_5/pen_hor_scale.png}
-    \caption{The plot shows how the mean value of the entire 2016/2017 season changes depending on horizon and penalty term}
-\end{figure}
 
 
 
