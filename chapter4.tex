@@ -1,6 +1,6 @@
 %===================================== CHAP 4 =================================
 
-\chapter{Model Formulation} \label{model_formulation}
+\chapter{Model Formulation} \label{chapter_model_formulation}
 
 In this chapter the mathematical optimization model of the Fantasy Team Composition Problem (FTCP) is presented. In Section \ref{modelling_choices} modelling choices are discussed. Further, in Section \ref{def_sets_ind_par_var} the sets, indices, parameters and variables used in the model are defined. Finally, the mathematical formulation is presented in Section \ref{mathematical_model} with explanations of the objective function and constraints. 
 
@@ -11,9 +11,18 @@ This section outlines the modelling choices used to model the FTCP. It starts wi
 
 \newpar
 
-Part of the FTCP resembles a lot the classic Knapsack problem. In the Knapsack problem there is a range of items with a value and cost,and the goal is to maximize the total value meanwhile not surpass a budget. Whereas in this case there are players where their value is points and their cost is an amount predetermined by the game. The aim is to pick the players such as the total amount of points is maximized while the budget is held in each gameweek. In addition, there are constraints that handle the choices of substitutes, captain and vice-captain each gameweek. The choices on wildcard, bench boost, free hit and triple captain are modelled. 
+Part of the FTCP resembles a lot the classic Knapsack problem. In the Knapsack problem there is a range of items with a value and cost, and the goal is to maximize the total value meanwhile not surpass a budget. Whereas in this case there are players where their value is points and their cost is an amount predetermined by the game. The aim is to pick players such as the total amount of points is maximized while the budget is held in each gameweek. In addition, there are constraints that handle the choices of substitutes, captain and vice-captain each gameweek. The decisions on wildcard, bench boost, free hit and triple captain are also modelled. 
 
 \newpar
+
+The points a player gets in each gameweek are uncertain when team composition decisions are made. The points depend on future random events during actual matches, such as goals, assists, penalties, passes, saves and etc. This is denoted in the model as $\rho_{pt}(\omega)$, where points is dependent on a future event $\omega$. The scope is that of maximizing expected points over a number of gameweeks. Of the output the most interesting decisions are the selected squad, starting line-up, substitutions, captain, vice-captain as well as whether to use any gamechips in a gameweek. 
+
+\newpar
+
+The only simplification made from the original problem is the feature of sell-on fee. Remember, that as more human managers select a player, his selling price may be different the the current purchase price. This is further simplified by denoting that the sell price is the same as the current purchase price. 
+
+
+\begin{comment}
 
 The only uncertainty in this problem is the number of points a player will get in each gameweek. Hence, the model is formulated accordingly. All the uncertainty lies in the objective function, and this is presented by $\rho_{pt}(\omega)$. This represents the number of points for a player $p$ in a gameweek $t$ dependent on a realization of a future event $\omega$. This event denotes all the factors deciding a player's point in a gameweek. For a goalkeeper, that includes factors such as the number of goals conceded, number of saves, penalty saved etc.
 
@@ -21,9 +30,11 @@ The only uncertainty in this problem is the number of points a player will get i
 
 Though the objective function is formulated in such way that it maximizes the number of expected points, once the model is solved  the objective value itself is not of interest. In the end it is the optimal team selection for a gameweek that is significant. In addition, the captain- and vice-captain choice, as well as the substitution priority are important outputs. This is reflected in the model by having small positive parameters in the objective function to ensure that these are picked accordingly. 
 
-\newpar
+\end{comment}
 
-In the model there is a difference between the selected squad, the starting line-up and substitutes. The selected squad include all the players whom could be picked for the starting line-up. Further, players in the starting line-up are the ones which get credited points. Those who are not picked for the starting line-up are regarded as substitutes. Hence, the connection between these three sets is that whenever players in the starting line-up do not feature, a player from the substitutes replaces them.
+
+
+
 
 
 
@@ -318,7 +329,7 @@ These constraints set restrictions for captains and vice-captains in the startin
     g_{ptl} \leq 1 \qquad\qquad t \in \mathcal{T}, \enskip l \in \mathcal{L}\ 
 \end{equation}
 
-These constraints explain how the substitutions are handled in the model. Both constraints \eqref{eq:subst} and \eqref{eq:free_hit_subst} state that all the players who are not picked in the starting line-up are regarded as substitutions. A parameter $\beta$ is used as a big M, such that when the free hit gamechip is exercised constraints \eqref{eq:free_hit_subst} is restricting, while in the other gameweeks constraints \eqref{eq:subst} is restricting. Constraints (\ref{eq:subst_priority}) handles that all the substitutions do not have more than one priority.
+These constraints explain how the substitutions are handled in the model. Both constraints \eqref{eq:subst} and \eqref{eq:free_hit_subst} state that all the players who are not picked in the starting line-up are regarded as substitutions. A parameter $\beta$ is a sufficiently high value, such that when the free hit gamechip is exercised constraints \eqref{eq:free_hit_subst} is restricting, while in the other gameweeks constraints \eqref{eq:subst} is restricting. Constraints (\ref{eq:subst_priority}) handles that all the substitutions do not have more than one priority.
 
 \subsubsection{Budget Constraints}
 
@@ -480,3 +491,35 @@ Some words: I know the constraint is non-linear. There is a difference between s
 
 Issue: It is possible that a player can be bought and sold more than one time. Hence, when you stand in gameweek $t_{2}$, the sum $\sum_{\tau:\{ t_{1} \dots t_{2}\}} e_{p\tau})$ can be higher than 1 and hence the sales price too high. Do you understand the problem? If so, how can the constraint be adjusted? 
 
+
+\subsection{Suggested solution}
+
+\subsubsection{Budget Constraints}
+
+\begin{equation} 
+    B^{S} - \sum_{p \in \mathcal{P}} C_{p1}^{B}x_{p1} = v_{1}
+\end{equation}
+
+\begin{equation} 
+    v_{t_{2}-1} + \sum_{p \in \mathcal{P}}S_{pt_{1}t_{2}}s_{pt_{1}pt_{2}} - \sum_{p \in \mathcal{P}}C_{pt}^{B}e_{pt_{2}} = v_{t_{2}} \qquad\qquad t_{1}, t_{2} \in \mathcal{T}\setminus\{1\}, \quad t_{2} > t_{1}
+\end{equation}
+
+\begin{equation}
+\sum_{t_{1} < t_{2}} s_{p,t_{1},t_{2}} = u_{pt_{2}}    \qquad\qquad t_{1}, t_{2} \in \mathcal{T}\setminus\{1\} \enskip p \in \mathcal{P}
+\end{equation}
+
+\begin{equation}
+    \sum_{t_{2} > t_{1}} s_{p,t_{1},t_{2}} \leq e_{p,t_{1}} \qquad\qquad t_{1}, t_{2} \in \mathcal{T}\setminus\{1\}, \enskip p \in \mathcal{P}
+\end{equation}
+
+\begin{equation}
+    \sum_{t_{A} < t_{1}} \sum_{t_{B}} s_{p,t_{A},t_{B}} -     \sum_{t_{A}} \sum_{t_{B} < t_{1}} s_{p,t_{A},t_{B}} = M(1-e_{pt_{1}}) \quad\quad p \in \mathcal{P}, \enskip t_{1} \in \mathcal{T}
+\end{equation}
+
+\begin{equation} 
+  x_{p,(t-1)} + e_{pt} - u_{pt} = x_{pt} \qquad\qquad p \in \mathcal{P}, \enskip t \in \mathcal{T}\setminus\{1\} 
+\end{equation}
+
+\begin{equation} 
+   e_{pt} + u_{pt} \leq 1  \qquad\qquad p \in \mathcal{P}, \enskip t \in \mathcal{T} 
+\end{equation}

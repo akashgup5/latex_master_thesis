@@ -5,21 +5,40 @@
 
 In this chapter, a computational study based on the solution approach outlined in Chapter 5 is presented. First, in Section \ref{sec:exact}, the optimal solution with perfect information is presented. Secondly, in Section \ref{sec:inexact}, the performance of each of different solution approaches are presented. 
 
+\newpar
 
-The mathematical programming model is written in the algebraic modelling language Mosel and implemented in FICO\textsuperscript {\textregistered} Xpress Optimization Suite 8.3, using a HP EliteDesk 800 G3 DM 65W computer with Intel\textsuperscript{\textregistered} Core\textsuperscript{\texttrademark} i7-7700 3.6 GHz processor and 32 GB RAM. The operating system in use is Windows 10 Education 64-bit. The results obtained from Xpress are written to CSV files, which are exported to R to be further analyzed. 
+The mathematical model is written in the algebraic modelling language Mosel and implemented in FICO\textsuperscript {\textregistered} Xpress Optimization Suite 8.3, using a HP EliteDesk 800 G3 DM 65W computer with Intel\textsuperscript{\textregistered} Core\textsuperscript{\texttrademark} i7-7700 3.6 GHz processor and 32 GB RAM. The operating system in use is Windows 10 Education 64-bit. The input data to the mathematical model is structured and pre-processed in the statistical programming language R. Further, the results obtained from the mathematical model include decisions on selected squad, starting line-up, substitution priority, number of illegal transfers, captain, vice-captain and whether a gamechip is used in a gameweek. These are written to CSV files, which are exported back to R to calculate points the team achieved. In the end, these are further exported to Microsoft Excel to make the data more presentable in form of tables and plots. 
 
 \section{Solution with realized points}\label{sec:exact}
-First, the initialization of sets and parameters are presented. Following is a presentation of the results from running the model with realized points. The last part of the section compares the results with top performing managers in FPL and analyzes their performance. 
+This section is divided in three parts: 
+First, the initialization of sets and parameters is presented. Following is a discussion of the problem size and operations research metrics such as optimality gap, bound, computational time and etc. Secondly, the solution is more thoroughly examined to discuss whether the decisions made are sensible or not. Lastly, the solution is compared against the best performing human managers. 
 
-\subsection{Initializations of parameters}    
+
+
+\subsection{Initialization of parameters}    
 %DEL1 
-The sets and parameters described in Section \ref{def_sets_ind_par_var} are presented in table \ref{initialization_of_parameters}. 
 
+Following in table \ref{tab:initializations_of_sets} and \ref{tab:initialization_of_parameters} are the initialization of parameters and sets used when the mathematical model with realized points is solved. 
 
+\begin{table}[H]
+\centering
+\caption{Initialization of sets.}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Set           &   &                                                               \\ \midrule
+$\mathcal{T}$ & - & 35 gameweeks,                                             \\
+$\mathcal{P}$ & - & 625 players,                                               \\
+$\mathcal{C}$ & - & 20 clubs,                                                 \\
+$\mathcal{L}$ & - & \{1,2,3\}, where 1 is first priority, \\
+$\mathcal{T}_{FH}$ & - & Gameweek 1 to 21 is in the first half of the season,\\
+$\mathcal{T}_{SH}$ & - & Gameweek 22 to 35 is in the second half of the season.\\
+\bottomrule
+\end{tabular}
+\label{tab:initializations_of_sets}
+\end{table}
 
 \begin{table}[H] 
 \tabcolsep=0.11cm
-\label{initialization_of_parameters}
 \centering
 \caption{Initialization of parameters.}
 \begin{tabular}{@{}lll@{}}
@@ -28,6 +47,7 @@ Parameters                       &   &                                          
 $\mathlarger{\rho_{pt}}$ & - & Realized points for a player $p$ in a gameweek $t$. \\
 $\epsilon$                       & - & Set to 0.1.                                                                     \\
 $\sigma_{1}, \sigma_{2}, \sigma_{3} $                     & - & Set to 0.01, 0.001 and 0.0001 respectively.                                               \\
+$C_{pt}^{B}$                     & - & Buy price collected from FPL homepage.  \\ 
 $R$                              & - & 4 points deducted if number of free transfers is exceeded.       \\
 $M^{K}$                          & - &  2 goalkeepers required in the selected squad.                                      \\
 $M^{D}$                          & - &  5 defenders required in the selected squad.                         \\
@@ -48,34 +68,32 @@ $\phi^{K}$                   & - & 1 keeper among the substitutes.              
 $\overline{Q}$                   & - & 2 free transfers possible to accumulate over gameweeks.                                              \\
 $\underline{Q}$                  & - & 1 free transfers given every gameweek.                                      \\ \bottomrule
 \end{tabular}
+\label{tab:initialization_of_parameters}
 \end{table}
 
-The data on each player's sell price and buy price in a gameweek is collected from FPL's homepage \url{www.fantasy.premierleague.com}.
-Nearly all the parameters are set according to the rules of FPL. 
-\begin{table}[H]
-\centering
-\caption{Initialization of sets.}
-\begin{tabular}{@{}lll@{}}
-\toprule
-Set           &   &                                                               \\ \midrule
-$\mathcal{T}$ & - & 35 gameweeks,                                             \\
-$\mathcal{P}$ & - & 625 players,                                               \\
-$\mathcal{C}$ & - & 20 clubs,                                                 \\
-$\mathcal{L}$ & - & \{1,2,3\}, where 1 is first priority, \\
-$\mathcal{T}_{FH}$ & - & Gameweek 1 to 21 is in the first half of the season,\\
-$\mathcal{T}_{SH}$ & - & Gameweek 22 to 35 is in the second half of the season.\\
-\bottomrule
-\end{tabular}
-\end{table}
+ 
+A season in FPL consists of 38 gameweeks, however because of restriction on time, an early decision is made to solve the model for the first 35 gameweeks. The season is divided in two halves, where the first half is from gameweek 1 to 21 and the second part is from gameweek 22 to 35. There are a big number of players in the FPL database, where large part of them have featured in a match while there are some who have not. After removing the players who have not featured in a match, the set resulted in 625 players. 
+
+\newpar
+
+All the parameters specifically stated in the rules of FPL are set accordingly. These include number of points deducted if number of free transfers are surpassed, number of players in different position in both selected squad and starting line-up, maximum players from same club, total of starting budget and the restrictions on free transfers. The parameter in the objective function for vice-captain are set to 0.1, while for the substitution priority, $\sigma_{1}, \sigma_{2}, \sigma_{3}$ these are set to 0.01, 0.001 and 0.0001, respectively. To tighten the formulation as much as possible, the parameters $\beta$ and $\alpha$ are set so to the smallest, but sufficiently high value. $\beta$ is used in constraints \eqref{eq:subst} and \eqref{eq:free_hit_subst} in Chapter \ref{chapter_model_formulation} which concern the substitution priority. Considering the variables adopted are binary, setting the value to 1 is optimal. $\alpha$ is used in constraints \eqref{eq:trans_flow_illegal_transfers}, and is set to highest possible value for number of points-deducting transfers. As there is given 1 free transfer each gameweek and the selected squad consists of 15 players, it is not possible to have more than 14 points-deducting transfers. The parameter $\alpha$ is set accordingly. 
+
+\newpar
+
+The data on each player's value in a gameweek is collected from FPL's homepage \url{www.fantasy.premierleague.com}. 
+
+\subsection{Problem Size}
+
+Table \ref{tab:computational_statistics} display the problem size of FTCP with input data from season 2017/18. The problem size are given before and after Presolve. This is a function integrated in Xpress Optimizer with few of its objectives are to reduce redundant variables, eliminate redundant constraints and remove linearly dependent constraints, which consequently reduces the complexity of the problem and improve the computing time. As can be seen from the table, the problem size is huge where the number of both constraints and variables are immense. From the table, it can be observed that the Presolve function is successful in eliminating both variables and elements, but the reduction in constraints is not that severe. A reason for this could be that most of the constraints are linearly independent, and that there is a limited present of empty rows in the FTCP. In addition, a large part of the $x_{pt}$, $x_{pt}^{freehit}$ and $y_{pt}$ are redundant, as many of them are defined despite few of them are used in the starting line-up and selected squad constraints. The fact that Presolve manage to eliminate such a large number of variables, implies that there should have been used more time and effort on reducing redundant variables in the procedure of implementation. That would most likely been effective in reducing solution time. Nonetheless, it can be argued that since the model only has to be solved once, this can to a certain degree be disregarded. 
 
 
 \begin{table}[H]
 \centering
 \caption{Computational statistics for the instance with realized points.}
-\label{Computational statistics}
+\label{tab:computational_statistics}
 \begin{tabular}{@{}llll@{}}
 \toprule
-                            & Rows    & Columns & Elements \\ \midrule
+                            & Rows(Constraints)    & Columns(Variables) & Elements \\ \midrule
 Original Problem Statistics & 172 034 & 254 425  & 1 052 715  \\
 Xpress Presolve Statistics  & 170 750 & 206 689  & 891 995   \\ \bottomrule
 \end{tabular}
@@ -83,16 +101,8 @@ Xpress Presolve Statistics  & 170 750 & 206 689  & 891 995   \\ \bottomrule
 
 
 
-\begin{table}[H]
-    \centering
-    \caption{Problem size of exact solution method}
-    \begin{tabular}{c|c}
-        Total number of variables & Total number of constraints  \\
-         & 
-    \end{tabular}
-\end{table}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics{}
     \caption{figure of when the solutions are found after how long time.}
@@ -101,15 +111,15 @@ Xpress Presolve Statistics  & 170 750 & 206 689  & 891 995   \\ \bottomrule
 \begin{table}[H]
     \centering
     \caption{Results of implementation of exact solution method.}
-    \begin{tabular}{c|c}
+    \begin{tabular}{c|c|c|c}
         LP Bound & Best solution & Best bound & Gap  \\
          & &
     \end{tabular}
 \end{table}
 
 
-DEL 2: 
-Figure \ref{Figure_Realized_points} gives an overview of how many points the model in chapter \ref{model_formulation} gets in every gameweek when solved with perfect information. The red dots represents gameweeks where the gamechips were used. The different gamechips were played in the following gameweeks: 
+\subsection{Performance in Fantasy Premier League}
+Figure \ref{Figure_Realized_points} gives an overview of how many points the model in chapter \ref{chapter_model_formulation} gets in every gameweek when solved with perfect information. The red dots represents gameweeks where the gamechips were used. The different gamechips were played in the following gameweeks: 
 
 \begin{itemize}
     \item Wildcard no. 1 was used ahead of gameweek 11
@@ -122,19 +132,19 @@ Figure \ref{Figure_Realized_points} gives an overview of how many points the mod
 \begin{figure}[H]
 \label{fig:Realized_points}
     \centering
-    \includegraphics[scale=1.00]{fig/chapter_7/RealizedPoints.png}
+    \includegraphics[scale=0.75]{fig/chapter_7/RealizedPoints.png}
     \caption{The graph shows the points per gameweek with perfect information}
 \label{Figure_Realized_points}    
 \end{figure}
 
-We find it necessary to comment on the choices made for selecting when to play the gamechips. Firstly, the Wildcard no.1 was used one week ahead of the bench boost was played. This makes good sense at it is wisely to ensure that you have got 15 players that will earn lots of points when playing the Bench Boost. Further, the triple captain chip was used in gameweek 31 which is reasonable as Mohammed Salah scored 4 goals and had 1 assist in this particular gameweek, yielding a score of 29 points. This is was the highest score obtained in one gameweek by any Premier League players. Finally, the Free Hit chip was used in gameweek 21. This was a blank gameweek, containing only 9 fixtures as Tottenham and West Ham did not play. It is reasonable to assume that a free hit should be used either ahead of a blank or doble gameweek, to ensure that all your selected players are featured at least one match for that particular gameweek.
+We find it necessary to comment on the choices made for selecting when to play the gamechips. Firstly, the Wildcard no.1 was used one week ahead of the bench boost was played. This makes good sense at it is wisely to ensure that you have got 15 players that will earn lots of points when playing the Bench Boost. Further, the triple captain chip was used in gameweek 31 which is reasonable as Mohammed Salah scored 4 goals and had 1 assist in this particular gameweek, yielding a score of 29 points. This is was the highest score obtained in one gameweek by any Premier League players. Finally, the Free Hit chip was used in gameweek 21. This was a blank gameweek, containing only 9 fixtures as Tottenham and West Ham did not play. It is reasonable to assume that a free hit should be used either ahead of a blank or double gameweek, to ensure that all your selected players are featured at least one match for that particular gameweek.
 \newpar
 Figure \ref{Figure_Transfers} shows how many transfers the model made in each gameweek. It is notable that the model performs most transfers when the Wildcards and the Free Hit are played. This makes sense as transfers are free when playing these gamechips. In general, one can say that the model makes many transfers compared to human managers. However, this is due to the fact that this is an optimal solution. Thus, it selects the players that over performed in a particular gameweek. Every gameweek there are some players that surprise the FPL managers. For instance, if a defender suddenly scores two goals in a match, the goals themselves represent 12 points. 
 
 \begin{figure}[H]
 \label{fig_Transfers}
     \centering
-    \includegraphics[scale=1.00]{fig/chapter_7/Transfers.png}
+    \includegraphics[scale=0.75]{fig/chapter_7/Transfers.png}
     \caption{The graph shows how many transfers the optimal solution makes in every gameweek}
 \label{Figure_Transfers}    
 \end{figure}
@@ -143,7 +153,7 @@ Figure \ref{Figure_Transfers} shows how many transfers the model made in each ga
 \begin{figure}[H]
 \label{fig:Comparison}
     \centering
-    \includegraphics[scale=1.00]{fig/chapter_7/Comparison.png}
+    \includegraphics[scale=0.75]{fig/chapter_7/Comparison.png}
     \caption{The graph compares the average and top performer of each Gameweek to the optimal team with perfect information}
 \label{Figure_Comparison}    
 \end{figure}
@@ -157,30 +167,44 @@ As stated in chapter \ref{introduction} it is interesting to compare the optimal
 \begin{figure}[H]
 \label{fig:Top_Manager}
     \centering
-    \includegraphics[scale=1.00]{fig/chapter_7/Top_manager.png}
+    \includegraphics[scale=0.75]{fig/chapter_7/Top_manager.png}
     \caption{Comparing optimal solution strategy to top manger}
 \label{Top_Manager}    
 \end{figure}
 
 As suggested in the introduction, the optimal solution strategy largely outperforms that of the top manager of Fantasy Premier League. In total it separates 2348 points between the two solutions, more than twice the amount of points gained by the top rated manager. It is notable that the two teams do not play their gamechips in any of the same gameweeks. The top manager played his triple captain in gameweek 22, where Tottenham and West Ham were featured twice. Selecting Harry Kane as his triple captain is an understandable choice, as Harry Kane was the top scorer of Premier League at that point of time. However, Kane under performed in both matches only receiving three points in total. In addition, one can see that the top manager played his second wildcard in gameweek 32, two weeks ahead of a double gameweek. Finally, he played his free hit in gameweek 35 which is reasonable as this was ahead of a blank gameweek. As expected, the two teams presented in figure \ref{Top_Manager} are positively correlated.   
- 
-Interesting points:
-\begin{enumerate}
-    \item picture of when the solutions are found after how long time. discuss 
-    \item disc
-    \item When are the chips used
-    \item What is the difference between the best player and the optimal solution
-    \item frequent formation
-    \item How many substitutions
-\end{enumerate}
+\newpar
+An other interesting comparison is that of the optimal solution to other human managers. Table \ref{Optimal_Human} provides an overview of how the optimal solution strategy performs compared to the top 50\% of the managers. 
 
+\begin{table}[H]
+\centering
+\caption{Comparing human managers to optimal solution}
+\label{Optimal_Human}
+\begin{tabular}{llc}
+\hline
+                 & Mean   & \multicolumn{1}{l}{Percentage of optimal solution} \\
+\hline                 
+Optimal solution & 133.63 & 100.00 \%                                          \\
+Winner           & 66.54  & 49.80 \%                                           \\
+Top 5 \%         & 55.83  & 41.78 \%                                           \\
+Top 10 \%        & 54.30  & 40.64 \%                                           \\
+Top 20 \%        & 52.20  & 39.06 \%                                           \\
+Top 30 \%        & 50.40  & 37.72 \%                                           \\
+Top 40 \%        & 48.50  & 36.29 \%                                           \\
+Top 50 \%        & 46.50  & 34.80 \%                                           \\
+\hline
+\end{tabular}
+\end{table}
+
+As can be observed, there is enormous difference between the optimal solution strategy and that of the other human managers. It is remarkable that the difference in mean between the top 50\% and the winner is only slightly above 20 points per round, while the difference between the optimal solution and the winner is above 67 points. Further, it is notable that the difference between finishing in the top 10 percentile to the top 5 percentile is rather low as it only separates 1.43 points per round. In comparison, the difference between the winner and the 5th percentile is as much as 10.71 points. Moreover, an interesting point is that this difference is actually larger than the one between the 50th percentile and the 5th percentile. Hence, it provides reason to assume that in order to finish among the absolute best managers, one have to perform extremely well compared to others, while small margins separates the average managers. 
+\newpar
+ 
 
 \section{Solution with expected points}\label{sec:inexact}
 \begin{enumerate}
     \item all the gamechips are explained before this chapter. the implementation of the gamechips do not change in each forecasting method. 
     \item a parameter study on the average method for horizon, penalty and obj.value on average forecasts on season 2016. This has been done before computational study. Suggestion figure: matrix for horizon and penalty, with green = good obj value, red = bad obj value
     \item  the decision on the threshold(risk) is explained in Experimental setup method. 
-    \item INGENTING ENDRES I DETTE KAPITTELET. KUN DRØFTING AV RESULTATER. 
 \end{enumerate}
 
 \subsection{Preliminaries}
@@ -200,16 +224,33 @@ Regression  & NA  & NA & NA \\
 \end{tabular}
 \end{table}
 
-
+\newpage
 \subsection{Average}
+With the average solution approach, our model obtain a score of 1916 points in total, yielding a mean of 54.743 points. Compared to the overall Fantasy Premier League standings, this score finish among the top 8th percentile. Figure \ref{Results_average} provide an overview of the weekly results when forecasting the results on the average method. In addition, it gives a comparison to its mean score over the 35 gameweeks. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.75]{fig/chapter_7/Results_average.png}
+    \caption{Results using improved average as forecast}
+\label{Results_average}    
+\end{figure}
+For the first two gameweeks the model performs rather poor compared to its mean, scoring 23 and 27 points for gameweek 1 and gameweek 2 respectively. Furthermore, its performance is stabilized around the mean score in gameweek 3 to gameweek 17. In the second part of the season, the results tend to fluctuate with greater variance around its mean. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.75]{fig/chapter_7/Transfers_average.png}
+    \caption{Penalized transfers made using the improved average approach}
+\label{Transfers_average}    
+\end{figure}
+Figure \ref{Transfers_average} gives information of how many penalized transfers the model performs in every gameweek. From the figure one can see that the model performed two illegal transfers ahead of gameweek 2, deducting 8 points for this gameweek. These transfers were made as Gary Cahill and Cesc Fabregas, who was selected in the initial gameweek, both received a red card in their first match. In fact, Gary Cahill was selected as captain in gameweek 1, which resulted in a score of -6 points for Gary Cahill. Hence, the sending offs and the transfers afterwards can to some degree explain the poor results in the first two gameweeks. From figure \ref{Transfers_average} its observable that the model only performs 8 penalized transfers over the entire season, which is reasonable compared to human managers. However, the model tends to finish below its mean for all the gameweeks where it performs illegal transfers. At first glance, this might seem odd. However, as the optimization horizon is set to 3 gameweeks, the model's objective is to maximize the points over the next three gameweeks, not only the next gameweek. 
 
-tabell 1: total sum points etter uke 35, toal mean for hver runde, ranking. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.75]{fig/chapter_7/Comparison_average.png}
+    \caption{Comparing improved average results to weekly average}
+\label{Comparison_average}    
+\end{figure} 
+According to figure \ref{Comparison_average} it is obvious that the results from this solution approach greatly outperform the weekly average managers. Actually, it outperforms the weekly average in 23 of the 35 gameweeks, while it ties the weekly average in two of the gameweeks. The model is heavily beaten by the weekly average in the first two gameweeks, which is not surprising due to the model's poor performance in these gameweeks. 
 
-forklare minst og høyeste antall illegal transfers og referere til appendiks. 
-
-graf 1: poeng hver runde, average for hver runde i selve spillet, når gamechippene brukes, 
-
-
+\begin{comment}
 
 Possible metrics: 
 
@@ -217,16 +258,9 @@ Results of total sum, average, predicted points pr round opp mot actual points p
 
 
 
-\begin{table}[H]
-    \centering
-    \begin{tabular}{c|c|c|c|c}
-        Round 10 - 20 & Points avg WITH NO variance & ill transfers WITH NO variance & Points avg WITH variance & ill transfers WITH variance\\
-    \end{tabular}
-    \caption{Results of avg no variance for round 10 -20.}
-\end{table}
-
 - Summarizing conclusion based on the variance/standard deviation of each method.
 - Say something about the computational time for each method. 
+
 
 \begin{table}[H]
 \centering
@@ -240,29 +274,70 @@ Total sum  & NA  & NA & NA & NA & NA \\
 
 
 \textit{Case-study of round w/chip to show that the model makes sense}
+\end{comment}
 
 \subsubsection{Argentina}
- tabell 1: total sum points etter uke 35, total mean for hver runde, ranking. 
+
+ \begin{comment}
+ tabell 1: total sum points after gameweek 35, total mean for each round, ranking. 
 
 forklare minst og høyeste antall illegal transfers og referere til appendiks. 
 
 graf 1: poeng hver runde, average for hver runde i selve spillet, når gamechippene brukes,
-
+ \end{comment}
 
 \subsubsection{Improved}
 
 
 \subsection{Odds}
+
+\newpage
 \subsection{Regression Model}
+With the solution approach using a linear regression, our model obtain an average score of 49.22 points in the first 35 gameweeks. With this average, the model perform among the top 36\% on the FPL overall ranking. Figure \ref{Regression_results} provide the score for each gameweek compared to the mean of 49.22 points. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.75]{fig/chapter_7/Regression_results.png}
+    \caption{Results using regression as forecast}
+\label{Regression_results}    
+\end{figure}
+
+From the figure it is remarkable that the model performs poorly in the first 5 gameweeks. Further, it seems to stabilize among its mean managers from gameweek 6 to gameweek 16. An interesting observation is that the model largely outperforms its mean in the second half of the season. The poor performance in the first gameweeks can to some degree be explained by figure \ref{Transfers_regression} which provides an overview over illegal transfers made ahead of each gameweek.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.75]{fig/chapter_7/Transfers_regression.png}
+    \caption{Penalized transfers made using the regression approach}
+\label{Transfers_regression}    
+\end{figure}
+
+As easily observed, the model frequently executes illegal transfers in the first 10 gameweeks. For instance, ahead of gameweek 2 it allows for 8 illegal transfers, deducting a total of 32 points from the overall score. The transfers are mainly due to players that over- and under performed compared to last seasons performance. In addition, the model does not consider players that were transferred from outside of the Premier League. Hence, a player like Mohamed Salah who is by far the top points scorer was not considered in the first gameweek. As the number of illegal transfers decreases in the second half of the season, the model tends to perform better. Thus, one can argue that the model makes too many illegal transfers early in the season and that this influence the overall points to a large degree. 
+\newpar
+An interesting comparison is that of the results from the regression approach to the human average performance in each gameweek. This comparison is made in figure \ref{Regression_vs_average}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.75]{fig/chapter_7/Weekly_average_regression.png}
+    \caption{Comparing regression approach to weekly average}
+\label{Regression_vs_average}    
+\end{figure}
+
+As expected from figure \ref{Regression_results}, the model is outperformed by the average human managers in the first gameweeks. This is as mentioned due to the frequently usage of illegal transfers. In the first 9 gameweeks, the average managers outperform the model by a total of 133 points. However, over the entire season (35 gameweeks in this case) the model outperforms the average managers by a total of 24 points, which is considered to be a good result considering the poor start of the season. As we reach gameweek 17, the model outperforms the average managers in 14 of the remaining 19 gameweeks. Firstly, this is due to the model adopting which players that have performed best over the season. Secondly, the decrease of illegal transfers is an important factor. However, it has to be mentioned that as time goes by some human managers tend to quit playing FPL as a result of a bad start. Hence, it is likely that the average would have been slighly higher if some managers did not quit during the season. 
+
 \subsection{Summary}
+Here we present a table that summarizes the results from the three different approaches. 
+
+
 
 \section{Recommendations for human FPL managers}
-
+\begin{comment}
 - hvilke anbefalinger kan man gi til fpl managere? 
      * hvilke formasjon går igjen i løsningene. lønner det seg med forsvarsspillere eller angrepsspillere?  
     * er budsjettet alltid oppfylt? og hvordan utvikler verdien til laget seg over sesongen? 
     
     - Tabell over Formasjon i optimal solution. 
+\end{comment}
+
 
 \begin{table}[H]
 \centering
