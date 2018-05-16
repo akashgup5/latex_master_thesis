@@ -6,7 +6,7 @@
 \section{Data}
 For this thesis we have mainly used FPL data provided by fantasyoverlord.com. Fantasy overlord contains detailed gameweek data for both the 2016/2017- and the 2017/2018 season. Further, clubelo.com has been used in order to obtain ELO values for each Premier League team. In addition, Sportradar has provided odds and probabilities for the fixtures of the 2017/2018 season. 
 \newpar
-The model presented in chapter \ref{model_formulation} has been run for the first 35 gameweeks of the 2017/2018 season. Ideally, the model should be run for the entire season. However, due to the deadline of the thesis this was not possible. 
+The model presented in chapter \ref{chapter_model_formulation} has been run for the first 35 gameweeks of the 2017/2018 season. Ideally, the model should be run for the entire season. However, due to the deadline of the thesis this was not possible. 
 
 \subsection{Processing of player data}
 \subsubsection{Injuries and suspensions}
@@ -49,6 +49,23 @@ Away field advantage & 0.859 & 0.895 & 0.851 & 0.863 & 0.886 & \textbf{0.871} \\
 \end{table}
 
 As for the point streak factor, the variables X and Y has to be decided. As goalkeepers and defenders receive 4 points for keeping a clean sheet, all players get 3 points for an assist and midfielders and forwards get 5 and 4 points respectively for scoring a goal, the X variable should be set according to these numbers. Further, as a player gets 2 points for playing more than 60 minutes, it is appropriate to let the X variable take a value of 5. Hence, if a player has an assist or scores a goal and in addition plays 60 minutes or more that player will receive enough points to be on a positive point streak given that he did not receive a yellow or red card. As for the Y variable, a player that does not contribute with neither a goal, assist nor a clean sheet is awarded maximum 2 points. Thus, it is reasonable to set the Y to equal 2 points. 
+\subsubsection{Determining optimal forecasting horizon, optimization horizon and penalty term}
+
+In a case with perfect information available, the optimal optimization horizon is the complete season of 38 gameweeks. Furthermore, the penalty term would be 4, equal as in the real case. However, we do not operate within the domain of perfect information, so these parameter settings are not guaranteed optimal. In addition, it is important to decide how many matches to look back in the past when calculating the forecasts based on average performance in previous games.
+\newpar 
+In order to set the values of the parameters in a smart way, a number of different combinations of the three parameters are run on the 2016/2017 season. Figure \ref{Parameter_choice} displays how the mean value of points for the entire 2016/2017 season changes with different forecasting horizons, optimization horizons and penalty terms. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.55]{fig/paramter_choice.png}
+    \caption{Performance with different transfer penalties and forecast horizons}
+\label{Parameter_choice}    
+\end{figure}
+
+In general, one can see that low transfer penalties combined with a high forecast horizon yield the poorest results. Furthermore, it seems like choosing 7 or 8 as the forecast horizon is the wiser choice. In addition, the transfer penalty should be set to a value above 10. Based on figure \ref{Parameter_choice}, a combination found in the center appears to be optimal, and the values $h = 6$, $f = 7$ and $p = 11$ are chosen. Also, a combination of $h = 4$, $f = 8$ and $p = 14$ yield good results. 
+\newpar
+As only data for the FPL 2015/2016 season is used, we were unable to predict points for the first gameweek of 2016/2017. Hence, when finding the optimal forecasting horizon the first gameweek is not considered. As for the forecast horizon of 8 weeks, we only consider the matches after gameweek 8 has been played. Hence, we get an opportunity of initially selecting the players that have performed best over the 8 first gameweeks. This is a great drawback when chosing the optimal forecast horizon. Intuitively, the results will be better as the forecast horizon increases, as one get the opportunity of initially selecting players that have proven to perform well. Hence, the mean of the teams performance is likely to rice above the mean if we started in gameweek 1. Therefore, based on the results from table \ref{Parameter_choice} we find it proper to choose the best mean with a smaller f-value, as this includes more gameweeks.  
+
 \subsection{Linear Regression}
 \subsection{Odds}
 In order to obtain necessary data, we have cooperated with Sportradar, a Norwegian company providing data for bookmakers. Sportradar delivers odds and probabilities of several sports events, including English Premier League. They have provided us with all the necessary probabilities, including result outcomes for each Premier League match as well as individual player probabilities. These data made all the computational work a lot easier, as Sportradar exported structured excel files containing all the necessary data. 
@@ -56,3 +73,4 @@ In order to obtain necessary data, we have cooperated with Sportradar, a Norwegi
 As odds are primarily available for fixtures in the near future, in general for the upcoming gameweek, the suggested solution approach using odds is rather limited. Hence, the horizon on the optimization model is forced to be one gameweek. Compared to the other suggested methods, this is considered a great drawback.
 \section{Game Chips}
 \section{Risk/Variance}
+
