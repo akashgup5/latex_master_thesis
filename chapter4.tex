@@ -389,9 +389,42 @@ Constraints \eqref{eq:free_hit_budget} ensure that the selected team for free hi
     q_{t+1} \leq \overline{Q} + (\underline{Q}-\overline{Q})w_{t} + (\underline{Q}-\overline{Q})r_{t} \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
-The purpose of these constraints is to describe how transfers are handled over the set of gameweeks $\mathcal{T}$. The first constraints (\ref{eq:trans_second_gw}) sets the number of free transfers in the second gameweek to $\underline{Q}$. This is the first time the decision of transferring players is considered, and consequently the first time the limitation of free transfers is treated. Constraints (\ref{eq:trans_flow}) handles how many free transfers are available next gameweek. Each gameweek, a number of $\underline{Q}$ free transfers is given. If this is not used, it is moved to the next gameweek. However, if the number of transferred out players exceeds the number of free transfers available, the variable $\alpha_{t}$ takes a value and each extra transfer gets punished by $R$ points in the objective function. The exception is when the wildcard gamechip is used and the number of free transfers is limitless. This is handled by the term $E w_{t}$ which causes $\alpha_{t}$ to not take a value in the gameweek the wildcard gamechip is used. The last constraints \eqref{eq:trans_min} and \eqref{eq:trans_max} impose an upper and lower bound on the number of free transfers available in a gameweek. The terms $(\underline{Q}-\overline{Q})w_{t}$ and $(\underline{Q}-\overline{Q})r_{t}$ ensures that there is only $\underline{Q}$ free transfers the gameweek after the gamechips wildcard and free hit are used. 
+The purpose of these constraints is to describe how transfers are handled over the set of gameweeks $\mathcal{T}$. The first constraints (\ref{eq:trans_second_gw}) sets the number of free transfers in the second gameweek to $\underline{Q}$. This is the first time the decision of transferring players is considered, and consequently the first time the limitation of free transfers is treated. Constraints (\ref{eq:trans_flow}) handles how many free transfers are available next gameweek. Each gameweek, a number of $\underline{Q}$ free transfers is given. If this is not used, it is moved to the next gameweek. However, if the number of transferred out players exceeds the number of free transfers available, the variable $\alpha_{t}$ takes a value and each extra transfer gets punished by $R$ points in the objective function. The exception is when the wildcard gamechip is used and the number of free transfers is limitless. This is handled by the term $E w_{t}$ which causes $\alpha_{t}$ to not take a value in the gameweek the wildcard gamechip is used. Constraints \eqref{eq:trans_flow_illegal_transfers} is used to handle a special case in the modelling; it makes sure that $\alpha_{t}$ only can take the value of zero, when $q_{t}$ hits its upper limit, $\overline{Q}$. This will further be explained with an example. The last constraints \eqref{eq:trans_min} and \eqref{eq:trans_max} impose an upper and lower bound on the number of free transfers available in a gameweek. The terms $(\underline{Q}-\overline{Q})w_{t}$ and $(\underline{Q}-\overline{Q})r_{t}$ ensures that there is only $\underline{Q}$ free transfers the gameweek after the gamechips wildcard and free hit are used. 
 
- 
+\subsubsection{Constraints \eqref{eq:trans_flow_illegal_transfers} explained by an example}
+
+\begin{table}[H]
+\parbox{.45\linewidth}{
+\centering
+\begin{tabular}{@{}|r|r|r|r|r|@{}}
+\hline
+t   & $e_{t}$  & $\alpha_{t}$  & $q_{t}$  & $q_{t+1}$   \\
+\hline
+1  & 5  & 5  & 1  & 2   \\
+\hline
+2  & 6  & 4  & 2  & 1   \\
+\hline
+\end{tabular}
+\caption*{Solution 1.}
+}
+\hfill
+\parbox{.45\linewidth}{
+\centering
+\begin{tabular}{@{}|r|r|r|r|r|@{}}
+\hline
+t   & $e_{t}$  & $\alpha_{t}$  & $q_{t}$  & $q_{t+1}$   \\
+\hline
+1  & 5  & 4  & 1  & 1   \\
+\hline
+2  & 6  & 5  & 1  & 1   \\
+\hline
+\end{tabular}
+\caption*{Solution 2.}
+}
+\end{table}
+
+In the tables above, two solutions are presented with variables related to constraints \eqref{eq:trans_flow}. Without constraints \eqref{eq:trans_flow_illegal_transfers}, solution 1 and 2 are regarded as the same since the total number of illegal transfers over the gameweeks are equivalent. However, in practice only solution 2 is right. In both solutions, there is 1 free transfer available and done 5 transfers out in the first gameweek. This means that $\alpha_{1}$ is 4 and that free transfers next gameweek, $q_{2}$, is 1. Without the constraints \eqref{eq:trans_flow_illegal_transfers}, it is possible that $q_{2}$ hits the upper limit $\overline{Q} = 2$ and $\alpha_{1}$ takes the value 5 and in the next gameweek it is instead denoted one less illegal transfer. This is handled in constraints \eqref{eq:trans_flow_illegal_transfers} so $\alpha_{t}$ only take the value 0 when $q_{t}$ hits its upper limit, $\overline{Q}$. 
+
 \subsubsection{Binary, Integer and Non-negativity Constraints}
 
 \begin{equation} \label{eq:bin_x}

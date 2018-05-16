@@ -21,12 +21,31 @@ A question that arise with the international transfer window, is how new players
 \newpar
 In this project it is assumed that the creators of Fantasy Premier League have assigned new players with a price that is perfectly mirrored by their expected performance. Thus, one can compare the new players with existing FPL players of the same price. For instance, if a new midfielder is listed with a price of 9, it is assumed that this player will have the same expected performance as other midfielders listed with the same price.
 \subsubsection{Irregular gameweeks}
-In general, every gameweek consists of 10 fixtures featuring every team once. However, due to matches in the national and international cups, some of the Premier League matches are postponed or played ahead of the original date. This implies that some of the gameweeks do not consist of exactly 10 fixtures, but perhaps 8 or 12 for instance. Thus, in these gameweeks some players may be featured twice, gaining points for both matches. Similarly, some players will not be feautered in other gameweeks, these gameweeks are hereby refered to as \textit{blanks}.
+In general, every gameweek consists of 10 fixtures featuring every team once. However, due to matches in the national and international cups, some of the Premier League matches are postponed or played ahead of the original date. This implies that some of the gameweeks do not consist of exactly 10 fixtures, but perhaps 8 or 12 for instance. Thus, in these gameweeks some players may be featured twice, gaining points for both matches. Similarly, some players will not be featured in other gameweeks, these gameweeks are hereby referred to as \textit{blanks}.
+
+\section{Forecasting Error}
+
+The forecasting error of the complete 2017/2018 season based on the two average-based models are summarized in Table \ref{tab:accuracy_average}. Note, however, that it is not given that the method with lowest error will performed best. 
+
+\begin{table}[H]
+\centering
+\caption{Summary of forecasting errors on the average methods}
+\label{tab:accuracy_average}
+\begin{tabular}{llll}
+Method & ME & RMSE & MAE\\
+Argentina & 0.00882 & 2.436 & 1.295 \\
+Improved  & 0.0436  & 2.455 & 1.294 \\ 
+Odds  & NA  & NA & NA   \\
+Regression  & NA  & NA & NA \\
+\end{tabular}
+\end{table}
 
 
 \section{Setting Parameters}
 veldig viktig diskusjon: 
 at vi har forstått at det er feil å sette høye penalties, men at vi er ute etter å få en modell som presterer bra. 
+
+
 \subsection{Average}
 In this thesis, the relative team strength factor are calculated according to the Elo values provided by clubelo.com. As the Elo values are updated for every gameweek, each Premier League team is assigned with 38 different Elo values, depending on the results in their previous games. An overview of the Elo values is attached in the appendix. 
 \newpar
@@ -53,7 +72,7 @@ As for the point streak factor, the variables X and Y has to be decided. As goal
 
 In a case with perfect information available, the optimal optimization horizon is the complete season of 38 gameweeks. Furthermore, the penalty term would be 4, equal as in the real case. However, we do not operate within the domain of perfect information, so these parameter settings are not guaranteed optimal. In addition, it is important to decide how many matches to look back in the past when calculating the forecasts based on average performance in previous games.
 \newpar 
-In order to set the values of the parameters in a smart way, a number of different combinations of the three parameters are run on the 2016/2017 season. Figure \ref{Parameter_choice} displays how the mean value of points for the entire 2016/2017 season changes with different forecasting horizons, optimization horizons and penalty terms. 
+In order to set the values of the parameters in a smart way, a number of different combinations of the three parameters are run on the 2016/2017 season. Figure \ref{Parameter_choice} displays how the mean value of points for the entire 2016/2017 season changes with different forecasting horizons, optimization horizons and penalty terms. Furthermore, Table \ref{tab:top_10} displays the 10 best combinations. Table \ref{tab:top_5} displays the best combinations for a given forecasting horizon. 
 
 \begin{figure}[H]
     \centering
@@ -62,15 +81,230 @@ In order to set the values of the parameters in a smart way, a number of differe
 \label{Parameter_choice}    
 \end{figure}
 
+\begin{table}[H]
+\centering
+\caption{The 10 best combinations of parameters}
+\label{tab:top_10}
+\begin{tabular}{lllll}
+Penalty & Horizon & Forecast Horizon & Total Points & Mean  \\
+20      & 4       & 6                & 1851         & 57,84 \\
+20      & 4       & 5                & 1899         & 57,55 \\
+19      & 3       & 5                & 1875         & 56,82 \\
+18      & 3       & 5                & 1869         & 56,64 \\
+14      & 3       & 5                & 1868         & 56,61 \\
+18      & 4       & 6                & 1808         & 56,50 \\
+19      & 4       & 6                & 1806         & 56,44 \\
+20      & 3       & 5                & 1860         & 56,36 \\
+20      & 5       & 5                & 1851         & 56,09 \\
+18      & 6       & 6                & 1793         & 56,03
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{The best combinations for each forecast horizon}
+\label{tab:top_5}
+\begin{tabular}{lllll}
+Penalty & Horizon & Forecast Horizon & Total Points & Mean  \\
+9       & 1       & 3                & 1914         & 54,69 \\
+11      & 2       & 4                & 1863         & 54,79 \\
+20      & 4       & 5                & 1899         & 57,55 \\
+20      & 4       & 6                & 1851         & 57,84
+\end{tabular}
+\end{table}
+
 In general, one can see that low transfer penalties combined with a high forecast horizon yield the poorest results. Furthermore, it seems like choosing 7 or 8 as the forecast horizon is the wiser choice. In addition, the transfer penalty should be set to a value above 10. Based on figure \ref{Parameter_choice}, a combination found in the center appears to be optimal, and the values $h = 6$, $f = 7$ and $p = 11$ are chosen. Also, a combination of $h = 4$, $f = 8$ and $p = 14$ yield good results. 
 \newpar
-As only data for the FPL 2015/2016 season is used, we were unable to predict points for the first gameweek of 2016/2017. Hence, when finding the optimal forecasting horizon the first gameweek is not considered. As for the forecast horizon of 8 weeks, we only consider the matches after gameweek 8 has been played. Hence, we get an opportunity of initially selecting the players that have performed best over the 8 first gameweeks. This is a great drawback when chosing the optimal forecast horizon. Intuitively, the results will be better as the forecast horizon increases, as one get the opportunity of initially selecting players that have proven to perform well. Hence, the mean of the teams performance is likely to rice above the mean if we started in gameweek 1. Therefore, based on the results from table \ref{Parameter_choice} we find it proper to choose the best mean with a smaller f-value, as this includes more gameweeks.  
+As only data for the FPL 2015/2016 season is used, we were unable to predict points for the first gameweek of 2016/2017. Hence, when finding the optimal forecasting horizon the first gameweek is not considered. As for the forecast horizon of 8 weeks, we only consider the matches after gameweek 8 has been played. Hence, we get an opportunity of initially selecting the players that have performed best over the 8 first gameweeks. This is a great drawback when choosing the optimal forecast horizon. Intuitively, the results will be better as the forecast horizon increases, as one get the opportunity of initially selecting players that have proven to perform well. Hence, the mean of the teams performance is likely to rice above the mean if we started in gameweek 1. Therefore, based on the results from table \ref{Parameter_choice} we find it proper to choose the best mean with a smaller f-value, as this includes more gameweeks.  
 
-\subsection{Linear Regression}
+\subsection{Regression}
+
+\subsubsection{Position Clustering}
+
+Here, a rational for the clustering might appear.
+
+\subsubsection{Time Series of Points}
+
+In order to determine if one should view the points a player obtains as a time series, or is just as well off by only looking at aggregated numbers, the Durbin-Watson and Ljung-Box test for autocorrelation are performed. In Table \ref{tab:auto_tests} the results of the Durbin-Watson test and Ljung-Box test with lags from 1-5 are presented. Based on the results, somewhere between75\%-95\% appear to have insignificant autocorrelation in their time-series of points. This result should be interpreted carefully, as the players that did not play the entire season earned 0 points in each gameweek. Regardless, it might be valuable to treat aggregates only, and neglect the effect time-series effects in the regression. The methodology works as a fine complement to the method based on average performance in the last matches, where the aspect of form is certainly considered.
+
+\begin{table}[H]
+\centering
+\caption{Summary of percentage of players with insignificant autocorrelation for different tests}
+\label{tab:auto_tests}
+\begin{tabular}{ll}
+Test            & \% of players with insignificant autocorrelation \\
+Durbin-Watson   & 94 \%                                            \\
+Ljung-Box lag 1 & 76 \%                                            \\
+Ljung-Box lag 2 & 76 \%                                            \\
+Ljung-Box lag 3 & 78 \%                                            \\
+Ljung-Box lag 4 & 80 \%                                            \\
+Ljung-Box lag 5 & 81 \%                                           
+\end{tabular}
+\end{table}
+
+\subsubsection{Variable Selection}
+
+As described in the Solution approach outlined in Chapter 5, lasso regression is performed in order to perform variable selection. 80\% of the data of the 2016/2017 season is used for training, and the rest for testing. In the following, the variables deemed significant alongside a plot or RMSE against values of log($\lambda$) for each position is presented.\newpar
+
+\textbf{Goalkeepers}
+In Figure Y the RMSE of the test set is plotted against different values of $\lambda$. In Table \ref{tab:sig_var_GLK} the significant variables are listed
+
+\begin{table}[H]
+\centering
+\caption{Significant Variables for goalkeepers based on lasso regression and RMSE}
+\label{tab:sig_var_GLK}
+\begin{tabular}{l}
+\textbf{Significant variables for goalkeepers }\\
+Opponent                              \\
+Team                                  \\
+Cost                                  \\
+Transfers in                          \\
+Transfers out                         \\
+Home/Away                             \\
+Minutes played                        \\
+Saves                                 \\
+Clean Sheets                          \\
+Assists                               \\
+Own Goals                            
+\end{tabular}
+\end{table}
+
+\textbf{Defenders}
+In Figure Y the RMSE of the test set is plotted against different values of $\lambda$. In Table \ref{tab:sig_var_DEF} the significant variables are listed
+
+\begin{table}[H]
+\centering
+\caption{Significant Variables for defenders based on lasso regression and RMSE}
+\label{tab:sig_var_DEF}
+\begin{tabular}{l}
+\textbf{Significant variables for Defenders }\\
+Opponent                              \\
+Team                                  \\
+Cost                                  \\
+Transfers in                          \\
+Transfers out                         \\
+Home/Away                             \\
+Minutes played                        \\
+Yellow Cards                          \\
+Own Goals                                               
+\end{tabular}
+\end{table}
+
+\textbf{Midfielders}
+In Figure Y the RMSE of the test set is plotted against different values of $\lambda$. In Table \ref{tab:sig_var_MID} the significant variables are listed
+
+\begin{table}[H]
+\centering
+\caption{Significant Variables for midfielders based on lasso regression and RMSE}
+\label{tab:sig_var_MID}
+\begin{tabular}{l}
+\textbf{Significant variables for Midfielders }\\
+Opponent                              \\
+Team                                  \\
+Cost                                  \\
+Transfers in                          \\
+Transfers out                         \\
+Home/Away                             \\
+Minutes played                        \\
+Goals
+        \\
+Penalty Misses
+        \\
+Clean Sheets
+        \\
+Assists
+\end{tabular}
+\end{table}
+
+\textbf{Forwards}
+In Figure Y the RMSE of the test set is plotted against different values of $\lambda$. In Table \ref{tab:sig_var_FWD} the significant variables are listed
+
+\begin{table}[H]
+\centering
+\caption{Significant Variables for forwards based on lasso regression and RMSE}
+\label{tab:sig_var_FWD}
+\begin{tabular}{l}
+\textbf{Significant variables for Forwards}\\
+Opponent                              \\
+Team                                  \\
+Cost                                  \\
+Transfers in                          \\
+Home/Away                             \\
+Minutes played                        \\
+Goals
+
+\end{tabular}
+\end{table}
+
+
+\subsubsection{Model Selection}
+
+For each position, a linear regression model is fitted based on the variables is fitted. A summmary of each model is presented and a discussion of the signs of the constants is given. It is important to note that the model is continually "refitted" as new data becomes available. That is, the $\beta $s are updated. The variables remain the same.
+
+
 \subsection{Odds}
 In order to obtain necessary data, we have cooperated with Sportradar, a Norwegian company providing data for bookmakers. Sportradar delivers odds and probabilities of several sports events, including English Premier League. They have provided us with all the necessary probabilities, including result outcomes for each Premier League match as well as individual player probabilities. These data made all the computational work a lot easier, as Sportradar exported structured excel files containing all the necessary data. 
 \newpar
-As odds are primarily available for fixtures in the near future, in general for the upcoming gameweek, the suggested solution approach using odds is rather limited. Hence, the horizon on the optimization model is forced to be one gameweek. Compared to the other suggested methods, this is considered a great drawback.
-\section{Game Chips}
-\section{Risk/Variance}
+Compared to the other two solution approaches, the player list is limited when calculating expected points using odds probabilities. The data from Sportradar was delivered post-season, which has affected the player list. Players that has been transferred or lend to other clubs during the 2017/2018 season are not considered. This is due to the fact that these players are no longer listed in Sportradar's database of Premier League players. In general, the reduced player list will not affect the results of the model, as the players that are lend out are typically lend to clubs in the English Championship division. Hence, these players were not consider good enough to contribute for the teams in the Premier League. However, some of the transfers might have an impact on the results. For instance, players like Philippe Coutinho and Michy Batshuayi are players that contributed with fantasy points in the first half of the season. Unfortunately, these players are not considered when using the odds approach, which is considered as a drawback of the approach.  
+\newpar
+As odds are primarily available for fixtures in the near future, in general for the upcoming gameweek, the suggested solution approach using odds is further limited. Hence, the horizon on the optimization model is forced to be one gameweek. Compared to the other suggested methods, this is considered a great drawback.
 
+\subsection{Game Chips}
+Examining the fixtures list of this year's Premier League season, the game chips are played according to the solution approach suggested in section \ref{Ch.5_Game_chips}. As for the first wildcard, our model is given the opportunity to play it in gameweek 9, where it can either choose to play it or to disregard it for the first half of the season. Hence, the model is not given the opportunity to play the first wildcard in any other gameweeks than in gameweek 9. Further, the triple captain chip can only be played in gameweek 22, as this is the fist double gameweek of the season. Moreover, we allow the bench boost to be played in the second double gameweek of the season, gameweek 34. Hence, the model is given the opportunity to play the second wildcard in gameweek 33, preparing for the bench boost in the following gameweek. As we chose to play the bench boost in the double gameweek 34, we have chosen to allow the model to play a free hit in gameweek 31. This is a blank gameweek, were only 8 team are featured.
+
+
+\section{Expected Value/Variance trade-off}
+
+\subsection{Variance in the proposed model}
+
+In order to estimate the variance of each player and the correlation between players, their historical performances are considered. In order to obtain somewhat reliable estimations, data for the entire 2016/2017 season is used. Therefore, it is impossible to also find on optimal variance threshold using data on the 2016/2017 season. As a consequence, we have decided not to include expected value/variance trade-off in our proposed model. Instead, the effect of applying the constaint to out solution is described in Section ? and can provide a basis for future research and models-
+
+\subsection{Variance Estimation}
+The variance is calculated as the empirical variance in points obtained for each individual player. All previous available data from the 2016/2017 and the 2017/2018 season are used. That is, for gameweek 10 of the 2017/2018, data from all rounds of the 2016/2017 as well as the first nine round of the 2017/2018 season is used.\newpar
+
+\subsubsection{Special cases}
+\textit{Lack of historical data}\newline
+As previously discussed, complete historical data will not be available for all players for reasons such as promotion or transfers. If only one data-point is available for a player (i.e he has only played one match), it is impossible to calculate his variance. In these cases, the variance is set equal to the average variance of all other players. It it worth noting that this will only be an issue for one match, as more than one data-point will exist afterwards. The lack of data-points are obviously a limitation of the accuracy of the variance estimation, and constitutes a significant source of uncertainty. As the variance trade-off is considered a mean to reduce overall risk, another approach/improvement might consider only picking players with a history of say 10 matches. \newpar
+
+\textit{Zero Variance}\newline
+Some players have never played, but can be selected. These players might be interesting to choose for instance in order to fulfill the budget/number of players constraints. However, their empirical variance would equal 0. This is not desirable, as the future performance is not deterministic (they are \textit{not} analogous the the risk-free asset in a portfolio optimization setting). Therefore, their variance is set equal the lowest non-zero variance obtained by other players.
+
+\subsection{Correlation Estimation}
+
+In order to determine the correlation between two players on the same or opposing teams, historical data for the 2016/2017 season is considered. Note that data is aggregated such that only the correlation coefficient between different positions overall is considered. It is not calculated between individual players or teams. Therefore, the correlation between players in the same position in the same team is set equal to 1. In order to determine if a correlation coefficient is significantly different from 0, a hypothesis test is performed. The correlation between players that are not on the same team, nor facing each other in a game-week, is assumed to be 0.\newpar
+
+Table \ref{tab:cor_team} and Table \ref{tab:cor_opp} show the correlation coefficient between different positions as well as the p-value from a hypothesis test with alternative hypothesis of a correlation not equal to 0, for players of the same and opposing teams respectively. In the cases where the correlation is not significant (GLK FWD and DEF FWD of the same teams and GLK GLK of opposing teams), the correlation coefficient is set equal to 0. For the rest, the correlation coefficients ($\rho$) presented in the tables are used.
+
+\begin{table}[H]
+\centering
+\caption{Correlation coefficient $\rho$ and p-value from significance test for the correlation between players of the same team}
+\label{tab:cor_team}
+\begin{tabular}{llll}
+Position & Position & $\rho$    & p-value  \\
+GLK      & DEF      & 0.689  & 2.20 E-16 \\
+GLK      & MID      & 0.274  & 1.24 E-10 \\
+GLK      & FWD      & 0.0288 & 0.519    \\
+DEF      & MID      & 0.368  & 2.20 E-16 \\
+DEF      & FWD      & 0.0578 & 0.176    \\
+MID      & FWD      & 0.238  & 1.72 E-08
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Correlation coefficient $\rho$ and p-value from significance test for the correlation between players of opposing teams}
+\label{tab:cor_opp}
+\begin{tabular}{llll}
+Position & Position & $\rho$    & p-value  \\
+GLK      & GLK      & 0.0162 & 0.759    \\
+GLK      & DEF      & -0.106 & 0.0374   \\
+GLK      & MID      & -0.312 & 2.78E-10 \\
+GLK      & FWD      & -0.336 & 3.85E-16 \\
+DEF      & DEF      & -0.319 & 2.35E-11 \\
+DEF      & MID      & -0.447 & 2.20E-16 \\
+DEF      & FWD      & -0.292 & 3.35E-09 \\
+MID      & MID      & -0.254 & 1.00E-07 \\
+MID      & FWD      & -0.136 & 0.00632 \\
+FWD      & FWD      & -0.119 & 0.0218  
+\end{tabular}
+\end{table}
