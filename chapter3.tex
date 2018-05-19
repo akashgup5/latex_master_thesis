@@ -152,26 +152,17 @@ It is no secret that teams have a tendency of performing better when playing at 
 \cite{Pollard} analysed over 400,000 sport matches since the start of the main professional sports, including English top division football. They found that the home advantage in English football decreased from the 1980s to the 2000s. Further, in contrary to \cite{Nevill} they claimed that travel and familiarity contribute to home advantage, but little in support of crowd effects. For association football, \cite{Pollard} home advantage is quantified as the number of points obtained by the home team expressed as a percentage of all points obtained in all games played. For the English Premier League, they provide results that annual values of home advantage of below 60 \% are not uncommon. 
 \newpar
 
-\section{Other Relevant Research}
-Although this thesis focuses exclusively on optimizing a Fantasy Premier League team, parallels can be drawn to other scientific areas. \cite{Bell} studied team composition variables in order to increase team performance. The results of the meta-analysis performed can be used to effectively compose teams in organizations. \cite{Davis} aim to determine the optimal composition of the pre-hospital medical response team and evaluate the importance of including a doctor to the team. \cite{Jabali} present a continuous approximation model to determine the long-term vehicle fleet composition needed to perform distribution activities, in which fleet size and mix of fleets are important decision variables.  These problems resembles the Fantasy Team problem as similar decisions arise when one are to decide which formation one should use in addition to the mix of players. 
+\section{Connections to Existing Literature}\label{Other_Relevant_Research}
+Although this thesis focuses exclusively on optimizing a Fantasy Premier League team, parallels can be drawn to other scientific areas. The FTCP shares features with many well-studied problems. However, these problems possess several significant differences with the FTCP. 
+
+\cite{Bell} studied team composition variables in order to increase team performance. The results of the meta-analysis performed can be used to effectively compose teams in organizations. \cite{Davis} aim to determine the optimal composition of the pre-hospital medical response team and evaluate the importance of including a doctor to the team. \cite{Jabali} present a continuous approximation model to determine the long-term vehicle fleet composition needed to perform distribution activities, in which fleet size and mix of fleets are important decision variables.  These problems resembles the Fantasy Team problem as similar decisions arise when one are to decide which formation one should use in addition to the mix of players. 
+
+
+
 \newpar
 Finally, there is a large correspondence between FTCP and portfolio optimization problems(see, e.g., \cite{Markowitz} and \cite{Speranza}). The FTCP can be conceived as the problem of investing in number of assets (football players) with stochastic returns in order to maximize some utility function (the total number of points). Likewise, the budget limit in FTCP can be seen as a budget constraint in portfolio optimization. However, in FTCP the decisions are binary (a player is either bought or not) while in portfolio optimization fractions of wealth can be allocated to different assets. In addition, there is a limit of the total number of players as well a restriction on number of players in different roles in FTCP - while in portfolio optimization problems there is no restriction on total number of assets and restriction on different asset types is not given beforehand. Further, variance is a well known measure of risk in portfolio optimization problems and considering the resemblance to FTCP, an implementation of a measure of risk should be considered. \cite{Dailyfantasysports} optimizes the expected payout of a tiered Daily NFL Fantasy Sports by using a stochastic integer program. Here variance is used as a measure of risk, and the standard deviation is approximated with a piecewise linear function. 
 
 \section{Our Contribution}
-
-
-%\section{Other Relevant Research} \label{other_relevant_research}
-
-%This section presents literature that focuses primarily on blogs and fan posts which is not regarded as academic work. It aims attention on player performance and is therefore related to the subject of this project. 
-
-
-
-%\subsection{xG Model}\label{xG_model}
-%The Expected Goals Model(xG) was first introduced in football by \cite{samgreen}, and have since seen an incredible rise. It is now one of the most used metrics in football analysis and it is slowly breaking through in sports media. For instance, big sport channels as SkySports\citep{skysports} in England and TV2\citep{tv2} in Norway have recently adopted the term in their after-match analysis.  
-\newpar
-%This is a method that provides an estimate of the quality of a scoring opportunity. It asks the question; what is the likelihood that a shot from this distance in this game situation converts into a goal. There exist several models on both blogs and fan communities, and all use similar set of variables such as distance from goal, angle, type of shot and type of pass that assisted the shot. It has been used both to rank teams and individual players in different sports. \cite{macdonald} and \cite{vabo} use this approach in ice hockey and football, respectively. As FPL managers are generally interested in the expected player performances, rankings of players play an important role when selecting the team. 
-\newpar 
-%xG have been under criticism for being too naive and not catching all aspects of a scoring chance\citep{michaelcaley1}. The biggest fallacy is that does not take into consideration defender's location on the pitch. This is mainly due to the lack of data, where the only available data are ball actions and not player locations. \cite{lucey} explains the huge difference in accuracy of expected goals by knowing defender proximity and the number of defenders between the ball and the goal. Another weakness is that it does not consider the player's finishing skills. It does not distinguish if it is a defender or an attacker taking the shot, a big difference in terms of quantifying a goal chance. 
 
 
 \iffalse %brukes for å kommentere ut alt nedenfor
