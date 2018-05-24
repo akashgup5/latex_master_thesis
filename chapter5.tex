@@ -6,29 +6,17 @@
 The FTCP is a complex problem with a high degree of uncertainty. In each gameweek a large range of decisions must be optimized. Compared to other Fantasy Sports, the gamechips makes it even more complicated. The objective of the model presented in Chapter 4 is to maximize the number of expected points. If the model is run ex-post, the model yields the optimal solution as the realized points are known. However, in order to compete in FPL, decisions must be made ex-ante. Thus, estimations of expected points and strategies for when the gamechips should be played are required. The aim of this chapter is to provide such input and propose a solution method in order to maximize performance over the entire season. 
 
 \newpar
-
-This chapter deals with methodology, while numerical values are introduced in Chapter \ref{chapter_experimental_setup}, Experimental Setup. In the first section of this chapter, we present an overview of the solution approach suggested. In Section \ref{Player_Performance}, three different methods for predicting player performance are described. Finally, in the Sections \ref{Ch.5_Game_chips} and \ref{Ch.5_Variance_tradeoff} respectively, methods for implementing gamechips and handling risk are proposed.
+In the first section of this chapter, we present an overview of the solution approach suggested. In Section \ref{Player_Performance}, three different methods for predicting player performance are described. Finally, in the Sections \ref{Ch.5_Game_chips} and \ref{Ch.5_Variance_tradeoff} respectively, methods for implementing gamechips and handling risk are proposed.
 
 
 \section{Solution Approach}
 
-As stochastic programming models seek to leverage probability distribution of uncertain parameters, they are regarded as more computational demanding than deterministic programming models \citep{Shapiro}. A common method for solving a stochastic model is by use of scenario generation. Solving the model over an entire season, this approach is not computational feasible. The number of scenarios explodes even for a modest number of scenarios. With 2 scenarios in a gameweek, the number of scenarios already reaches over 1 million for only 20 gameweeks, $2^{20} = 1 048 576$. Hence, the FTCP is solved by a deterministic approach. It is solved in a rolling horizon framework where decisions are implemented for one gameweek at a time. When decisions are optimized for a given gameweek, a certain number of gameweeks ahead is considered. 
-
-The mathematical model is adjusted for strategies for when to use gamechips and the element of risk handling is added. In addition, every time the decisions are optimized for a given gameweek
-
-for gamechip strategies and risk handling. In addition, every time the decisions are optimized for a given gameweek 
-
+As stochastic programming models seek to leverage probability distribution of uncertain parameters, they are regarded as more computational demanding than deterministic programming models \citep{Shapiro}. A common method for solving a stochastic model is by use of scenario generation. For the FTCP, the number of scenarios explodes even for a modest number of scenarios. With only two scenarios in a gameweek, the number of scenarios already reaches over 1 million for 20 gameweeks, $2^{20} = 1 048 576$. Therefore, solving a stochastic model over a whole season is computational infeasible. Hence, the FTCP is solved by a deterministic approach. It is solved in a rolling horizon framework where decisions are implemented for one gameweek at a time. When decisions are optimized for a given gameweek, a certain number of gameweeks ahead is considered. Input data such as predictions of player performance, estimation of empirical variance and correlation are done beforehand. The mathematical model is adjusted for strategies for when to use gamechips and the element of risk handling is added. 
 
 \newpar
 
-\begin{comment}
-I suggest you reorganize the material in the first part of this section. You have the right content but the order is confusing. 
-First: start by saying that you do not solve the stochastic program you presented. Say that you solve the optimization model in a rolling-horizon framework in order to make decisions for one gw at a time. 
-Second: say that every time you optimize for a given gw you consider a certain number of gws ahead of the focal gw. 
-Third: say that every time you optimize for a given gw you provide as input what you show in Figure 5.1.
-\end{comment}
 
-When using a forecast to estimate the expected value of a player's points, the objective function described in Section \ref{mathematical_model} changes from: 
+When using a forecast to estimate the expected value of a player's points, the objective function described in Section \ref{mathematical_model} is simplified from: 
 
 \begin{equation*}
 \smaller
@@ -62,7 +50,8 @@ The solution approach is divided into three different elements, as depicted in F
     \item Gamechip strategies
     \item Risk handling
 \end{itemize}
-All three elements can be regarded as input to the model, but in different ways. The predictions are estimations of player performance, while the gamechip strategies are decisions regarding when to play the various gamechips. In order account for risk, additional constraints are introduced. By risk, we refer to potential variance in overall team performance induced by variance in an individual player's performance and from correlation in points obtained by players in the same or opposing teams.
+
+The predictions are estimations of player performance, while the gamechip strategies are decisions regarding when to play the various gamechips. In order account for risk, additional constraints are introduced. By risk, we refer to potential variance in overall team performance induced by variance in an individual player's performance and from correlation in points obtained by players in the same or opposing teams.
 
 
 \begin{figure}[H]
@@ -91,7 +80,7 @@ As described in Section \ref{Other_Relevant_Research}, there is a large resembla
 
 \subsection{Rolling horizon}
 
-The Fantasy Team Composition Problem is solved by a rolling horizon heuristic. The idea behind a rolling horizon heuristic is to split the problem into several sub-problems along a time axis, and then solve them in a chronological order taking into account the solution of the previous sub-problem. The heuristic suits problems with a long planning horizon where there are limited dependency between decisions made early and late in the planning horizon. Industrial planning and scheduling problems are common areas where the heuristic is used. The most important considerations are the number of sub-problems versus the length of each sub-problem, and which decisions to fix in each sub-problem. 
+The idea behind a rolling horizon heuristic is to split the problem into several sub-problems along a time axis, and then solve them in a chronological order taking into account the solution of the previous sub-problem. The heuristic suits problems with a long planning horizon where there are limited dependency between decisions made early and late in the planning horizon. Industrial planning and scheduling problems are common areas where the heuristic is used. The most important considerations are the number of sub-problems versus the length of each sub-problem, and which decisions to fix in each sub-problem. 
 
 \begin{figure}[H]
     \centering
@@ -150,10 +139,11 @@ An important decision is that of determining the length of the sub-horizon. Idea
 \newpar
 
 \begin{algorithm}
+\setstretch{1.35}
 \caption{Forecast-based optimization model}
 \begin{algorithmic}
-\State{t = 0} 
-\While{(t = t+1) $\leq$ $\mathcal{T}$}
+\State{$t$ = 0} 
+\While{($t = t+1$) $\leq$ $\mathcal{|T|}$}
     \State{Generate input data: expected points, variance and correlation for $TP_{t}$}
     \If{any gw in $TP_{t}$ is \textit{double} or \textit{blank}}
         \State{Implement gamechip strategy}
@@ -180,7 +170,7 @@ An important decision is that of determining the length of the sub-horizon. Idea
 
 
 \begin{comment}
-\section{Player performance prediction}\label{Player_performance_prediction}
+\section{Player performance prediction} \label{Player_performance_prediction}
 The optimization model presented in chapter \ref{chapter_model_formulation} uses expected fantasy points as an input. A major uncertainty lies in prediction of football players performances. In this section, we initially present a brief discussion regarding evaluation of forecasting accuracy. Furthermore, we introduce three different methods of predicting future player performance. First, we present a regression model based on the historical Fantasy Premier League performance. Secondly, we replicate and modify the approach suggested by \cite{Bonomo}. Finally, we introduce an approach using bookmakers' odds in order to predict each player's expected points. 
 \end{comment}
 
@@ -188,11 +178,12 @@ The optimization model presented in chapter \ref{chapter_model_formulation} uses
 
 
 
-\section{Player Performance} \label{Player_Performance}
+\section{Player Performance Prediction} \label{Player_Performance}
 
 
 
-\subsection{Player Predictions Using Modified Average}
+\subsection{Player Predictions Using Modified Average} \label{Sol_approach_Modified_Average}
+
 The solution approach suggested by \cite{Bonomo} can be used for the English Fantasy Premier League as well as for the Argentinian. In general, one simply uses the average points performance for the recent gameweeks as the prediction of the performance for the next gameweek. In order to improve the prediction, one can account for team opponent, home advantage and whether a player is on a good performance streak. This is done by weighting a player's performance by three factors as mentioned in section \ref{Forecasting_of_player_performance}.
 \newpar
 In general, a player's point prediction is calculated according to the following equation:
@@ -352,6 +343,7 @@ If a player receives more than X points for 2 gameweeks in a row, his point stre
 
 
 \subsection{Player prediction using regression}
+\label{Sol_approach_regression}
 
 A second way of predicting Fantasy Premier League points is by use of regression. Before the regression-based prediction model is introduced, a brief discussion of evaluation of forecasting accuracy is presented.
 
@@ -437,7 +429,7 @@ It is often argued that form is an important factor in the performance of athlet
     r_k = \frac{\sum_{t=k+1}^T(y_t-\bar{y})(y_{t-k}-\bar{y})}{\sum_{t=1}^T(y_t-\bar{y})^2}
 \end{equation}
 
-The Ljung-Box test is statistical test that is often conducted in order to test for autocorrelation in a time series for different lags \citep{Hyndman}. The reader is referred to \cite{Hyndman} for a detailed description of the test.
+The Ljung-Box test is statistical test that is often conducted in order to test for autocorrelation in a time series for different lags \citep{Hyndman}. The reader is referred to \cite{Hyndman} for a detailed description of the test. The Durbin-Watson test is another test frequently conducted in order to test for the presence of autocorrelation at lag 1 \citep{Carol_1}. A detailed description of the test may for instance be found in \cite{Carol_1}.
 
 \subsubsection{Variable selection}
 
@@ -580,12 +572,12 @@ The Free Hit, which allows the manager to perform unlimited free transfers for o
 
 \subsection{Gamechip implementation in the mathematical model}
 
-The gamechips are implemented in the mathematical model by setting right hand side of constraints \ref{eq:Wildcard_first_half_of_the_season} - \ref{eq:free_hit} equal to 0, and are only set to 1 in the respective constraints when the specific gameweeks are considered in the sub-horizon. Thus, the constraints are deactivated and have no effect on the objective function. Alternatively, the constraints related to a gamechip could be relaxed or removed, and only introduced when the specific gameweeks are considered in the sub-horizon.
+The gamechips are implemented in the mathematical model by setting right hand side of constraints \ref{eq:wildcard_first_half_of_the_season} - \ref{eq:free_hit} equal to 0, and are only set to 1 in the respective constraints when the specific gameweeks are considered in the sub-horizon. Thus, the constraints are deactivated and have no effect on the objective function. Alternatively, the constraints related to a gamechip could be relaxed or removed, and only introduced when the specific gameweeks are considered in the sub-horizon.
 
 \newpar
 
 
-The opportunity of using a gamechip is firstly introduced when reaching a sub-horizon which includes a particular gameweek where a gamechip can be used. When that particular gameweek is reached, the respective constraints is split in two. For example, if the sub-horizon is set to 4, and the first Wildcard is allowed to be played in gameweek 12, it is first considered when the mathematical model is run for sub-problem 9. In the model, the right hand side of constraints \ref{eq:Wildcard_second_half_of_the_season} - \ref{eq:free_hit} are set to 0, while constraints \ref{eq:Wildcard_first_half_of_the_season} is split in two: 
+The opportunity of using a gamechip is firstly introduced when reaching a sub-horizon which includes a particular gameweek where a gamechip can be used. When that particular gameweek is reached, the respective constraints is split in two. For example, if the sub-horizon is set to 4, and the first Wildcard is allowed to be played in gameweek 12, it is first considered when the mathematical model is run for sub-problem 9. In the model, the right hand side of constraints \ref{eq:wildcard_second_half_of_the_season} - \ref{eq:free_hit} are set to 0, while constraints \ref{eq:wildcard_first_half_of_the_season} is split in two: 
 
 \begin{equation*}
     \begin{aligned}
@@ -609,10 +601,10 @@ The other gamechips are implemented in a similar way as the Wildcard.
 \section{Risk Handling} \label{Ch.5_Variance_tradeoff}
 
 \subsection{Variance}
-Variance refers to the variability in each player's realized points. Some midfielders are for instance known to be consistently starting, but seldom contribute in terms of assists or goals. It is reasonable to assume that such players have a low expected value of points, but also a low variability in points earned. Other players might contribute a lot in terms of assists and goals when they are playing, but are perhaps often injured. Such players could have a high predicted value, but also a high variance in points obtained. In order to estimate each player's variance, empirical variance is calculated. \newpar
+Variance refers to the variability in each player's realized points. Some midfielders are for instance known to be consistently starting, but seldom contribute in terms of assists or goals. It is reasonable to assume that such players have a low expected value of points, but also a low variability in points earned. Other players might contribute a lot in terms of assists and goals when they are playing, but are perhaps often injured. Such players could have a high predicted value, but also a high variance in points obtained. \newpar
 
 \subsection{Correlation}
-The variance of each player only considers each player's individual contribution to the team's total variance. However, it is natural to assume that there exists a correlation between the performance of players. For instance, as the goalkeeper and defenders of the same team are rewarded for keeping a clean sheet, their performances are expected to be positively correlated. Similarly, it is intuitive that the goalkeeper and forwards of two opposing teams are negatively correlated. Whether or not there exists correlation between defenders of opposing teams are perhaps not so obvious. In order to estimate correlation between two players, empirical correlation is considered. In order to test for correlation, a hypothesis test is performed. \newpar
+The variance of each player only considers each player's individual contribution to the team's total variance. However, it is natural to assume that there exists a correlation between the performance of players. For instance, as the goalkeeper and defenders of the same team are rewarded for keeping a clean sheet, their performances are expected to be positively correlated. Similarly, it is intuitive that the goalkeeper and forwards of two opposing teams are negatively correlated. Whether or not there exists correlation between defenders of opposing teams are perhaps not so obvious. In order to test for correlation, Pearson's Product-Moment Correlation test is performed. By applying the test, a few assumptions are made. The variables are assumed approximately normally distributed and display homoscedasticity (constant variance). For a full description of Pearson's Product-Moment Correlation and its underlying assumptions, the reader is referred to \cite{laerd}.  \newpar
 
 \subsection{Team Variance}
 
@@ -665,12 +657,8 @@ In the mathematical model, we may now determine an upper threshold for the varia
 \begin{comment}
 \subsection{Further discussion}
 \begin{itemize}
-    \item Na = average (bare aktuelt når spilleren kun har spilt en kamp, før det vil han ikke velges) 
-    \item 0 = min $>$ 0
-    \item tar med alle tilgjengelige observasjoner
     \item diskutere om fordeling
     \item varians eller standardavvik
-    \item only non-zero data considered
     \item what hypotesis test is performed
 \end{itemize}
 \end{comment}
