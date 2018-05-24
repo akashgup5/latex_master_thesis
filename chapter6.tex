@@ -8,7 +8,7 @@ In this chapter we present an experimental setup for the solution approach sugge
 The chapter begins with a presentation and discussion of the data in Section \ref{exp_setup_data}. Then, in Section \ref{Exp_setup_Player_Performance_Prediction}, we elaborate on how parameters and input associated with the three different prediction models are decided. Section \ref{exp_setup_gamechips} provides the decisions on which gameweeks to consider the use of gamechips. Finally, in Section \ref{exp_setup_Value_Variance} the numerical values related to the risk handling are presented.
 
 \section{Data} \label{exp_setup_data}
-We have used data provided by the official website of Fantasy Premier League. A detailed record of such data for both the 2016/2017- and the 2017/2018 season is kept by \url{www.fantasyoverlord.com}. A major drawback is the lack of data on Fantasy Premier League. As we only have data for two seasons, we are only capable of training the model on one season, and test on the other. It is reasonable to assume that if more data were available the model could be improved further and more robust statements could be made. Elo values for each Premier League team are obtained from \url{www.clubelo.com}. In addition, Sportradar has provided odds and probabilities for the fixtures of the 2017/2018 season. 
+We have used data provided by the official website of Fantasy Premier League. A detailed record of such data for both the 2016/2017- and the 2017/2018 season is kept by \url{www.fantasyoverlord.com}. As we only have data for two seasons, we are only capable of training the model on one season, and test on the other. This is a drawback, since it is reasonable to assume that if more data were available the model could be improved further and more robust statements could be made. Elo values for each Premier League team are obtained from \url{www.clubelo.com}. In addition, Sportradar has provided odds and probabilities for the fixtures of the 2017/2018 season. 
 
 \subsection{Processing of Player's Data}
 
@@ -17,7 +17,7 @@ Once a player is listed as injured and thus unavailable for the upcoming gamewee
 
 \newpar
 
-As for injuries, suspensions are also accounted for by rewarding suspended players with an expected points of 0 in the gameweeks where they are suspended. A player may be suspended for up to three games when receiving a red card, depending on whether it was a direct red card or not. Further, players are subject to a match ban when receiving their 5th, 10th or 15th yellow card of the season. In addition, a player can be suspended by the English Football Association if he is found guilty of unsportsmanlike conduct. 
+As for injuries, suspensions are also accounted for by rewarding suspended players 0 expected points in the gameweeks where they are suspended. A player may be suspended for up to three games when receiving a red card, depending on whether it was a direct red card or not. Further, players are subject to a match ban when receiving their 5th, 10th or 15th yellow card of the season. In addition, a player can be suspended by the English Football Association if he is found guilty of unsportsmanlike conduct. 
 
 
 \subsubsection{Promoted teams}
@@ -63,18 +63,95 @@ Away advantage & 0.867 & 0.886 & 0.863 & 0.851 & 0.895 & 0.859 & \textbf{0.872} 
 As for the point streak factor, the variables \textit{X} and \textit{Y} regarding whether a player is on a point streak, has to be decided. Since goalkeepers and defenders receive 4 points for keeping a clean sheet, all players get 3 points for an assist and midfielders and forwards get 5 and 4 points respectively for scoring a goal, the X variable should be set according to these numbers. Further, as a player gets 2 points for playing more than 60 minutes, it is appropriate to let the \textit{X} variable take a value of 5. Hence, if a player keeps a clean sheet, has an assist or scores a goal and in addition plays at least 60 minutes, he will receive enough points to be on a positive point streak given that he did not receive a yellow or red card. As for the \textit{Y} variable, a player that does not contribute with neither a goal, assist nor a clean sheet is awarded maximum 2 points. Thus, it is reasonable to set the \textit{Y} equal to 2 points. 
 
 
-\subsubsection{Determining optimal forecasting horizon, sub-horizon and penalty term}
+\subsubsection{Determining optimal forecasting horizon and optimization horizon}
 
-When perfect information is available, the optimal optimization horizon is the complete season of 38 gameweeks. Furthermore, the penalty term would be 4, as stated in the rules of the game. However, we do not operate within the domain of perfect information, so these parameter settings are not guaranteed optimal. Further, decisions must be made on how many matches to look back in the past when calculating the forecasts based on average performance in previous games.
+With perfect information available, an optimization horizon 38 gameweeks (an entire season) is optimal. However, as perfect information is not available ahead of a gameweek, a sub-horizon of 38 gameweeks is not guaranteed to be optimal. In fact, considering all the uncertainty of future events, regarding goalscoring defenders, penalties saves, injuries etc. a sub-horizon of 38 gameweeks is unlikely to be optimal. In the following, we aim to determine an optimal sub-horizon based on the results from the 2016/2017 season. In addition, we decide how many gameweeks to look back when forecasting the future performances based on the previous averages.
+\newpar
+When determining the optimal optimization- and forecast horizon, we have decided that the forecast horizon should be at least as long as the optimization horizon. Moreover, the readers should be aware that the player predictions are expected to improve as the forecast horizon increases. For instance, consider the case when the forecast horizon is 6 gameweeks. As the data is tested on the 2016/2017 season, we only have data to consider the matches after gameweek 6 has been played. Hence, we get an opportunity of initially selecting the players that have performed best over the 6 first gameweeks. As an increase in forecast horizon allows one to select players that have initially performed well over more matches, one can argue that the player selection in 2016/2017 is biased to some degree. Due to this bias, we do not consider forecast horizons greater than 6 gameweeks. 
+\newpar
+Notice that only the testing data is biased. When we run the model for the 2017/2018 season, the previous gameweeks are simply set to previous gameweeks from the 2016/2017 season. Moreover, the reader should bear in mind that the parameters set are based solely on data from 2016/2017. Ideally, the parameters should have been tested over several seasons. 
+\newpar
+Figure \ref{fig:pen_4} displays the results when considering forecast horizons from 3 to 6 gameweeks as well as optimization horizons from 1 to 6 gameweeks.  Moreover, Table \ref{tab:pen_4_ill_trans} provides the numerical means displayed in Figure \ref{fig:pen_4} as well as average weekly illegal transfers made. 
 
-\subsubsection{Model run with penalty 4}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.55]{fig/chapter_6/pen_4.png}
+    \caption{Performance with changing optimization- and forecast horizons and constant transfer penalty 4}
+\label{fig:pen_4}    
+\end{figure}
 
+\begin{comment}
+\begin{table}[H]
+\centering
+\caption{Performance with changing optimization- and forecast horizons and constant transfer penalty 4}
+\label{tab:pen_4}
+\begin{tabular}{lllll}
+penalty & horizon & f\_horizon & objective\_value & mean  \\
+4       & 1       & 5          & 1644             & 49,82 \\
+4       & 1       & 4          & 1684             & 49,53 \\
+4       & 1       & 6          & 1544             & 48,25 \\
+4       & 2       & 6          & 1513             & 47,28 \\
+4       & 2       & 4          & 1562             & 45,94 \\
+4       & 4       & 5          & 1509             & 45,73 \\
+4       & 3       & 5          & 1504             & 45,58 \\
+4       & 2       & 5          & 1491             & 45,18 \\
+4       & 5       & 5          & 1481             & 44,88 \\
+4       & 1       & 3          & 1555             & 44,43 \\
+4       & 3       & 6          & 1407             & 43,97 \\
+4       & 5       & 6          & 1361             & 42,53 \\
+4       & 4       & 6          & 1355             & 42,34 \\
+4       & 6       & 6          & 1350             & 42,19 \\
+4       & 3       & 4          & 1428             & 42,00 \\
+4       & 4       & 4          & 1428             & 42,00 \\
+4       & 2       & 3          & 1394             & 39,83 \\
+4       & 3       & 3          & 1357             & 38,77
+\end{tabular}
+\end{table}
+\end{comment}
+
+
+
+\begin{table}[H]
+\centering
+\caption{Illegal transfers with penalty 4}
+\label{tab:pen_4_ill_trans}
+\begin{tabular}{llllll}
+penalty & horizon & f\_horizon & objective\_value & mean  & ill\_trans\_gameweek \\
+4       & 1       & 5          & 1644             & 49.82 & 1.48       \\
+4       & 1       & 4          & 1684             & 49.53 & 1.88       \\
+4       & 1       & 6          & 1544             & 48.25 & 1.34       \\
+4       & 2       & 6          & 1513             & 47.28 & 2.09       \\
+4       & 2       & 4          & 1562             & 45.94 & 2.74       \\
+4       & 4       & 5          & 1509             & 45.73 & 2.88       \\
+4       & 3       & 5          & 1504             & 45.58 & 2.70       \\
+4       & 2       & 5          & 1491             & 45.18 & 2.55       \\
+4       & 5       & 5          & 1481             & 44.88 & 3.00       \\
+4       & 1       & 3          & 1555             & 44.43 & 2.63       \\
+4       & 3       & 6          & 1407             & 43.97 & 2.69       \\
+4       & 5       & 6          & 1361             & 42.53 & 3.03       \\
+4       & 4       & 6          & 1355             & 42.34 & 2.91       \\
+4       & 6       & 6          & 1350             & 42.19 & 3.22       \\
+4       & 3       & 4          & 1428             & 42.00 & 3.47       \\
+4       & 4       & 4          & 1428             & 42.00 & 3.50       \\
+4       & 2       & 3          & 1394             & 39.83 & 3.91       \\
+4       & 3       & 3          & 1357             & 38.77 & 4.29      
+\end{tabular}
+\end{table}
+
+
+As observed, the model reaches its best performances  with an optimization horizon of 1 gameweek combined with a forecast horizon between 4 and 6 gameweeks. 
+However, obtaining a weekly mean of 49.82 points is considered rather poor. From Table \ref{tab:pen_4_ill_trans}, its observable that the model performs many penalized transfers.  In general, making more than 1 penalized transfer on average is considered a lot. As they deduct points from the total score, they have a huge impact on the overall rankings. Moreover, according to Table \ref{tab:pen_4_ill_trans}, the performances generally increases as the number of illegal transfers decreases. Hence, in the following we investigate how regulations on the penalty parameter affects the results.  
 
 \subsubsection{Model run with different penalties}
-In order to set the values of the parameters in a sensible way, a number of different combinations of the three parameters are tested on the 2016/2017 season. Figure \ref{Parameter_choice} provides an overview of how the mean value of points for the entire 2016/2017 season changes with different forecasting horizons, sub-horizons and penalty terms. In the figure, only the best run (maximum mean) for each different penalty value from 3-20 is plotted. Furthermore, each combination of sub- and forecast horizon are run as long as the optimization horizon is not greater that the forecast horizon. One should be careful not to make too categorical statements based on the figure. When the forecast horizon is 6 weeks, we can only consider the matches after gameweek 6 has been played. Hence, we get an opportunity of initially selecting the players that have performed best over the 6 first gameweeks. Intuitively, the results will be better as the forecast horizon increases, as one get the opportunity of initially selecting players that have already proven to perform well the same season. However, some insights can be reached based on the figure. First, a sub-horizon of 3-4 appears to  be ideal. Furthermore, a penalty in the range of 15-20 appears to yield the best results. As does a forecasting horizon between 5-6. However, this is not unexpected due to the bias in player selection.
+In order to set the values of the parameters in a sensible way, a number of different combinations of the three parameters are tested on the 2016/2017 season. Figure \ref{Parameter_choice} provides an overview of how the mean value of points for the entire 2016/2017 season changes with different forecasting horizons, optimization horizons and penalty terms. Moreover, Table \ref{tab:top_10} provides the numerical values from the best 10 combinations in Figure \ref{Parameter_choice}.
 
 
+\newpar
+
+\begin{comment}
 \textit{Avsnittet ovenfor må skrives mer utfyllende og inneholde mer diskusjon. Spesielt fra setningen "Frist, a sub-horizon of 3-4..." og utover. Viktige punker å få med: at dette er kun testet på en sesong og derfor må alt bli tatt med en klype salt. Man vil ikke teste for mer enn forecasting horizon på 6, siden da har man så få datapunker å basere seg på at det blir unfair å sammenlikne dens resultater med forecasting horizon på f.feks 2. Det skrives at sub-horizon på 3-4 ser ideell ut, men hvorfor? Det må skrives.}
+\end{comment}
+
 
 \begin{figure}[H]
     \centering
@@ -82,10 +159,6 @@ In order to set the values of the parameters in a sensible way, a number of diff
     \caption{Performance with different transfer penalties, optimization horizons and forecast horizons}
 \label{Parameter_choice}    
 \end{figure}
-
-Table \ref{tab:top_10} displays the 10 best combinations. The table clearly shows that a penalty between 15-20, optimization horizon of 3-4 and forecast horizon of 5-6 was optimal in the 2016/2017 season, when mean is considered. Again, we stress that the mean intuitively is expected to increase with a longer forecast horizon. Table \ref{tab:top_5} displays the best combinations when forecasting horizon is held fixed. Figure \ref{fig:fixed_f_hor} displays the best combinations with a fixed forecasting horizon.
-
-
 
 \begin{table}[H]
 \centering
@@ -106,18 +179,8 @@ Penalty & Horizon & Forecast Horizon & Total Points & Mean  \\
 \end{tabular}
 \end{table}
 
-\begin{table}[H]
-\centering
-\caption{The best combinations for each forecast horizon}
-\label{tab:top_5}
-\begin{tabular}{lllll}
-Penalty & Horizon & Forecast Horizon & Total Points & Mean  \\
-9       & 1       & 3                & 1914         & 54.69 \\
-11      & 2       & 4                & 1863         & 54.79 \\
-20      & 4       & 5                & 1899         & 57.55 \\
-20      & 4       & 6                & 1851         & 57.84
-\end{tabular}
-\end{table}
+
+In Figure \ref{Parameter_choice}, only the best run (maximum mean) for each different penalty value from 3 to 20 is plotted. According to the figure and Table \ref{tab:top_10}, optimization horizons of 3 to 4 gameweeks appear to be ideal, as they provide the combinations with the highest mean performances. Furthermore, penalties in the range of 14 to 20 yield the best results. As for the forecasting horizons, values of 5 and 6 gameweeks are clearly optimal. However, the latter is not unexpected due to the bias in player selection. 
 
 \begin{figure}[H]
     \centering
@@ -125,6 +188,19 @@ Penalty & Horizon & Forecast Horizon & Total Points & Mean  \\
     \caption{Performance with different transfer penalties and optimization horizons, but fixed forecast horizon}
 \label{fig:fixed_f_hor}    
 \end{figure}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lllll}
+Penalty & Horizon & Forecast Horizon & Total Points & Mean  \\
+9       & 1       & 3                & 1914         & 54.69 \\
+11      & 2       & 4                & 1863         & 54.79 \\
+20      & 4       & 5                & 1899         & 57.55 \\
+20      & 4       & 6                & 1851         & 57.84
+\end{tabular}
+\caption{The best combinations for each forecast horizon}
+\label{tab:top_5}
+\end{table}
 
 \begin{comment}
 In general, one can see that low transfer penalties combined with a high forecast horizon yield the poorest results. Furthermore, it seems like choosing 7 or 8 as the forecast horizon is the wiser choice. In addition, the transfer penalty should be set to a value above 10. Based on figure \ref{Parameter_choice}, a combination found in the center appears to be optimal, and the values $h = 6$, $f = 7$ and $p = 11$ are chosen. Also, a combination of $h = 4$, $f = 8$ and $p = 14$ yield good results. 
@@ -172,13 +248,23 @@ In general, one can see that low transfer penalties combined with a high forecas
 
 \end{comment}
 
-Table \ref{tab:top_10} shows that a forecast horizon of 6 gameweeks combined with a optimization horizon of 4 gameweeks and a transfer penalty of 20 yields the highest mean for the 2016/2017 season. However, the next 4 top means are achieved with a forecast horizon of 5 gameweeks. Considering this, combined with the fact that an increasing forecast horizon limits the amount of gameweeks considered, we find it appropriate to select 5 gameweeks as the optimal forecast horizon. Moreover, according to table \ref{tab:top_10} an optimization horizon of 3 or 4 gameweeks is optimal. For high penalties, this is confirmed by figure \ref{fig:fixed_f_hor}. Furthermore, the figure illustrates that the optimization horizon of 6 gameweeks yields the highest mean for a forecast horizon of 5 gameweeks. However, it can be observed that an optimization horizon of 3 gameweeks in general performs better than that of 4 gameweeks. Therefore, we find it convenient to set the optimization horizon to 3 gameweeks when applying the adjusted average approach for the 2017/2018 season. Finally, figure \ref{fig:fixed_f_hor} illustrates that a higher penalty yields better means for the 2016/2017, reaching its best performance for penalties ranging from 14 to 20. As the results are somehow inbetween these penalties and dependent on the choices of the forecast- and optimization horizon, we have chosen a penalty value of 16. 
+Figure \ref{fig:fixed_f_hor} and Table \ref{tab:top_5} display the best combinations when the forecasting horizon is held fixed for 3 to 6 gameweeks. Clearly, forecast horizons of 5 and 6 gameweeks outperform those of 3 and 4 gameweeks. Moreover, Table \ref{tab:top_10} shows that a forecast horizon of 6 gameweeks combined with a optimization horizon of 4 gameweeks and a transfer penalty of 20 yields the highest mean for the 2016/2017 season. However, the next 4 top means are achieved with a forecast horizon of 5 gameweeks. Considering this, combined with the fact that an increasing forecast horizon yield biased player predictions, we find it appropriate to select 5 gameweeks as the optimal forecast horizon for the 2017/2018 season. Additionally, according to Figure \ref{fig:fixed_f_hor} an optimization horizon of 3 or 4 gameweeks is optimal. In general, an optimization horizon of 3 gameweeks performs better than that of 4 gameweeks. Therefore, we find it convenient to set the optimization horizon to 3 gameweeks when applying the adjusted average approach for the 2017/2018 season.
+Finally, figure \ref{fig:fixed_f_hor} illustrates that the higher penalties yield better means for the 2016/2017, reaching its best performance for penalties ranging from 14 to 20. 
+\newpar
+As the results are somehow inbetween these penalties and dependent on the choices of the forecast- and optimization horizon, we have chosen a penalty value of 16. 
+\newpar
+In order to summarize the discussion above, we have chosen to run the Modified Average approach using the following parameters:
+\begin{itemize}
+    \item Optimization horizon - 3 gameweeks
+    \item Forecast horizon - 5 gameweeks
+    \item Penalty - 16
+\end{itemize}
 
-\subsection{Regression}
+\subsection{Regression}\label{exp_setup_reg}
 
 \subsubsection{Categorization based on Position}
 
-As outlined in Section N, we have decided to segment each player into his distinct position on the field. This decision is based on the fact that players are awarded points for different achievements based on their position. Also, the decisions are substantiated by some plots. First, Figure \ref{fig:box_plot} displays a box-plot of the total points for each different position. Moreover, Figure \ref{fig:cs_tot_p} and Figure \ref{fig:goal_tot_p} show how points are associated with different variables for different positions. The analysis is done for gameweek 1-32 in season 2016/2017, as these are the gameweeks that constitute the training set used later in the lasso regression.
+As outlined in Section \ref{Sol_approach_regression}, we have decided to separate each player into his distinct position on the field. To substantiate this decision, a visual assessment is undertaken. First, Figure \ref{fig:box_plot} displays a box-plot of the total points for each different position. Moreover, Figure \ref{fig:cs_tot_p} and Figure \ref{fig:goal_tot_p} show how points are associated with different variables for different positions. The analysis is done for gameweek 1-32 in season 2016/2017, as these are the gameweeks that constitute the training set used later in the lasso regression.
 
 \begin{figure}[H]
     \centering
@@ -203,20 +289,20 @@ As outlined in Section N, we have decided to segment each player into his distin
 
 \subsubsection{Time Series of Points}
 
-In order to determine if one should view the points a player obtains as a time series, the Durbin-Watson and Ljung-Box tests for autocorrelation are performed. In Table \ref{tab:auto_tests} the results of the tests with lags from 1-5 are presented. Based on the results, 75\%-95\% of the players appear to have insignificant autocorrelation in their time-series of points. This result should be interpreted carefully. For instance, the players that did not play the entire season earned 0 points in each gameweek, and would certainly exhibit no autocorrelation. Regardless, we have decided to treat aggregates only, and neglect time-series effects in the regression. That is, the variable previous points is excluded from consideration. The methodology works as a complement to the Modified Average method, where only points in latest games are considered.
+In order to determine if one should view the points a player obtains as a time series, the Durbin-Watson test and Ljung-Box test with lag 1-5 for autocorrelation are performed. In Table \ref{tab:auto_tests} the results of the tests are presented. Based on the results, 75\%-95\% of the players appear to have insignificant autocorrelation in their time-series of points at a significance level of 10 \%. This result should be interpreted carefully as the calculation is done for all players, and individual players may still display a time-dependency in points obtained. Regardless, we have decided to treat aggregates only, and neglect time-series effects in the regression. That is, the variable previous points is excluded from consideration. The methodology works as a complement to the Modified Average method, where only points in latest games are considered.
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ll}
-Test            & \% of players with insignificant autocorrelation \\
-Durbin-Watson   & 94 \%                                            \\
-Ljung-Box lag 1 & 76 \%                                            \\
-Ljung-Box lag 2 & 76 \%                                            \\
-Ljung-Box lag 3 & 78 \%                                            \\
-Ljung-Box lag 4 & 80 \%                                            \\
-Ljung-Box lag 5 & 81 \%                                           
+\begin{tabular}{lll}
+Test            & \% significance level 10\% & \% significance level 5\% \\
+Durbin-Watson   & 94 \% & 99 \%                                            \\
+Ljung-Box lag 1 & 76 \% & 84 \%                                            \\
+Ljung-Box lag 2 & 76 \% & 81 \%                                            \\
+Ljung-Box lag 3 & 78 \% & 84 \%                                            \\
+Ljung-Box lag 4 & 80 \% & 84 \%                                           \\
+Ljung-Box lag 5 & 81 \% & 85 \%                                          
 \end{tabular}
-\caption{Summary of percentage of players with insignificant autocorrelation for different tests.}
+\caption{Summary of percentage of players with insignificant autocorrelation for different tests and significance levels.}
 \label{tab:auto_tests}
 \end{table}
 
@@ -226,7 +312,15 @@ As described in Section \ref{Sol_approach_regression}, lasso regression is perfo
 
 \newpar
 
+\subsubsection{Goalkeepers}
+As evident from Figure \ref{fig:goal_tot_p} no goalkeepers scored a goal in the up to gameweek 32 in the 2016/2017 English Premier League season. Furthermore, only one assist was provided. Therefore, we have decided not to consider these exploratory variables when performing the variable selection for goalkeepers. 
+
+
+\begin{comment}
+
 In Figures \ref{fig:lasso_GLK_1}, \ref{fig:lasso_DEF_1}, \ref{fig:lasso_MID_1} and \ref{fig:lasso_FWD_1} the RMSE of the test set is plotted against different values of log($\lambda$) for goalkeepers, defenders, midfielders and forwards respectively. Further, their significant variables are listed in Tables \ref{tab:sig_var_GLK_1}, \ref{tab:sig_var_DEF_1}, \ref{tab:sig_var_MID_1} and \ref{tab:sig_var_FWD_1} respectively.
+
+\end{comment}
 
 \begin{comment}
 
