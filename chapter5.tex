@@ -3,7 +3,7 @@
 
 \chapter{Solution Framework} \label{chapter_solution_approach}
 
-The FTCP is a complex problem with a high degree of uncertainty. In each gameweek a large range of decisions must be optimized. Compared to other Fantasy Sports, the gamechips makes it even more complicated. The objective of the model presented in Chapter 4 is to maximize the number of expected points. If the model is run ex-post, the model yields the optimal solution as the realized points are known. However, in order to compete in FPL, decisions must be made ex-ante. Thus, estimations of expected points and strategies for when the gamechips should be played are required. The aim of this chapter is to provide such input and propose a solution method in order to maximize performance over the entire season. 
+The FPLDP is a complex problem with a high degree of uncertainty. In each gameweek a large range of decisions must be optimized. Compared to other Fantasy Sports, the gamechips makes it even more complicated. The objective of the model presented in Chapter 4 is to maximize the number of expected points. If the model is run ex-post, the model yields the optimal solution as the realized points are known. However, in order to compete in FPL, decisions must be made ex-ante. Thus, estimations of expected points and strategies for when the gamechips should be played are required. The aim of this chapter is to provide such input and propose a solution method in order to maximize performance over the entire season. 
 
 \newpar
 In the first section of this chapter, we present an overview of the solution approach suggested. In Section \ref{Player_Performance}, three different methods for predicting player performance are described. Finally, in the Sections \ref{Ch.5_Game_chips} and \ref{Ch.5_Variance_tradeoff} respectively, methods for implementing gamechips and handling risk are proposed.
@@ -11,7 +11,7 @@ In the first section of this chapter, we present an overview of the solution app
 
 \section{Solution Approach}
 
-As stochastic programming models seek to leverage probability distribution of uncertain parameters, they are regarded as more computational demanding than deterministic programming models \citep{Shapiro}. A common method for solving a stochastic model is by use of scenario generation. For the FTCP, the number of scenarios explodes even for a modest number of scenarios. With only two scenarios in a gameweek, the number of scenarios already reaches over 1 million for 20 gameweeks, $2^{20} = 1 048 576$. Therefore, solving a stochastic model over a whole season is computational infeasible. Hence, the FTCP is solved by a deterministic approach. It is solved in a rolling horizon framework where decisions are implemented for one gameweek at a time. When decisions are optimized for a given gameweek, a certain number of gameweeks ahead is considered. Input data such as predictions of player performance, estimation of empirical variance and correlation are done beforehand. The mathematical model is adjusted for strategies for when to use gamechips and the element of risk handling is added. 
+As stochastic programming models seek to leverage probability distribution of uncertain parameters, they are regarded as more computational demanding than deterministic programming models \citep{Shapiro}. A common method for solving a stochastic model is by use of scenario generation. For the FPLDP, the number of scenarios explodes even for a modest number of scenarios. With only two scenarios in a gameweek, the number of scenarios already reaches over 1 million for 20 gameweeks ($2^{20} = 1\,048\,576$). Therefore, solving a stochastic model over a whole season is computational infeasible. Hence, the FPLDP is solved by a deterministic approach. It is solved in a rolling horizon framework where decisions are implemented for one gameweek at a time. When decisions are optimized for a given gameweek, a certain number of gameweeks ahead is considered. Input data such as predictions of player performance, estimation of empirical variance and correlation are done beforehand. The mathematical model is adjusted for strategies for when to use gamechips and the element of risk handling is added. 
 
 \newpar
 
@@ -76,7 +76,7 @@ Gamechip strategies are actions developed to decide when it is optimal to use th
 
 \newpar
 
-As described in Section \ref{Other_Relevant_Research}, there is a large resemblance between the Football Team Composition Problem and the well known Markowitz portfolio selection problem in financial theory. This is taken advantage of as constraints related to handling of risk are incorporated by use of empirical variance and correlation. 
+As described in Section \ref{Other_Relevant_Research}, there is a large resemblance between the FPLDP and the well known Markowitz portfolio selection problem in financial theory. This is taken advantage of as constraints related to handling of risk are incorporated by use of empirical variance and correlation. 
 
 \subsection{Rolling horizon}
 
@@ -85,15 +85,15 @@ The idea behind a rolling horizon heuristic is to split the problem into several
 \begin{figure}[H]
     \centering
     \includegraphics[scale = 0.47]{fig/chapter_5/Rolling_Horizon_Information_Flow.png}
-    \caption{Information flow in the FTCP.}
+    \caption{Information flow in the FPLDP.}
     \label{fig:information_flow}
 \end{figure}
 
-Rolling horizon is an appropriate solution method for FTCP as managers are provided new information and face new decisions every gameweek. That is, each gameweek is a sub-problem. As shown in figure \ref{fig:information_flow}, decisions are made based on the information available. When a gameweek is played, updated information such as realized points, injuries and suspensions are made available. Hence, new decisions are made accordingly. Consequently, the problem is divided into $\mathcal{|T|}$ number of sub-problems along a time axis. That is, the decisions taken in a gameweek affects decisions in future gameweeks. However, decisions made early in the season has a limited impact on decisions made late in the season. It is fully possible to have a whole different selected squad in the last gameweeks compared to that of the first gameweeks. This is especially the case when the Wildcard is applied.
+Rolling horizon is an appropriate solution method for FPLDP as managers are provided new information and face new decisions every gameweek. That is, each gameweek is a sub-problem. As shown in figure \ref{fig:information_flow}, decisions are made based on the information available. When a gameweek is played, updated information such as realized points, injuries and suspensions are made available. Hence, new decisions are made accordingly. Consequently, the problem is divided into $\mathcal{|T|}$ number of sub-problems along a time axis. That is, the decisions taken in a gameweek affects decisions in future gameweeks. However, decisions made early in the season has a limited impact on decisions made late in the season. It is fully possible to have a whole different selected squad in the last gameweeks compared to that of the first gameweeks. This is especially the case when the Wildcard is applied.
 
 \newpar
 
-In the rolling horizon heuristic, each sub-problem is solved over a sub-horizon. This corresponds well to the FTCP, as FPL managers often consider several gameweeks when making decisions. Each sub-problem is split into three parts:
+In the rolling horizon heuristic, each sub-problem is solved over a sub-horizon. This corresponds well to the FPLDP, as FPL managers often consider several gameweeks when making decisions. Each sub-problem is split into three parts:
 \begin{itemize}
     \item \textbf{Fixed part (FP)}. Set of gameweeks where decisions have been made and are fixed for the remainder of the solution process. These decisions are the players that are selected in a gameweek, $x$, the remaining budget variable, $v$, and the number of free transfers available, $q$.
     \item \textbf{Central part (CP)}. A gameweek where new decisions are made. The decisions include which players to include in the selected squad, $x$, determining the starting line-up, $y$, the choice of captain, $f$,  vice-captain, $h$, whether to use a gamechip or not and which substitution priority, $g$, to assign.  
@@ -345,11 +345,17 @@ If a player receives more than X points for 2 gameweeks in a row, his point stre
 \subsection{Player prediction using regression}
 \label{Sol_approach_regression}
 
-A second way of predicting Fantasy Premier League points is by use of regression. Before the regression-based prediction model is introduced, a brief discussion of evaluation of forecasting accuracy is presented.
+A second way of predicting Fantasy Premier League points is by use of regression. In order to create a regression model, we have undertaken the following steps:
+\begin{itemize}
+    \item Separate players based position
+    \item Perform a variable selection
+    \item Fit a linear regression model
+\end{itemize}
+Before the approach is further introduced, a brief discussion of the theory applied is presented.
 
 
 \subsubsection{Training and test sets}
-In order to determine the accuracy of a forecast, out-of-sample forecasts should be evaluated. To accomplish this, available data are separated into two portions: training and test data. A model is first fitted using the training data only. Then, the model's forecast accuracy is determined by comparing forecasts from the model with actual realizations contained in the test data. 
+In order to determine the accuracy of a forecast, out-of-sample forecasts should be evaluated \citep{Hyndman}. To accomplish this, available data are separated into two portions: training and test data. A model is first fitted using the training data only. Then, the model's forecast accuracy is determined by comparing forecasts from the model with actual realizations contained in the test data. 
 If the model that is the best fit on all available data is chosen as forecasting model, the model would be subject to over-fitting \citep{Hyndman}. That is, the model performs well on the data in the training set, but does not necessarily forecast well.
 
 \subsubsection{Forecast errors}
@@ -361,19 +367,29 @@ A forecast error is the difference between an observed value and its forecast \c
 
 \subsubsection{Scale-dependent errors}
 
-Forecast errors (Equation \ref{eq:f_err}) are on the same scale as the data \citep{Hyndman}. The two most commonly used scale-dependent measures are the Mean Absolute Error (MAE, Equation \ref{eq:MAE}) and Root Mean Squared Error (RMSE, Equation \ref{eq:RMSE}).
+Commonly used error measures include the Mean Absolute Error (MAE, Equation \ref{eq:MAE}), Mean Squared Error (MSE, Equation \ref{eq:MSE}) and Root Mean Squared Error (RMSE, Equation \ref{eq:RMSE}) \citep{Hyndman}.
 
 \begin{equation}\label{eq:MAE}
     MAE = mean(|e_t|)
 \end{equation}
 
+\begin{equation}\label{eq:MSE}
+    MSE = mean(e_t^2)
+\end{equation}
+
 \begin{equation}\label{eq:RMSE}
-    RMSE = \sqrt{mean(e_t^2)}
+    RMSE = \sqrt{MSE}
 \end{equation}
 
 
  A forecast method that minimizes the MAE will lead to forecasts of the median, while minimizing the RMSE will lead to forecasts of the mean \citep{Hyndman}. 
 
+\subsubsection{\textit{k}-fold cross Validation}
+\textit{k}-fold Cross validation involves randomly dividing a set of observations into \textit{k} groups, or \textit{folds}, of equal size \citep{ISLR}. The first fold is treated as a test set, and the remaining $k-1$ folds are used to train a model. The procedure is repeated \textit{k} times, and for each repetition, a new fold makes up the test set. The process results in \textit{k} estimates of the test-error, $MSE_1$, $MSE_2$ ..., $MSE_k$. Finally, a \textit{k}-fold average MSE is computed by averaging the values, as shown in Equation \ref{eq:cv} \citep{ISLR}.
+
+\begin{equation}\label{eq:cv}
+    CV_{(k)} = \frac{1}{k}\sum_{i=1}^{k} MSE_i
+\end{equation}
 
 \subsubsection{Variables}
 In order to perform a regression and estimate expected points in the next gameweek, numerous numerical and categorical explanatory variables are considered. In the following, all variables considered are presented: 
@@ -385,7 +401,7 @@ In order to perform a regression and estimate expected points in the next gamewe
     \item \textbf{Realized points} - The dependent variable. The realized points are the actual points gained by players.
 \end{itemize}
 
-\textbf{Independent Variables}
+\textbf{Explanatory Variables}
 
 \textit{Categorical Variables}
 \newpar
@@ -416,9 +432,11 @@ In order to perform a regression and estimate expected points in the next gamewe
     
 \end{itemize}
 
-\subsubsection{Categorization by Positions}
+\subsubsection{Categorization by Position}
 
-As described in Chapter 2, points are awarded based on different criteria for players in different positions. For instance, goalkeepers, defenders and midfielders are rewarded points for keeping a clean sheet, but forwards are not. Based on this knowledge, we have decided to segment the players into their respective position before continuing the regression procedure. If we were to regress on all available variables, such a distinction would perhaps not be necessary, as the coefficient related to the categorical variable could compensate the differences. However, as seen later in this chapter, we aim to limit the number of explanatory variables for each position by use of variable selection. In order to provide further justification for the categorization, visual representations such as box-plots and scatter-plots are assessed. These figures may be found in Section X.
+%Seperate analysis by positions because of different eccects of covariates (betas)
+
+As described in Chapter 2, points are awarded based on different criteria for players in different positions. For instance, goalkeepers, defenders and midfielders are rewarded points for keeping a clean sheet, but forwards are not. Based on this knowledge, we have decided to segment the players into their respective position before continuing the regression procedure. If we were to regress on all available variables, such a distinction would perhaps not be necessary, as the coefficient related to the categorical variable could compensate the differences. However, as seen later in this chapter, we aim to limit the number of explanatory variables for each position by use of variable selection. In order to provide further justification for the categorization, a box-plot and scatter-plots are assessed in Section \ref{exp_setup_reg}.
 
 \subsubsection{Times Series Effect of points}
 
@@ -429,7 +447,7 @@ It is often argued that form is an important factor in the performance of athlet
     r_k = \frac{\sum_{t=k+1}^T(y_t-\bar{y})(y_{t-k}-\bar{y})}{\sum_{t=1}^T(y_t-\bar{y})^2}
 \end{equation}
 
-The Ljung-Box test is statistical test that is often conducted in order to test for autocorrelation in a time series for different lags \citep{Hyndman}. The reader is referred to \cite{Hyndman} for a detailed description of the test. The Durbin-Watson test is another test frequently conducted in order to test for the presence of autocorrelation at lag 1 \citep{Carol_1}. A detailed description of the test may for instance be found in \cite{Carol_1}.
+The Ljung-Box test is statistical test that is often conducted in order to test for autocorrelation in a time series for different lags \citep{Hyndman}. The Durbin-Watson test is another test frequently conducted in order to test for the presence of autocorrelation at lag 1 \citep{Carol_1}. A detailed description of the tests can for instance be found in \cite{Hyndman} and \cite{Carol_1} respectively.
 
 \subsubsection{Variable selection}
 
@@ -443,11 +461,13 @@ Lasso regression is a shrinkage method used in order to perform variable selecti
 
 Here, RSS is the Residual Sum of Squares, the quantity minimized in multiple linear regression. However, in contrast to linear regression, Lasso regression does not only minimize RSS. It also penalize the sum of the $\beta$-coefficients by absolute value. Or, more precisely, it uses an $l_1$ penalty. This has the desired effect of forcing some of the coefficient estimates to be exactly equal to zero when the tuning parameter $\lambda$ is sufficiently large \citep{ISLR}. Hence, lasso regression performs variable selection.\newpar 
 
-In order to decide the value of $\lambda$, and subsequently what variables to include in the model, a test and a training set is created. Furthermore, different models with different values of $\lambda$ are fitted on the training set. Moreover, predictions based on linear regression for each model associated with a distinct value of $\lambda$ is generated. Finally, the model with lowest RMSE is selected. That is, the variables associated with a non-zero $\beta$ are selected.
+In order to decide the value of $\lambda$, and subsequently what variables to include in the model, \textit{k}-fold cross validation is used. The average \textit{k}-fold cross validation MSE based on the coefficients obtained from the lasso is plotted against different values of $\lambda$. In order to select a model, two considerations are made. First, the model with the smallest error is considered. However, if such a a model includes a large number of explanatory variables, it can be subject to over-fitting. Therefore, the model with a MSE one standard deviation higher than that of the minimum is also considered. Subsequently, variables are selected. That is, the variables associated with a non-zero $\beta$ are chosen. 
 
 \subsubsection{Model Selection}
 
-We have decided to model the variables deemed significant by the lasso-regression by use of \textit{linear regression}. A linear regression model an advantage compared to for instance logistic regressions, as points can be negative, which frequently happens in FPL. Moreover, the model and its coefficients are easily interpreted. As the observant reader might have noticed, only one of the explanatory variables presented, namely previous points, is explicitly related to points in previous rounds. This is done in order to limit already complicated dependencies between the explanatory variables. For instance, total points in a season so far would be highly correlated with goals scored so far in a season. However, some dependencies are still likely to exist between the variables, for instance between minutes played and goals scored. As the explanatory variables are assumed independent in a linear regression, this is a limitation to the method.  Modeling such dependencies is an interesting further development, but beyond the scope of this thesis. 
+It is important to note that lasso regression is only conducted in order to perform variable selection. The $\beta$-values from the regression are not carried forward. Instead, we have decided to forecast points by use of linear regression on the variables selected by the lasso regression. Linear regression has an advantage over a lasso regression as it has more easily interpreted coefficients and well-defined variance. This makes the calculation of p-values possible. Moreover, it makes the results more accessible for readers from different disciplines as it is widely known. Furthermore, a linear regression model has an advantage compared to for instance logistic regressions, as points can be negative, which sometimes happens in FPL.\newpar 
+
+Only on variable explicitly related to points, namely previous points, is considered. We have decided not to include variables such as total points in the season so far and points from the bonus point system. These variables would be highly correlated with variables such as goals, and are excluded as not to over complicate the regression model. Since the bonus points to a large degree are decided by the same factors as "regular" points (e.g. goals, assists, clean sheets etc) their effect are included in the coefficients for these explanatory variables. 
 
 
 \subsection{Prediction using odds}
@@ -608,7 +628,7 @@ The variance of each player only considers each player's individual contribution
 
 \subsection{Team Variance}
 
-In Section \ref{Other_Relevant_Research}, it is pointed out that the FTCP has a lot of similarities with portfolio optimization. In financial optimization it is common to examine the trade-off between expected return and variance \citep{Markowitz}. According to \cite{Zenios}, the variance of a portfolio containing \textit{n} assets with weight \textit{w} can be expressed as 
+In Section \ref{Other_Relevant_Research}, it is pointed out that the FPLDP has a lot of similarities with portfolio optimization. In financial optimization it is common to examine the trade-off between expected return and variance \citep{Markowitz}. According to \cite{Zenios}, the variance of a portfolio containing \textit{n} assets with weight \textit{w} can be expressed as 
 
 \begin{equation}
     \sigma^2(w) = \sum_{i = 1}^{n}\sum_{i' = 1}^{m}\sigma_{ii'}w_{i}w_{i'} = \sum_{i = 1}^{n}\sigma_{i}^2w_i^2 + \sum_{i = 1}^{n}\sum_{\substack{i' = 1;\\ i' \neq i}}^{n}\sigma_{ii'}w_iw_{i'}
@@ -619,10 +639,18 @@ where, $w_i$ is the portfolio weight of asset $i$, $\sigma_{i}^2$ is the varianc
 
 \newpar
 
-In our case, the mathematical model optimizes over the starting line-up variable, $y$. Hence, we can rewrite equation \ref{eq:port_var} by utilizing the fact that each portfolio weight is either $\frac{1}{11}$ or $0$. If we also substitute the expression for covariance with correlation, the expression simplifies to
+In our case, the mathematical model optimizes over the starting line-up variable, $y$. We are interested in finding the variance of the sum of total points obtained rather than the variance in percentage return, which is often is the case in finance. Hence, we can rewrite equation \ref{eq:port_var} by utilizing the fact that each "portfolio weight" is either 1 or 0. If we also substitute the expression for covariance with correlation, the expression simplifies to
 
+\begin{comment}
 \begin{equation}
     \sigma^2(y) = (\frac{1}{11})^2\sum_{i = 1}^{n}\sigma_i^2y_i + (\frac{1}{11})^2\sum_{i = 1}^{n}\sum_{\substack{j = 1;\\ j \neq i}}^{n} \sigma_i^{2}\sigma_j^{2}y_{i}y_{j}\rho_{i,j}
+    \label{eq:team_var}
+\end{equation}
+
+\end{comment}
+
+\begin{equation}
+    \sigma^2(y) = \sum_{i = 1}^{n}\sigma_i^2y_i + \sum_{i = 1}^{n}\sum_{\substack{j = 1;\\ j \neq i}}^{n} \sigma_i^{2}\sigma_j^{2}y_{i}y_{j}\rho_{i,j}
     \label{eq:team_var}
 \end{equation}
 

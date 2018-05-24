@@ -2,10 +2,10 @@
 
 \chapter{Model Formulation} \label{chapter_model_formulation}
 
-In this chapter the mathematical optimization model of the Fantasy Premier League Decision Problem (FPLDP) is presented. In Section \ref{modelling_choices} modelling choices and model assumptions are discussed. Further, in Section \ref{def_sets_ind_par_var} the sets, indices, parameters and variables used in the model are defined. Finally, the mathematical formulation is presented in Section \ref{mathematical_model} with explanations of the objective function and constraints. 
+In this chapter the mathematical optimization model of the Fantasy Premier League Decision Problem (FPLDP) is presented. In Section \ref{modelling_choices},  model assumptions are discussed. Further, in Section \ref{def_sets_ind_par_var} the sets, indices, parameters and variables used in the model are defined. Finally, the mathematical formulation is presented in Section \ref{mathematical_model} with explanations of the objective function and constraints. 
 
 
-\section{Modelling Choices} \label{modelling_choices}
+\section{Modelling Assumptions} \label{modelling_choices}
 
 \begin{comment}
 As mentioned in Section \ref{Other_Relevant_Research}, the FPLDP resembles the classic Knapsack problem. In the Knapsack problem, there is a range of items with a value and cost, and the goal is to maximize the total value meanwhile not surpass a budget. Whereas in this case there are players where their value is points and their cost is an amount predetermined by the game. The aim is to pick players such as the total amount of points is maximized while the budget is held in each gameweek. In addition, there are constraints that handle the choices of substitutes, captain and vice-captain each gameweek. The decisions on wildcard, bench boost, free hit and triple captain are also modelled. 
@@ -15,7 +15,7 @@ As mentioned in Section \ref{Other_Relevant_Research}, the FPLDP resembles the c
 
 \newpar
 
-The points a player receives in each gameweek are modeled as dependent on future random events during actual matches. Such random events include goals, assists, penalties, passes, saves etc. This is denoted in the model as $\rho_{pt}(\omega)$, where $\omega$ is a future random event. The objective is to maximize expected points over a number of gameweeks. Of the output the most interesting decisions are the selected squad, starting line-up, substitutions, captain, vice-captain as well as whether to use any gamechips in a gameweek. 
+FPLDP is modelled as a stochastic mixed integer linear program. The points a player receives in each gameweek is stochastic and modeled as dependent on future random events during actual matches. Such random events include goals, assists, penalties, passes, saves etc. This is denoted in the model as $\rho_{pt}(\omega)$, where $\omega$ is a future random event. The objective is to maximize expected points over a number of gameweeks. Of the output the most interesting decisions are the selected squad, starting line-up, substitutions, captain, vice-captain as well as whether to use any gamechips in a gameweek. 
 
 \newpar
 
