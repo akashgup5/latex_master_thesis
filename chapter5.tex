@@ -93,7 +93,7 @@ Rolling horizon is an appropriate solution method for FPLDP as managers are prov
 
 \newpar
 
-In the rolling horizon heuristic, each sub-problem is solved over a sub-horizon. This corresponds well to the FPLDP, as FPL managers often consider several gameweeks when making decisions. Each sub-problem is split into three parts:
+In the rolling horizon heuristic, each sub-problem is solved over shorter sub-horizons over the planning horizon. This corresponds well to the FPLDP, as FPL managers often consider several gameweeks when making decisions. Each sub-problem is split into three parts:
 \begin{itemize}
     \item \textbf{Fixed part (FP)}. Set of gameweeks where decisions have been made and are fixed for the remainder of the solution process. These decisions are the players that are selected in a gameweek, $x$, the remaining budget variable, $v$, and the number of free transfers available, $q$.
     \item \textbf{Central part (CP)}. A gameweek where new decisions are made. The decisions include which players to include in the selected squad, $x$, determining the starting line-up, $y$, the choice of captain, $f$,  vice-captain, $h$, whether to use a gamechip or not and which substitution priority, $g$, to assign.  
@@ -184,8 +184,10 @@ The optimization model presented in chapter \ref{chapter_model_formulation} uses
 
 \subsection{Player Predictions Using Modified Average} \label{Sol_approach_Modified_Average}
 
-The solution approach suggested by \cite{Bonomo} can be used for the English Fantasy Premier League as well as for the Argentinian. In general, one simply uses the average points performance for the recent gameweeks as the prediction of the performance for the next gameweek. In order to improve the prediction, one can account for team opponent, home advantage and whether a player is on a good performance streak. This is done by weighting a player's performance by three factors as mentioned in section \ref{Forecasting_of_player_performance}.
+The solution approach suggested by \cite{Bonomo} can be used for the English Fantasy Premier League as well as for the Argentinian. In general, one uses the average points performance for the recent gameweeks as the prediction of the performance for the next gameweek. In order to improve the prediction, one can account for team opponent, home advantage and whether a player is on a good performance streak. This is done by weighting a player's performance by three factors as mentioned in section \ref{Forecasting_of_player_performance}.
+
 \newpar
+
 In general, a player's point prediction is calculated according to the following equation:
 \begin{equation}
     \textrm{Expected points} = \textrm{Adjusted avg. points} \times \textrm{Team strength} \times \textrm{Home advantage} \times \textrm{Point streak}
@@ -347,7 +349,7 @@ If a player receives more than X points for 2 gameweeks in a row, his point stre
 
 A second way of predicting Fantasy Premier League points is by use of regression. In order to create a regression model, we have undertaken the following steps:
 \begin{itemize}
-    \item Separate players based position
+    \item Separate players based on position
     \item Perform a variable selection
     \item Fit a linear regression model
 \end{itemize}
@@ -382,7 +384,7 @@ Commonly used error measures include the Mean Absolute Error (MAE, Equation \ref
 \end{equation}
 
 
- A forecast method that minimizes the MAE will lead to forecasts of the median, while minimizing the RMSE will lead to forecasts of the mean \citep{Hyndman}. 
+A forecast method that minimizes the MAE will lead to forecasts of the median, while minimizing the RMSE will lead to forecasts of the mean \citep{Hyndman}. 
 
 \subsubsection{\textit{k}-fold cross Validation}
 \textit{k}-fold Cross validation involves randomly dividing a set of observations into \textit{k} groups, or \textit{folds}, of equal size \citep{ISLR}. The first fold is treated as a test set, and the remaining $k-1$ folds are used to train a model. The procedure is repeated \textit{k} times, and for each repetition, a new fold makes up the test set. The process results in \textit{k} estimates of the test-error, $MSE_1$, $MSE_2$ ..., $MSE_k$. Finally, a \textit{k}-fold average MSE is computed by averaging the values, as shown in Equation \ref{eq:cv} \citep{ISLR}.
@@ -408,7 +410,7 @@ In order to perform a regression and estimate expected points in the next gamewe
 \begin{itemize}
     \item \textbf{Team} - Which teams the players play for. This variable can change during the international transfer window in August and January.  
     
-    \item \textbf{Position on the field} - Describes whether a player is a goalkeeper, a defender, a midfielder or a forward. The variable is constant throughout the season.
+    \item \textbf{Position} - Describes whether a player is a goalkeeper, a defender, a midfielder or a forward. The variable is constant throughout the season.
     \item \textbf{Home/Away} - Displays whether a match is played at home or away.
 \end{itemize}
 \newpar
@@ -436,7 +438,7 @@ In order to perform a regression and estimate expected points in the next gamewe
 
 %Seperate analysis by positions because of different eccects of covariates (betas)
 
-As described in Chapter 2, points are awarded based on different criteria for players in different positions. For instance, goalkeepers, defenders and midfielders are rewarded points for keeping a clean sheet, but forwards are not. Based on this knowledge, we have decided to segment the players into their respective position before continuing the regression procedure. If we were to regress on all available variables, such a distinction would perhaps not be necessary, as the coefficient related to the categorical variable could compensate the differences. However, as seen later in this chapter, we aim to limit the number of explanatory variables for each position by use of variable selection. In order to provide further justification for the categorization, a box-plot and scatter-plots are assessed in Section \ref{exp_setup_reg}.
+As described in Chapter 2, points are awarded based on different criteria for players in different positions. For instance, goalkeepers, defenders and midfielders are rewarded points for keeping a clean sheet, but forwards are not. Based on this knowledge, we have decided to segment the players into their respective positions before continuing the regression procedure. If we were to regress on all available variables, such a distinction would perhaps not be necessary, as the coefficient related to the categorical variable could compensate the differences. However, as seen later in this chapter, we aim to limit the number of explanatory variables for each position by use of variable selection. In order to provide further justification for the categorization, a box-plot and scatter-plots are assessed in Section \ref{exp_setup_reg}.
 
 \subsubsection{Times Series Effect of points}
 
@@ -447,7 +449,7 @@ It is often argued that form is an important factor in the performance of athlet
     r_k = \frac{\sum_{t=k+1}^T(y_t-\bar{y})(y_{t-k}-\bar{y})}{\sum_{t=1}^T(y_t-\bar{y})^2}
 \end{equation}
 
-The Ljung-Box test is statistical test that is often conducted in order to test for autocorrelation in a time series for different lags \citep{Hyndman}. The Durbin-Watson test is another test frequently conducted in order to test for the presence of autocorrelation at lag 1 \citep{Carol_1}. A detailed description of the tests can for instance be found in \cite{Hyndman} and \cite{Carol_1} respectively.
+In order to test for autocorrelation, the Ljung-Box test and the Durbin-Watson test are conducted. The Ljung-Box test is a statistical test that is often conducted in order to test for autocorrelation in a time series for different lags \citep{Hyndman}. The Durbin-Watson test is another test frequently conducted in order to test for the presence of autocorrelation at lag 1 \citep{Carol_1}. A detailed description of the tests can for instance be found in \cite{Hyndman} and \cite{Carol_1} respectively.
 
 \subsubsection{Variable selection}
 
@@ -467,7 +469,7 @@ In order to decide the value of $\lambda$, and subsequently what variables to in
 
 It is important to note that lasso regression is only conducted in order to perform variable selection. The $\beta$-values from the regression are not carried forward. Instead, we have decided to forecast points by use of linear regression on the variables selected by the lasso regression. Linear regression has an advantage over a lasso regression as it has more easily interpreted coefficients and well-defined variance. This makes the calculation of p-values possible. Moreover, it makes the results more accessible for readers from different disciplines as it is widely known. Furthermore, a linear regression model has an advantage compared to for instance logistic regressions, as points can be negative, which sometimes happens in FPL.\newpar 
 
-Only on variable explicitly related to points, namely previous points, is considered. We have decided not to include variables such as total points in the season so far and points from the bonus point system. These variables would be highly correlated with variables such as goals, and are excluded as not to over complicate the regression model. Since the bonus points to a large degree are decided by the same factors as "regular" points (e.g. goals, assists, clean sheets etc) their effect are included in the coefficients for these explanatory variables. 
+Only on variable explicitly related to points, namely previous points, is considered. We have decided not to include variables such as total points in the season so far and points from the bonus point system. These variables would be highly correlated with variables such as goals, and are excluded as not to over-complicate the regression model. Since the bonus points to a large degree are decided by the same factors as "regular" points (e.g. goals, assists, clean sheets etc) their effect are included in the coefficients for these explanatory variables. 
 
 
 \subsection{Prediction using odds}
@@ -660,7 +662,7 @@ where $\sigma_{i}^2$ is the variance of expected points obtained by player \text
 In the mathematical model, we may now determine an upper threshold for the variance of the starting line-up at time $t$ as described below. Note that in equation \ref{eq:team_var} two binary variables are multiplied. In order to linearize the expression, an auxiliary variable, $\delta_{pp't}$, is introduced and the following set of equations are inferred.
 
 \begin{equation}
-    \sigma^2_{t} = (\frac{1}{11})^2\sum_{p = 1}^{P}\sigma_p^2 y_{pt} + (\frac{1}{11})^2\sum_{p = 1}^{P}\sum_{p' = 1}^{P} \sigma_p^2\sigma_p'^2\rho_{p,p',t} \delta_{pp't} \qquad\qquad t \in \mathcal{T}
+    \sigma^2_{t} = \sum_{p = 1}^{P}\sigma_p^2 y_{pt} + \sum_{p = 1}^{P}\sum_{p' = 1}^{P} \sigma_p^2\sigma_p'^2\rho_{p,p',t} \delta_{pp't} \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
 \begin{equation}
