@@ -273,13 +273,13 @@ In order to summarize the discussion above, we have chosen to run the Modified A
 
 \subsubsection{Categorization based on Position}
 
-As outlined in Section \ref{Sol_approach_regression}, we have decided to separate the players based on their positions. To substantiate this decision, a visual assessment is undertaken. The analysis is done for gameweek 1-32 in season 2016/2017, as these are the gameweeks that constitute the training set used later in the lasso regression. First, Figure \ref{fig:box_plot} displays a box-plot of the total points for each different position. It appears as if the variance is larger for midfielders and forwards than what it is for defenders and goalkeepers. Further, defenders and goalkeepers have the highest median scores, while the most positive outliers are found among midfielders and forwards. Secondly, Figure \ref{fig:cs_tot_p}, Figure \ref{fig:goal_tot_p} and Figure \ref{fig:assist_tot_p} show how points are associated with clean sheets, goals and assists for different positions. From \ref{fig:goal_tot_p} and Figure \ref{fig:assist_tot_p} it is clear that goals and assists are not contributing a lot in terms of total points for goalkeepers, but is so for midfielders and forwards. Figure \ref{fig:assist_tot_p} appears to affirm that clean sheets are more important for goalkeepers and defenders than for forwards and midfielders.
+As outlined in Section \ref{Sol_approach_regression}, we have decided to separate the players based on their positions. To substantiate this decision, a visual assessment is undertaken. The analysis is done for gameweek 1-32 in season 2016/2017, as these are the gameweeks that constitute the training set used later in the lasso regression. First, Figure \ref{fig:cluster_plots} displays a box-plot of the total points for each different position. The different positions appear to exhibit some differing characteristics. The variance looks as if it is larger for midfielders and forwards than what it is for defenders and goalkeepers. Further, defenders and goalkeepers have the highest median scores, while the most positive outliers are found among midfielders and forwards. Secondly, the Figure show how total points are associated with clean sheets, goals and assists for different positions. It is clear that goals and assists are not contributing a lot in terms of total points for goalkeepers, but is so for midfielders and forwards. Figure \ref{fig:assist_tot_p} also manifest that clean sheets are more important for goalkeepers and defenders in order to earn a high point score.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.55]{fig/chapter_6/cluster_plots.png}
-    \caption{Figures substantiating the decision of separating the players based on position.}
-\label{fig:lasso_GLK}    
+    \caption{Plots substantiating the decision of separating the players based on position.}
+\label{fig:cluster_plots}    
 \end{figure}
 
 
@@ -370,7 +370,7 @@ Ljung-Box lag 5 & 81 \% & 85 \%
 
 \subsubsection{Variable Selection}
 
-As described in Section \ref{Sol_approach_regression}, lasso regression is performed in order to conduct a variable selection. 80\% of the data of the 2016/2017 season is used for training, while the remaining 20 \% are used for testing. In the following, the variables deemed significant alongside a plot of (average \textit{k}-fold) MSE against values of log($\lambda$) for each position is presented. Note that in each plot, there are 2 dotted vertical lines. The leftmost marks the log($\lambda$)-value with lowest MSE. The rightmost marks the log($\lambda$)-value with one standard deviation higher MSE than the lowest MSE. Furthermore, the numbers in the top of the plot indicates the number of variables included for each value of log($\lambda$). The reason number of variables may exceed the number of variables presented in Section N, is that on variable in introduced for each categorical variable. That is, the variable team and opponent will be treated as 20 different variables each as there are 20 teams in the English Premier League. If only a few of these variables are selected by the lasso-regression, 
+As described in Section \ref{Sol_approach_regression}, lasso regression is performed in order to conduct a variable selection. 80\% of the data of the 2016/2017 season is used for training, while the remaining 20 \% are used for testing. In the following, the variables deemed significant alongside a plot of (average \textit{k}-fold) MSE against values of log($\lambda$) for each position is presented. Note that in each plot, there are 2 dotted vertical lines. The leftmost marks the log($\lambda$)-value with lowest MSE. The rightmost marks the log($\lambda$)-value with one standard deviation higher MSE than the lowest MSE. Furthermore, the numbers in the top of the plot indicates the number of variables included for each value of log($\lambda$). The why reason number of variables may exceed the number of variables presented in Section N, is that a dummy-variable in introduced for each level of a categorical variable. That is, the variables team and opponent will be treated as 20 different variables each as there are 20 teams in the English Premier League. If only a few of these variables are selected by the lasso-regression, the entire variable s excluded from consideration. Similarly, if all except a few variables are selected, all levels are included.
 
 \newpar
 
@@ -380,16 +380,27 @@ As evident from Figure \ref{fig:goal_tot_p} no goalkeepers scored a goal up to g
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.55]{fig/chapter_6/lasso_GLK.png}
-    \caption{\textit{k}-fold cross validated MSE for different values of $\lambda$ for goalkeepers}
+    \caption{\textit{k}-fold cross validated MSE for different values of $\lambda$ for goalkeepers.}
 \label{fig:lasso_GLK}    
 \end{figure}
+
+\subsubsection{Goalkeepers}
+As evident from Figure \ref{fig:goal_tot_p} no goalkeepers scored a goal up to gameweek 32 in the 2016/2017 English Premier League season. Furthermore, Figure \ref{fig:assist_tot_p} shows that only one assist was provided by a goalkeeper. Therefore, we have decided not to consider these exploratory variables when performing the variable selection for goalkeepers. Figure \ref{fig:lasso_GLK} shows that for the lowest MSE value, approximately 6 variables are included in the model. Therefore, this the log($\lambda$)-value corresponding to the minimum MSE is chosen.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.55]{fig/chapter_6/lasso_GLK.png}
+    \caption{\textit{k}-fold cross validated MSE for different values of $\lambda$ for goalkeepers.}
+\label{fig:lasso_GLK}    
+\end{figure}
+
 
 
 \begin{comment}
 
 In Figures \ref{fig:lasso_GLK_1}, \ref{fig:lasso_DEF_1}, \ref{fig:lasso_MID_1} and \ref{fig:lasso_FWD_1} the RMSE of the test set is plotted against different values of log($\lambda$) for goalkeepers, defenders, midfielders and forwards respectively. Further, their significant variables are listed in Tables \ref{tab:sig_var_GLK_1}, \ref{tab:sig_var_DEF_1}, \ref{tab:sig_var_MID_1} and \ref{tab:sig_var_FWD_1} respectively.
 
-\end{comment}
+
 
 \begin{comment}
 
@@ -676,6 +687,7 @@ Goals                                 \\
 \label{tab:sig_var_FWD_1}
 \end{minipage}
 \end{table}
+\end{comment}
 
 \begin{comment}
 
@@ -753,6 +765,9 @@ F Statistic & 437.8821000000$^{***}$ (df = 4; 3313) \\
 For instance, predicted points for Peter Check would be \newpar
 
 For each position, a linear regression model is fitted based on the variables. A summary of each model is presented and a discussion of the signs of the constants is given. It is important to note that the model is continually "refitted" as new data becomes available. That is, the $\beta $s are updated. The variables remain the same. \newpar
+
+\subsubsection{Discussion}
+\textit{drawback at saves, goals osv er lavt i begynnelsen av sesongen}
 
 \subsection{Odds}
 In order to obtain necessary data, we have cooperated with Sportradar, a Norwegian company providing data for bookmakers. Sportradar delivers odds and probabilities of several sports events, including English Premier League. They have provided us with all the necessary probabilities, including result outcomes for each Premier League match as well as individual player probabilities. These data made all the computational work a lot easier, as Sportradar exported structured excel files containing all the necessary data. 
