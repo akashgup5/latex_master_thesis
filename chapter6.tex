@@ -273,7 +273,7 @@ In order to summarize the discussion above, we have chosen to run the Modified A
 
 \subsubsection{Categorization based on Position}
 
-As outlined in Section \ref{Sol_approach_regression}, we have decided to separate the players based on their positions. To substantiate this decision, a visual assessment is undertaken. The analysis is done for gameweek 1-32 in season 2016/2017, as these are the gameweeks that constitute the training set used later in the lasso regression. First, Figure \ref{fig:cluster_plots} displays a box-plot of the total points for each different position. The different positions appear to exhibit some differing characteristics. The variance looks as if it is larger for midfielders and forwards than what it is for defenders and goalkeepers. Further, defenders and goalkeepers have the highest median scores, while the most positive outliers are found among midfielders and forwards. Secondly, the Figure show how total points are associated with clean sheets, goals and assists for different positions. It is clear that goals and assists are not contributing a lot in terms of total points for goalkeepers, but is so for midfielders and forwards. Figure \ref{fig:assist_tot_p} also manifest that clean sheets are more important for goalkeepers and defenders in order to earn a high point score.
+As outlined in Section \ref{Sol_approach_regression}, we have decided to separate the players based on their positions. To substantiate this decision, a visual assessment is undertaken. The analysis is done for gameweek 1-32 in season 2016/2017, as these are the gameweeks that constitute the training set used later in the lasso regression. First, Figure \ref{fig:cluster_plots} displays a box-plot of the total points for each different position. The different positions appear to exhibit some differing characteristics. The variance looks as if it is larger for midfielders and forwards than what it is for defenders and goalkeepers. Further, defenders and goalkeepers have the highest median scores, while the most positive outliers are found among midfielders and forwards. Secondly, the Figure show how total points are associated with clean sheets, goals and assists for different positions. It is clear that goals and assists are not contributing a lot in terms of total points for goalkeepers, but is so for midfielders and forwards. Figure \ref{fig:cluster_plots} also manifest that clean sheets are more important for goalkeepers and defenders in order to earn a high point score.
 
 \begin{figure}[H]
     \centering
@@ -284,64 +284,7 @@ As outlined in Section \ref{Sol_approach_regression}, we have decided to separat
 
 
 
-\begin{comment}
-\begin{figure}
-\centering
-\begin{minipage}{.5\textwidth}
-  \centering
-  \captionsetup{justification=centering}
-  \includegraphics[width=.9\linewidth]{fig/chapter_6/box_plot_positions.png}
-  \captionof{figure}{Box-plot of total points obtained in different positions over the 2016 season gameweek 1-32.}
-  \label{fig:box_plot}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-  \centering
-  \captionsetup{justification=centering}
-  \includegraphics[width=.9\linewidth]{fig/chapter_6/clean_sheet_tot_poins.png}
-  \captionof{figure}{Clean Sheets and Total points for different positions.}
-  \label{fig:cs_tot_p}
-\end{minipage}
-\end{figure}
 
-\begin{figure}[H]
-\centering
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=.9\linewidth]{fig/chapter_6/goals_tot_poins.png}
-  \caption{Goals and Total points for different positions.}
-  \label{fig:goal_tot_p}
-\end{subfigure}%
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=.9\linewidth]{fig/chapter_6/assists_tot_poins.png}
-  \caption{Time-series winter 16/17}
-  \label{fig:assist_tot_p}
-\end{subfigure}
-\end{figure}
-
-
-
-
-\begin{figure}[h!]
-\centering
-\begin{minipage}{.5\textwidth}
-  \centering
-  \captionsetup{justification=centering}
-  \includegraphics[width=.9\linewidth]{fig/chapter_6/goals_tot_poins.png}
-  \caption{figure}{Goals and Total points for different positions.}
-  \label{fig:goal_tot_p}
-\end{minipage}
-\hfill
-\begin{minipage}{.5\textwidth}
-  \centering
-  \captionsetup{justification=centering}
-  \includegraphics[width=.9\linewidth]{fig/chapter_6/assists_tot_poins.png}
-  \caption{figure}{Time-series winter 16/17}
-  \label{fig:assist_tot_p}
-\end{minipage}
-\end{figure}
-
-\end{comment}
 
 
 
@@ -370,352 +313,52 @@ Ljung-Box lag 5 & 81 \% & 85 \%
 
 \subsubsection{Variable Selection}
 
-As described in Section \ref{Sol_approach_regression}, lasso regression is performed in order to conduct a variable selection. 80\% of the data of the 2016/2017 season is used for training, while the remaining 20 \% are used for testing. In the following, the variables deemed significant alongside a plot of (average \textit{k}-fold) MSE against values of log($\lambda$) for each position is presented. Note that in each plot, there are 2 dotted vertical lines. The leftmost marks the log($\lambda$)-value with lowest MSE. The rightmost marks the log($\lambda$)-value with one standard deviation higher MSE than the lowest MSE. Furthermore, the numbers in the top of the plot indicates the number of variables included for each value of log($\lambda$). The why reason number of variables may exceed the number of variables presented in Section N, is that a dummy-variable in introduced for each level of a categorical variable. That is, the variables team and opponent will be treated as 20 different variables each as there are 20 teams in the English Premier League. If only a few of these variables are selected by the lasso-regression, the entire variable s excluded from consideration. Similarly, if all except a few variables are selected, all levels are included.
+As described in Section \ref{Sol_approach_regression}, lasso regression is performed in order to conduct a variable selection. 80\% of the data of the 2016/2017 season is used for training, while the remaining 20 \% are used for testing. In the following, the variables deemed significant alongside a plot of (average \textit{k}-fold) MSE against values of log($\lambda$) for each position is presented. Note that in each plot, there are 2 dotted vertical lines. The leftmost marks the log($\lambda$)-value with lowest MSE. The rightmost marks the log($\lambda$)-value with one standard deviation higher MSE than the lowest MSE. Furthermore, the numbers in the top of the plot indicates the number of variables included for each value of log($\lambda$). The reason why number of variables may exceed the number of variables presented in Section N, is that a dummy-variable in introduced for each level of a categorical variable. That is, the variables team and opponent will be treated as 20 different variables each as there are 20 teams in the English Premier League. If only a few of these dummy-variables are selected by the lasso-regression, the variable is excluded from consideration. Similarly, if all except a few dummy-variables are selected, all levels are included.
 
 \newpar
 
 \subsubsection{Goalkeepers}
-As evident from Figure \ref{fig:goal_tot_p} no goalkeepers scored a goal up to gameweek 32 in the 2016/2017 English Premier League season. Furthermore, Figure \ref{fig:assist_tot_p} shows that only one assist was provided by a goalkeeper. Therefore, we have decided not to consider these exploratory variables when performing the variable selection for goalkeepers. Figure \ref{fig:lasso_GLK} shows that for the lowest MSE value, approximately 6 variables are included in the model. Therefore, this the log($\lambda$)-value corresponding to the minimum MSE is chosen.
+As evident from Figure \ref{fig:cluster_plots} no goalkeepers scored a goal up to gameweek 32 in the 2016/2017 English Premier League season, and only one assist was provided by a goalkeeper. Therefore, we have decided not to consider these exploratory variables when performing the variable selection for goalkeepers. Figure \ref{fig:lasso_GLK} shows that for the lowest MSE value, approximately 6 variables are included in the model. Therefore, the variables associated with this log($\lambda$)-value is chosen.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.55]{fig/chapter_6/lasso_GLK.png}
-    \caption{\textit{k}-fold cross validated MSE for different values of $\lambda$ for goalkeepers.}
+    \caption{\textit{k}-fold cross validated MSE for different values of log($\lambda$) for goalkeepers.}
 \label{fig:lasso_GLK}    
 \end{figure}
 
-\subsubsection{Goalkeepers}
-As evident from Figure \ref{fig:goal_tot_p} no goalkeepers scored a goal up to gameweek 32 in the 2016/2017 English Premier League season. Furthermore, Figure \ref{fig:assist_tot_p} shows that only one assist was provided by a goalkeeper. Therefore, we have decided not to consider these exploratory variables when performing the variable selection for goalkeepers. Figure \ref{fig:lasso_GLK} shows that for the lowest MSE value, approximately 6 variables are included in the model. Therefore, this the log($\lambda$)-value corresponding to the minimum MSE is chosen.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.55]{fig/chapter_6/lasso_GLK.png}
-    \caption{\textit{k}-fold cross validated MSE for different values of $\lambda$ for goalkeepers.}
-\label{fig:lasso_GLK}    
-\end{figure}
-
-
-
-\begin{comment}
-
-In Figures \ref{fig:lasso_GLK_1}, \ref{fig:lasso_DEF_1}, \ref{fig:lasso_MID_1} and \ref{fig:lasso_FWD_1} the RMSE of the test set is plotted against different values of log($\lambda$) for goalkeepers, defenders, midfielders and forwards respectively. Further, their significant variables are listed in Tables \ref{tab:sig_var_GLK_1}, \ref{tab:sig_var_DEF_1}, \ref{tab:sig_var_MID_1} and \ref{tab:sig_var_FWD_1} respectively.
-
-
-
-\begin{comment}
-
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.55]{fig/chapter_6/lasso_GLK.png}
-    \caption{RMSE for different values of $\lambda$ for goalkeepers}
-\label{fig:lasso_GLK}    
-\end{figure}
-
-
-\begin{table}[H]
-\centering
-\caption{Significant Variables for goalkeepers based on lasso regression and RMSE}
-\label{tab:sig_var_GLK}
-\begin{tabular}{l}
-\textbf{Significant variables for goalkeepers }\\
-Opponent                              \\
-Team                                  \\
-Cost                                  \\
-Transfers in                          \\
-Transfers out                         \\
-Home/Away                             \\
-Minutes played                        \\
-Saves                                 \\
-Clean Sheets                          \\
-Assists                               \\
-Own Goals                            
-\end{tabular}
-\end{table}
-
-\end{comment}
-
-
-\begin{table}[H]
-\centering
-\begin{minipage}{.5\textwidth}
-  \centering
-  \captionsetup{justification=centering}
-    \begin{figure}[H]
-        \centering
-        \includegraphics[scale=0.4]{fig/chapter_6/lasso_GLK.png}
-    \end{figure}
-    \captionof{figure}{RMSE for different values of $\lambda$ for goalkeepers}
-    \label{fig:lasso_GLK_1}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-  \centering
-  \captionsetup{justification=centering}
-    \begin{tabular}{c}
-    \\
-    \textbf{Significant variables for Goalkeepers }\\
-    \\
-    \\
-Opponent                              \\
-Team                                  \\
-Cost                                  \\
-Transfers in                          \\
-Transfers out                         \\
-Home/Away                             \\
-Minutes played                        \\
-Saves                                 \\
-Clean Sheets                          \\
-Assists                               \\
-Own Goals                            
-    \\
-    \\
-    \\
-    \\
-\\
-
-
-    \end{tabular}
-\captionof{table}{Significant Variables for goalkeepers based on lasso regression and RMSE}
-\label{tab:sig_var_GLK_1}
-\end{minipage}
-\end{table}
-
-\begin{comment}
-\textbf{Defenders}
-In Figure \ref{fig:lasso_DEF} the RMSE of the test set is plotted against different values of $\lambda$. In Table \ref{tab:sig_var_DEF} the significant variables are listed
-\end{comment}
-
-
-\begin{table}[H]
-\centering
-\begin{minipage}{.5\textwidth}
-  \centering
-  \captionsetup{justification=centering}
-    \begin{figure}[H]
-        \centering
-        \includegraphics[scale=0.4]{fig/chapter_6/lasso_DEF.png}
-    \end{figure}
-    \captionof{figure}{RMSE for different values of $\lambda$ for defenders}
-    \label{fig:lasso_DEF_1}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-  \centering
-  \captionsetup{justification=centering}
-    \begin{tabular}{c}
-    \textbf{Significant variables for Defenders }\\
-    \\
-    \\
-    \\
-    
-    Opponent                              \\
-    Team                                  \\
-    Cost                                  \\
-    Transfers in                          \\
-    Transfers out                         \\
-    Home/Away                             \\
-    Minutes played                        \\
-    Yellow Cards                          \\
-    Own Goals                             \\
-    \\
-    \\
-    \\
-    \\
-   \\
-   \\
-    
-    
-    \end{tabular}
-\captionof{table}{Significant Variables for midfielders based on lasso regression and RMSE}
-\label{tab:sig_var_DEF_1}
-\end{minipage}
-\end{table}
-
-\begin{comment}
-
+\subsubsection{Defenders}
+As evident from Figure \ref{fig:cluster_plots}, defenders somewhat frequently provides assists and goals. Therefore, these variables are not excluded when performing the variable selection. In Figure \ref{fig:lasso_DEF} it is apparent that the model with the lowest MSE value includes approximately 47, while the model 1 standard deviation away (indicated by the rightmost dotted line), includes approximately 9 variables. By taken the bias-variance trade-off into consideration, the model corresponding to the log($\lambda$)-value with MSE 1 standard deviation higher than the minimum MSE is chosen.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.55]{fig/chapter_6/lasso_DEF.png}
-    \caption{RMSE for different values of $\lambda$ for defenders}
+    \caption{\textit{k}-fold cross validated MSE for different values of log($\lambda$) for defenders.}
+\label{fig:lasso_DEF}    
 \end{figure}
 
-\begin{table}[H]
-\centering
-\caption{Significant Variables for defenders based on lasso regression and RMSE}
-\begin{tabular}{l}
-\textbf{Significant variables for Defenders }\\
-Opponent                              \\
-Team                                  \\
-Cost                                  \\
-Transfers in                          \\
-Transfers out                         \\
-Home/Away                             \\
-Minutes played                        \\
-Yellow Cards                          \\
-Own Goals                                               
-\end{tabular}
-\end{table}
-
-\end{comment}
-
-\begin{comment}
-\textbf{Midfielders}
-In Figure \ref{fig:lasso_MID} the RMSE of the test set is plotted against different values of $\lambda$. In Table \ref{tab:sig_var_MID} the significant variables are listed
-\end{comment}
-
-
-\begin{table}[H]
-\centering
-\begin{minipage}{.5\textwidth}
-  \centering
-  \captionsetup{justification=centering}
-    \begin{figure}[H]
-        \centering
-        \includegraphics[scale=0.4]{fig/chapter_6/lasso_MID.png}
-    \end{figure}
-    \captionof{figure}{RMSE for different values of $\lambda$ for midfielders}
-    \label{fig:lasso_MID_1}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-  \centering
-  \captionsetup{justification=centering}
-    \begin{tabular}{c}
-    \\
-    \textbf{Significant variables for Midfielders }\\
-    \\
-    \\
-    \\
-   Opponent                              \\
-Team                                  \\
-Cost                                  \\
-Transfers in                          \\
-Transfers out                         \\
-Home/Away                             \\
-Minutes played                        \\
-Goals                                   \\
-Penalty Misses                          \\
-Clean Sheets                            \\
-Assists                                 \\
-\\
-\\
-\\
-
-    \end{tabular}
-\captionof{table}{Significant Variables for midfielders based on lasso regression and RMSE}
-\label{tab:sig_var_MID_1}
-\end{minipage}
-\end{table}
-
-\begin{comment}
-
+\subsubsection{Midfielders}
+As evident from Figure \ref{fig:cluster_plots}, defenders somewhat frequently provides assists and goals. Therefore, these variables are not excluded when performing the variable selection. In Figure \ref{fig:lasso_MID} it is apparent that the model with the lowest MSE value includes approximately 47, while the model 1 standard deviation away (indicated by the rightmost dotted line), includes approximately 9 variables. By taken the bias-variance trade-off into consideration, the model corresponding to the log($\lambda$)-value with MSE 1 standard deviation higher than the minimum MSE is chosen.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.55]{fig/chapter_6/lasso_MID.png}
-    \caption{RMSE for different values of $\lambda$ for midfielders}
+    \caption{\textit{k}-fold cross validated MSE for different values of log($\lambda$) for midfielders.}
 \label{fig:lasso_MID}    
 \end{figure}
 
-\begin{table}[H]
-\centering
-\caption{Significant Variables for midfielders based on lasso regression and RMSE}
-\label{tab:sig_var_MID}
-\begin{tabular}{l}
-\textbf{Significant variables for Midfielders }\\
-Opponent                              \\
-Team                                  \\
-Cost                                  \\
-Transfers in                          \\
-Transfers out                         \\
-Home/Away                             \\
-Minutes played                        \\
-Goals
-        \\
-Penalty Misses
-        \\
-Clean Sheets
-        \\
-Assists
-\end{tabular}
-\end{table}
-
-\end{comment}
-
-\begin{comment}
-\textbf{Forwards}
-In Figure \ref{fig:lasso_FWD} the RMSE of the test set is plotted against different values of $\lambda$. In Table \ref{tab:sig_var_FWD} the significant variables are listed
-\end{comment}
-
-\begin{table}[H]
-\centering
-\begin{minipage}{.5\textwidth}
-  \centering
-  \captionsetup{justification=centering}
-    \begin{figure}[H]
-        \centering
-        \includegraphics[scale=0.4]{fig/chapter_6/lasso_FWD.png}
-    \end{figure}
-    \captionof{figure}{RMSE for different values of $\lambda$ for forwards}
-    \label{fig:lasso_FWD_1}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-  \centering
-  \captionsetup{justification=centering}
-    \begin{tabular}{c}
-    \textbf{Significant variables for Forwards}\\
-\\
-\\    
-\\
-\\
-Opponent                              \\
-Team                                  \\
-Cost                                  \\
-Transfers in                          \\
-Home/Away                             \\
-Minutes played                        \\
-Goals                                 \\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-
- \end{tabular}
-\captionof{table}{Significant Variables for forwards based on lasso regression and RMSE}
-\label{tab:sig_var_FWD_1}
-\end{minipage}
-\end{table}
-\end{comment}
-
-\begin{comment}
+\subsubsection{Forwards}
+As evident from Figure \ref{fig:cluster_plots}, defenders somewhat frequently provides assists and goals. Therefore, these variables are not excluded when performing the variable selection. In Figure \ref{fig:lasso_FWD} it is apparent that the model with the lowest MSE value includes approximately 47, while the model 1 standard deviation away (indicated by the rightmost dotted line), includes approximately 9 variables. By taken the bias-variance trade-off into consideration, the model corresponding to the log($\lambda$)-value with MSE 1 standard deviation higher than the minimum MSE is chosen.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.55]{fig/chapter_6/lasso_FWD.png}
-    \caption{RMSE for different values of $\lambda$ for forwards}
+    \caption{\textit{k}-fold cross validated MSE for different values of log($\lambda$) for forwards.}
 \label{fig:lasso_FWD}    
 \end{figure}
 
-\begin{table}[H]
-\centering
-\caption{Significant Variables for forwards based on lasso regression and RMSE}
-\label{tab:sig_var_FWD}
-\begin{tabular}{l}
-\textbf{Significant variables for Forwards}\\
-Opponent                              \\
-Team                                  \\
-Cost                                  \\
-Transfers in                          \\
-Home/Away                             \\
-Minutes played                        \\
-Goals
 
-\end{tabular}
-\end{table}
 
-\end{comment}
 
 \textit{snakke litt mer om figurene og variablene}
 
