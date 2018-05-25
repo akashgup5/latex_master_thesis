@@ -275,6 +275,16 @@ In order to summarize the discussion above, we have chosen to run the Modified A
 
 As outlined in Section \ref{Sol_approach_regression}, we have decided to separate the players based on their positions. To substantiate this decision, a visual assessment is undertaken. The analysis is done for gameweek 1-32 in season 2016/2017, as these are the gameweeks that constitute the training set used later in the lasso regression. First, Figure \ref{fig:box_plot} displays a box-plot of the total points for each different position. It appears as if the variance is larger for midfielders and forwards than what it is for defenders and goalkeepers. Further, defenders and goalkeepers have the highest median scores, while the most positive outliers are found among midfielders and forwards. Secondly, Figure \ref{fig:cs_tot_p}, Figure \ref{fig:goal_tot_p} and Figure \ref{fig:assist_tot_p} show how points are associated with clean sheets, goals and assists for different positions. From \ref{fig:goal_tot_p} and Figure \ref{fig:assist_tot_p} it is clear that goals and assists are not contributing a lot in terms of total points for goalkeepers, but is so for midfielders and forwards. Figure \ref{fig:assist_tot_p} appears to affirm that clean sheets are more important for goalkeepers and defenders than for forwards and midfielders.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.55]{fig/chapter_6/cluster_plots.png}
+    \caption{Figures substantiating the decision of separating the players based on position.}
+\label{fig:lasso_GLK}    
+\end{figure}
+
+
+
+\begin{comment}
 \begin{figure}
 \centering
 \begin{minipage}{.5\textwidth}
@@ -330,6 +340,8 @@ As outlined in Section \ref{Sol_approach_regression}, we have decided to separat
   \label{fig:assist_tot_p}
 \end{minipage}
 \end{figure}
+
+\end{comment}
 
 
 
