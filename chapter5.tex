@@ -666,7 +666,7 @@ where, $w_i$ is the portfolio weight of asset $i$, $\sigma_{i}^2$ is the varianc
 
 \newpar
 
-In our case, the mathematical model optimizes over the starting line-up variable, $y$. We are interested in finding the variance of the sum of total points obtained rather than the variance in percentage return, which is often is the case in finance. Hence, we can rewrite equation \ref{eq:port_var} by utilizing the fact that each "portfolio weight" is either 1 or 0. If we also substitute the expression for covariance with correlation, the expression simplifies to
+In our case, the mathematical model optimizes over the starting line-up variable, $y$. We are interested in finding the variance of the sum of total points obtained rather than the variance in percentage return, which is often the case in finance. Hence, we can rewrite equation \ref{eq:port_var} by utilizing the fact that each "portfolio weight" is either 1 or 0. If we also substitute the expression for covariance with correlation, the expression simplifies to
 
 \begin{comment}
 \begin{equation}
@@ -686,24 +686,24 @@ where $\sigma_{i}^2$ is the variance of expected points obtained by player \text
 
 In the mathematical model, we may now determine an upper threshold for the variance of the starting line-up at time $t$ as described below. Note that in equation \ref{eq:team_var} two binary variables are multiplied. In order to linearize the expression, an auxiliary variable, $\delta_{pp't}$, is introduced and the following set of equations are inferred.
 
-\begin{equation}
-    \sigma^2_{t} = \sum_{p = 1}^{P}\sigma_p^2 y_{pt} + \sum_{p = 1}^{P}\sum_{p' = 1}^{P} \sigma_p^2\sigma_p'^2\rho_{p,p',t} \delta_{pp't} \qquad\qquad t \in \mathcal{T}
+\begin{equation} \label{eq:variance}
+    \sigma^2_{t} = \sum_{p = 1}^{P}\sigma_p^2 y_{pt} + \sum_{p = 1}^{P}\sum_{\substack{p' = 1; \\ p' \neq p}}^{P} \sigma_p^2\sigma_p'^2\rho_{p,p',t} \delta_{pp't} \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
-\begin{equation}
+\begin{equation} \label{eq:variance_threshold}
     \sigma^2_{t} \leq THRESHOLD \qquad\qquad t \in \mathcal{T}
 \end{equation}
 
-\begin{equation}
-    \delta_{pp't} \leq y_{pt}  \qquad\qquad p \in \mathcal{P}, p' \in \mathcal{P}, \enskip t \in \mathcal{T}
+\begin{equation} \label{eq:variance_p_beta}
+    \delta_{pp't} \leq y_{pt}  \qquad\qquad p \in \mathcal{P}, p' \in \mathcal{P}, p' \neq p, \enskip t \in \mathcal{T}
 \end{equation}
 
-\begin{equation}
-    \delta_{pp't} \leq y_{p't}  \qquad\qquad p \in \mathcal{P}, p' \in \mathcal{P}, \enskip t \in \mathcal{T}
+\begin{equation} \label{eq:variance_p_dash_beta}
+    \delta_{pp't} \leq y_{p't}  \qquad\qquad p \in \mathcal{P}, p' \in \mathcal{P}, p' \neq p, \enskip t \in \mathcal{T}
 \end{equation}
 
-\begin{equation}
-    \delta_{pp't} \geq y_{pt} + y_{p't} - 1  \qquad\qquad p \in \mathcal{P}, p' \in \mathcal{P}, \enskip t \in \mathcal{T}
+\begin{equation} \label{eq:variance_p_p_dash_beta}
+    \delta_{pp't} \geq y_{pt} + y_{p't} - 1  \qquad\qquad p \in \mathcal{P}, p' \in \mathcal{P}, p' \neq p, \enskip t \in \mathcal{T}
 \end{equation}
 
 
