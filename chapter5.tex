@@ -43,7 +43,11 @@ where $\hat{\rho}_{pt}$ denotes an estimation of expected points of each player 
 
 \newpar
 
+\begin{comment}
 The solution approach is divided into three different elements, as depicted in Figure \ref{fig:solution_approach}. The elements are:
+\end{comment}
+
+The solution approach is divided into three different elements. The elements are:
 
 \begin{itemize}
     \item Player performance prediction
@@ -473,8 +477,25 @@ Only on variable explicitly related to points, namely previous points, is consid
 
 
 \subsection{Prediction using odds}
-The third approach for player point prediction is by use of odds created by bookmakers. It is reasonable to assume that bookmakers provide a realistic odds distribution for the different scorelines, in order to avoid profitable gambling. By acquiring the result outcomes for each Premier League match, a scoreline prediction can be obtained. By summing all the result odds and dividing each individual result odds by that sum, one can obtain the probability of an exact result to occur. A great drawback with this approach, is the fact that bookmakers only provide odds for the upcoming gameweek. Hence, the odds can only be used in order to predict the fantasy points one gameweek ahead. 
+As stated in the literature review in Chapter 3, \cite{Hvattum} found that Elo ratings appeared to be considerably less accurate than market odds when used for forecasts. Therefore, we find it interesting to adapt an approach based on bookmakers odds. 
+
 \newpar
+
+\begin{comment}
+It is reasonable to assume that bookmakers provide a realistic odds distribution for the different scorelines, in order to avoid profitable gambling.
+\end{comment}
+
+\textit{Få med avsnitt om hvordan hva som ligger bak scoreline prediction og expected goals, referer til Maher etc.}
+
+\subsubsection{Scoreline Prediction}
+\subsubsection{Expected goals}
+
+\newpar
+
+By acquiring the result outcomes for each Premier League match, a scoreline prediction can be obtained. By summing all the result odds and dividing each individual result odds by that sum, one can obtain the probability of an exact result to occur. A great drawback with this approach, is the fact that bookmakers only provide odds for the upcoming gameweek. Hence, the odds can only be used in order to predict the fantasy points one gameweek ahead. 
+
+\newpar
+
 When the scoreline predictions are acquired by use of result odds, one has to link these predictions to player performances. In order to determine the probability for a defender or midfielder to keep a clean sheet, one simply sum the probabilities of each match outcome where its team does not concede a goal. Further, bookmakers provide odds' for each individual player to score a goal or have an assist in a particular match. By summing the goalscorers odds, one can obtain the cumulative probability distribution of the goalscorers. Once the cumulative distribution is obtained, one simply multiplies the goalscoring probabilities with the result probabilities in order to assign goalscoring points for each player. As for the assist, a similar approach may be used. However, some of the goals scored are unassisted which must be taking into account when predicting the assist points. This can be done by multiplying a players assist points with a factor representing the amount of goals being assisted. Finally, as for the yellow cards, one simply use the odds in order to calculate the probability of a player receiving a yellow card. For instance, if a player has a probability of 0.3 for receiving a yellow card in a particular match, his expected points is penalized with -0.3 as a yellow card deducts 1 point. 
 \newpar
 The largest bookmaking companies offer odds for all the items mentioned in the paragraph above. As goals scored are the greatest point factor in Fantasy Premier League, this area is of great interest. As mentioned, it is necessary to obtain the probabilities for each result outcome in a given match. The following example provides Unibet's result odds for a match-up between Leicester and Burnley on April 14th 2018. 
@@ -587,7 +608,7 @@ It is wise to play the Triple Captain in a double gameweek as it is reasonable t
 
 \newpar
 
-More quantitative approaches could be to use the financial metric, Sharpe Ratio \cite{Sharpe}. Another interesting approach could be to model it as the Secretary Problem
+More quantitative approaches could be to use the financial metric, Sharpe Ratio \citep{Sharpe}. It's a method to calculate risk-adjusted return, and could be adopted to FPLDP where one plays the Triple Captain when a player hits a predetermined lower limit of Sharpe Ratio. Another interesting approach could be to model it as the Secretary Problem (\cite{Lindley}; \cite{Bruss}). It's a well studied problem in mathematics-probability-optimization which finds a strategy for maximizing the probability of choosing the best among $N$ available candidates.  
 
 \subsection{Second Wildcard and Bench Boost}
 The second Wildcard should be played with caution, as it is wise to also consider the Bench Boost when using it. As the Bench Boost allows each player in the squad to collect points, and not only the starting line-up, the Bench Boost should be played in a double gameweek. Therefore, the model is set to play the second Wildcard in the gameweek ahead of a double gameweek.

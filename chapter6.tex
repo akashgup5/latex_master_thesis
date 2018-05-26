@@ -277,7 +277,7 @@ As laid out in Section \ref{exp_setup_data}, players lacking data for a gameweek
 
 \subsubsection{Categorization based on Position}
 
-As outlined in Section \ref{Sol_approach_regression}, we have decided to separate the players based on their positions. To substantiate this decision, a visual assessment is undertaken. The analysis is done for gameweek 1-32 in season 2016/2017, as these are the gameweeks that constitute the training set used later in the lasso regression. First, Figure \ref{fig:cluster_plots} displays a box-plot of the total points for each different position. The different positions appear to exhibit some differing characteristics. The variance looks as if it is larger for midfielders and forwards than what it is for defenders and goalkeepers. Further, defenders and goalkeepers have the highest median scores, while the most positive outliers are found among midfielders and forwards. Secondly, the Figure show how total points are associated with clean sheets, goals and assists for different positions. It is clear that goals and assists are not contributing a lot in terms of total points for goalkeepers, but is so for midfielders and forwards. Figure \ref{fig:cluster_plots} also manifest that clean sheets are important for goalkeepers and defenders in order to earn a high point score.
+As outlined in Section \ref{Sol_approach_regression}, we have decided to separate the players based on their positions. To substantiate this decision, a visual assessment is undertaken. The analysis is done for the 2016/2017, as the season constitutes the training set used. First, Figure \ref{fig:cluster_plots} displays a box-plot of the total points for each different position. The different positions appear to exhibit some differing characteristics. The variance looks as if it is larger for midfielders and forwards than what it is for defenders and goalkeepers. Further, defenders and goalkeepers have the highest median scores, while the most positive outliers are found among midfielders and forwards. Secondly, the Figure show how total points are associated with clean sheets, goals and assists for different positions. It is clear that goals and assists are not contributing a lot in terms of total points for goalkeepers, but is so for midfielders and forwards. Figure \ref{fig:cluster_plots} also manifest that clean sheets are important for goalkeepers and defenders in order to earn a high point score.
 
 \begin{figure}[H]
     \centering
@@ -287,7 +287,7 @@ As outlined in Section \ref{Sol_approach_regression}, we have decided to separat
 \end{figure}
 
 
-
+\newpage
 
 
 \subsubsection{Time Series of Points}
@@ -315,7 +315,7 @@ Ljung-Box lag 5 & 81 \% & 85 \%
 
 \subsubsection{Variable Selection}
 
-As described in Section \ref{Sol_approach_regression}, lasso regression is performed in order to conduct a variable selection. Data of the entire 2016/2017 season is used. In Figure \ref{fig:lasso_all} a plot of (average \textit{k}-fold) MSE against values of log($\lambda$) for each position is presented. Note that in each plot, there are 2 dotted vertical lines. The leftmost line marks the log($\lambda$)-value with lowest MSE. The rightmost marks the log($\lambda$)-value with one standard deviation higher MSE than the lowest MSE. Furthermore, the numbers in the top of the plot indicates the number of variables included for each value of log($\lambda$). The reason why number of variables may exceed the number of variables presented in Section N, is that a dummy-variable in introduced for each level of a categorical variable. That is, the variables team and opponent will be treated as 20 different variables each as there are 20 teams in the English Premier League. If only a few of these dummy-variables are selected by the lasso-regression, the variable is excluded from consideration. Similarly, if all except a few dummy-variables are selected, all levels are included. That is, some levels are included even if they are not selected by the lasso regression.
+As described in Section \ref{Sol_approach_regression}, lasso regression with \textit{k}-fold cross validation is performed in order to conduct a variable selection. Data of the entire 2016/2017 season is used, and separated into $\textit{k}=10$ folds for the cross validation. In Figure \ref{fig:lasso_all} a plot of (average \textit{k}-fold) MSE against values of log($\lambda$) for each position is presented. Note that in each plot, there are 2 dotted vertical lines. The leftmost line marks the log($\lambda$)-value with lowest MSE. The rightmost marks the log($\lambda$)-value with one standard deviation higher MSE than the lowest MSE. Furthermore, the numbers in the top of the plot indicates the number of variables included for each value of log($\lambda$). The reason why the number of variables may exceed the number of variables presented in Section N, is that a dummy-variable in introduced for each level of a categorical variable. That is, the variables team and opponent will be treated as 20 different variables each as there are 20 teams (levels) in the English Premier League. If only a few of these dummy-variables are selected by the lasso-regression, the variable is excluded from consideration. Similarly, if all except a few dummy-variables are selected, all levels are included. That is, some levels are included even if they are not selected by the lasso regression.
 
 \newpar
 
@@ -327,12 +327,12 @@ As described in Section \ref{Sol_approach_regression}, lasso regression is perfo
 \end{figure}
 
 \subsubsection{Model Selection}
-For each position, a linear regression model is fitted based on the variables selected. In the following, a presentation of the selected variables and a summary of each model is presented. The $\beta$s presented are computed before the 2017/2018 season begun. Note that even though the variables are the same throughout the season, the $\beta$s are subject to change, as each model is refitted every gameweek when new data becomes available. Even if team or opponent are selected, they are not presented in the summary, as it would require 20 variables for each.
+For each position, a linear regression model is fitted based on the variables selected. In the following, a presentation of the selected variables and a summary of each model is presented. The $\beta$s presented are computed before the 2017/2018 season begun. Note that even though the variables are the same throughout the season, the $\beta$s are subject to change, as each model is refitted every gameweek when new data becomes available. Even if team or opponent are selected, they are not presented in the summary, as they would require 20 variables each.
 
 \newpar
 
 \subsubsection{Goalkeepers}
-As evident from Figure \ref{fig:cluster_plots} no goalkeepers scored a goal up to gameweek 32 in the 2016/2017 English Premier League season, and only one assist was provided by a goalkeeper. Therefore, we have decided not to consider these exploratory variables when performing the variable selection for goalkeepers. Figure \ref{fig:lasso_all} shows that for the lowest MSE value, 6 variables are included in the model. Therefore, the variables associated with this log($\lambda$)-value is chosen. However, one of them were related to a team, and another to an opponent. As only 1 of 20 variables for team and opponent respectively were included, both team and opponent is excluded from consideration. In Table \ref{tab:coef_GLK} a summary of a regression fitted on the selected variables is presented. As expected, all variables have a positive sign. The p-values also indicate that all variables are significant. 
+As evident from Figure \ref{fig:cluster_plots} no goalkeepers scored a in the 2016/2017 English Premier League season, and only one assist was provided by a goalkeeper. Therefore, we have decided not to consider these exploratory variables when performing the variable selection for goalkeepers. Figure \ref{fig:lasso_all} shows that for the lowest MSE value, 6 variables are included in the model. With 6 variables present the possibility of overfitting is limited. Therefore, all the variables associated with this log($\lambda$)-value is chosen. However, one of them were related to a team, and another to an opponent. As only 1 of 20 variables for team and opponent respectively were included, both team and opponent is excluded from consideration. In Table \ref{tab:coef_GLK} a summary of a regression fitted on the selected variables is presented. All variables have a sign consistent with their intuitive interpretation. The p-values indicate that all variables are significant. 
 
 \begin{table}[H]
 \centering
@@ -374,18 +374,13 @@ Table \ref{tab:var_petr} shows the cost, transfers in, minuets and saves of Petr
 
 Note that the illustration does not capture the fact that the $\beta$ are subject to change due to new available information and refitting of the model.
 
-\begin{comment}
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.55]{fig/chapter_6/lasso_GLK.png}
-    \caption{\textit{k}-fold cross validated MSE for different values of log($\lambda$) for goalkeepers.}
-\label{fig:lasso_GLK}    
-\end{figure}
-
-\end{comment}
 
 \subsubsection{Defenders}
-As evident from Figure \ref{fig:cluster_plots}, defenders somewhat frequently provides assists and goals. Therefore, these variables are not excluded when performing the variable selection. From Figure \ref{fig:lasso_all} it is apparent that the model with the lowest MSE value includes approximately 47 variables, while the model 1 standard deviation away (indicated by the rightmost dotted line), includes 10 variables for defenders. By taking the bias-variance trade-off into consideration, the model corresponding to the log($\lambda$)-value with MSE 1 standard deviation higher than the minimum MSE is chosen. None of the variables associated with team where included, but 4 of the variables associated with opponent was included. Therefore, team is excluded from the linear regression, but opponent is not. In Table \ref{tab:coef_DEF} a summary of the rest of the selected variables can be found. Note that the coefficient home/away is the included if a player plays at home, and is 0 otherwise. Thus, the signs in front of all coefficients except yellow cards make intuitive sense. The reason why the sign in front of yellow cards is positive is perhaps because players receiving many yellow cards also are frequently involved in matches, thus earning points from other activities. It is also worth noting that this is the variable in Table \ref{tab:coef_DEF} with lowest p-value, even if they are all significant at a significance level of 0.01.
+As evident from Figure \ref{fig:cluster_plots}, defenders somewhat frequently provides assists and goals. Therefore, these variables are not excluded when performing the variable selection for defenders. From Figure \ref{fig:lasso_all} it is apparent that the model with the lowest MSE value includes approximately 47 variables, while the model 1 standard deviation away (indicated by the rightmost dotted line), includes 10 variables for defenders. By taking overfitting into consideration, the model corresponding to the log($\lambda$)-value with MSE 1 standard deviation higher than the minimum MSE is chosen.
+
+\newpar
+
+None of the variables associated with team where selected, but 4 of the variables associated with opponent was included. Therefore, team is excluded from the linear regression, but opponent is not. In Table \ref{tab:coef_DEF} a summary of the selected variables can be found. Note that the coefficient home/away is the included if a player plays at home, and is 0 otherwise. Thus, the signs in front of all coefficients except yellow cards make intuitive sense. A justification for the positive sign in front of yellow cards is perhaps that players receiving many yellow cards also are frequently involved in matches, thus earning points from other activities. It is worth noting that yellow cards is the variable in Table \ref{tab:coef_DEF} with lowest p-value, even if they are all significant at a significance level of 0.01.
 
 \begin{table}[H]
 \centering
@@ -405,18 +400,9 @@ Yellow Cards  & 7,9E-02      & 2,0E-02    & 3,88     & 1,1E-04 \\
 \label{tab:coef_DEF}
 \end{table}
 
-\begin{comment}
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.55]{fig/chapter_6/lasso_DEF.png}
-    \caption{\textit{k}-fold cross validated MSE for different values of log($\lambda$) for defenders.}
-\label{fig:lasso_DEF}    
-\end{figure}
-
-\end{comment}
 
 \subsubsection{Midfielders}
-From Figure \ref{fig:lasso_all}, it is apparent that the model with the lowest MSE value includes 28 variables for midfielders, while the model 1 standard deviation away includes 5. By taking the bias-variance trade-off into consideration, we have decided to choose the model with 28 variables. A substantial amount of both team and opponents are included, so both variables are carried forward. The coefficients from the linear regression are presented in Table \ref{tab:coef_MID}. All signs in front of the coefficients are consistent with their intuitive interpretation.
+From Figure \ref{fig:lasso_all}, it is apparent that the model with the lowest MSE value includes 28 variables for midfielders, while the model 1 standard deviation away includes 5. We suspect that more than 5 variables can have predictive power for midfielders. Thus, we have decided to choose the model with 28 variables. A substantial amount of the levels corresponding to both team and opponents are included, so both variables are carried forward. The coefficients from the linear regression are presented in Table \ref{tab:coef_MID}. All signs in front of the coefficients are consistent with their intuitive interpretation. Furthermore, they are all significant at a significance level of 5\%
 
 \begin{table}[H]
 \centering
@@ -439,24 +425,15 @@ Assists          & 5,23E-02  & 2,0E-02    & 2,61    & 9,1E-03 \\
 \label{tab:coef_MID}
 \end{table}
 
-\begin{comment}
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.55]{fig/chapter_6/lasso_MID.png}
-    \caption{\textit{k}-fold cross validated MSE for different values of log($\lambda$) for midfielders.}
-\label{fig:lasso_MID}    
-\end{figure}
-
-\end{comment}
 
 \subsubsection{Forwards}
-For forwards, the variable clean sheet is not taken into consideration. Forwards are not rewarded for clean sheets, and it is hard to spot a pattern between total points and clean sheets for forwards from Figure \ref{fig:cluster_plots}. Figure \ref{fig:lasso_all} displays that for forwards, the model with the lowest MSE value includes 25 variables, while the model 1 standard deviation away includes 4. By taking the bias-variance trade-off into consideration, we have decided to choose the model with 25 variables. The coefficients from the linear regression are presented in Table \ref{tab:coef_FWD}. All the signs in front of the coefficients appear consistent with their intuitive interpretation, except for penalties missed. This can perhaps stem from that fact that if a player miss a penalty, he is also to take the penalties for his team, and earning points when he scores. Note however, that both home/away and penalties missed are insignificant in the linear regression model for a significance level of 5\%. Regardless, we have decided to include them, as they were initially selected by the lasso regression.
+For forwards, the variable clean sheet is not taken into consideration. Forwards are not rewarded for clean sheets, and it is hard to spot a pattern between total points and clean sheets for forwards from Figure \ref{fig:cluster_plots}. Figure \ref{fig:lasso_all} shows that for forwards, the model with the lowest MSE value includes 25 variables, while the model 1 standard deviation away includes 4. Again, we suspect that more than 4 variables have predictive power, and select the model with minimum MSE. Enough levels of both team and opponent are included to make it justifiable to select them. The coefficients from the linear regression are presented in Table \ref{tab:coef_FWD}. All the signs in front of the coefficients appear consistent with their intuitive interpretation, except for penalties missed. This can perhaps stem from that fact that if a player misses a penalty, he might also frequently take the penalties for his team, and earning points when he scores. Note however, that both home/away and penalties missed are insignificant in the linear regression model for a significance level of 5\%. Regardless, we have decided to include them, as they were initially selected by the lasso regression.
 
 \begin{table}[H]
 \centering
 \begin{tabular}{|l|l|l|l|l|}
 \hline
-Variable         & Estimate  & Std. Error & t value & p-value \\ \hline
+Variable         & Coefficient ($\beta$)  & Std. Error & t value & p-value \\ \hline
 (Intercept)      & -1,75E+00 & 6,7E-01    & -2,62   & 9,0E-03 \\
 Cost             & 3,89E-07  & 6,7E-08    & 5,79    & 8,4E-09 \\
 Transfers In     & 1,39E-05  & 1,9E-06    & 7,24    & 6,8E-13 \\
@@ -471,22 +448,9 @@ Penalties Missed & 5,52E-01  & 3,0E-01    & 1,87    & 6,2E-02 \\
 \label{tab:coef_FWD}
 \end{table}
 
-\begin{comment}
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.55]{fig/chapter_6/lasso_FWD.png}
-    \caption{\textit{k}-fold cross validated MSE for different values of log($\lambda$) for forwards.}
-\label{fig:lasso_FWD}    
-\end{figure}
+\subsubsection{Remarks}
 
-\end{comment}
-
-
-
-
-
-\subsubsection{Discussion}
-\textit{drawback at saves, goals osv er lavt i begynnelsen av sesongen}
+An interesting observation from the variable selection is that team and clean sheets are not selected for goalkeepers or defenders. Forcing the variable into the model could be an interesting approach in order to investigate what difference it makes, but is not considered in this thesis. Using total sums, for instance for saves, goals and assists, constitutes a drawback in the sense that observations are quite similar for all players in the first couple of gameweeks. One way to account for this, could be to include values from last season in more than the first gameweek. This approach would, however, complicate the process of  including players with a lack of data even further. Another approach would be to only fit the model on data from the first rounds of previous seasons. However, that would be more sensible if data for multiple seasons were used in the training set.
 
 \subsection{Odds}
 In order to obtain necessary data, we have cooperated with Sportradar, a Norwegian company providing data for bookmakers. Sportradar delivers odds and probabilities of several sports events, including English Premier League. They have provided us with all the necessary probabilities, including result outcomes for each Premier League match as well as individual player probabilities. These data made all the computational work a lot easier, as Sportradar exported structured excel files containing all the necessary data. 
