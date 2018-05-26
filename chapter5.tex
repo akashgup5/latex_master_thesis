@@ -21,8 +21,8 @@ When using a forecast to estimate the expected value of a player's points, the o
 \begin{equation*}
 \smaller
 \begin{aligned}
-\text{max} \; z ={} & \EX_{\omega} \Big\lbrack\sum\limits_{p \in \mathcal{P}} \sum\limits_{t \in \mathcal{T}} \Big( \mathlarger{\rho}_{pt}(\omega)y_{pt} + \mathlarger{\rho}_{pt}(\omega)f_{pt} + 2 \mathlarger{\rho}_{pt}(\omega)c_{pt} + \epsilon  \mathlarger{\rho}_{pt}(\omega)h_{pt} \\ 
-& + \sum_{l \in \mathcal{L}}\sigma_{l} \mathlarger{\rho}_{pt}(\omega)g_{ptl} \Big)  \Big\rbrack \\ 
+\text{max} \; z ={} & \EX_{\omega} \Big\lbrack\sum\limits_{p \in \mathcal{P}} \sum\limits_{t \in \mathcal{T}} \Big( \mathlarger{\rho}_{pt}(\omega)y_{pt} + \mathlarger{\rho}_{pt}(\omega)f_{pt} + \epsilon  \mathlarger{\rho}_{pt}(\omega)h_{pt} + \sum_{l \in \mathcal{L}}\kappa_{l} \mathlarger{\rho}_{pt}(\omega)g_{ptl} \\ 
+&  + 2 \mathlarger{\rho}_{pt}(\omega)c_{pt} \Big)  \Big\rbrack \\ 
 & - R\sum_{t \in \mathcal{T}}\alpha_{t}
 \end{aligned}
 \end{equation*}
@@ -32,8 +32,8 @@ to
 \begin{equation*}
 \smaller
 \begin{aligned}
-\text{max} \; z ={} &  \sum\limits_{p \in \mathcal{P}} \sum\limits_{t \in \mathcal{T}} \Big( \hat{\mathlarger{\rho}}_{pt} y_{pt} + \hat{\mathlarger{\rho}}_{pt} f_{pt} + 2 \hat{\mathlarger{\rho}}_{pt} c_{pt} + \epsilon  \hat{\mathlarger{\rho}}_{pt} h_{pt} \\ 
-& + \sum_{l \in \mathcal{L}}\sigma_{l} \hat{\mathlarger{\rho}}_{pt} g_{ptl} \Big)  \\ 
+\text{max} \; z ={} &  \sum\limits_{p \in \mathcal{P}} \sum\limits_{t \in \mathcal{T}} \Big( \hat{\mathlarger{\rho}}_{pt} y_{pt} + \hat{\mathlarger{\rho}}_{pt} f_{pt} + \epsilon  \hat{\mathlarger{\rho}}_{pt} h_{pt} + \sum_{l \in \mathcal{L}}\kappa_{l} \hat{\mathlarger{\rho}}_{pt} g_{ptl} \\ 
+& + 2 \hat{\mathlarger{\rho}}_{pt} c_{pt} \Big)  \\ 
 & - R\sum_{t \in \mathcal{T}}\alpha_{t}
 \end{aligned}
 \end{equation*}
@@ -95,38 +95,29 @@ Rolling horizon is an appropriate solution method for FPLDP as managers are prov
 
 \newpar
 
-In the rolling horizon heuristic, each sub-problem is solved over shorter sub-horizons over the season. This corresponds well to the FPLDP, as FPL managers often consider several gameweeks when making decisions. Each sub-problem is split into three parts:
+In the rolling horizon heuristic, each sub-problem is solved over shorter sub-horizons over the season. This corresponds well to the FPLDP, as FPL managers often consider several gameweeks when making decisions. Each sub-horizon is split in two time periods ($TP$). The two \textit{TP}s are $TP_t^{C}$, which is the central period that will be implemented in sub-problem $t$, and the forecasting period $TP_t^{F}$. Before solving sub-problem $t+1$, variables $x$, $v$ and $q$ are frozen and used as input. The sub-horizon is shifted so that the first part of $TP_t^{F}$ becomes $TP_{t+1}^{C}$. If the central period and the forecasting period have equal length, the forecasting period becomes the new central period. 
 
-Each sub-horizon is split in two time periods ($TP$). The two \textit{TP}s are $TP_t^{C}$, which is the central period that will be implemented in sub-problem $t$, and the forecasting period $TP_t^{F}$. Before solving sub-problem $t+1$, variables $x$, $v$ and $q$ are frozen, and the sub-horizon is shifted so that the first part of $TP_t^{F}$ becomes $TP_{t+1}^{C}$. If the central period and the forecasting period have equal length, the forecasting period becomes the new central period. 
 \begin{itemize}
     \item \textbf{Fixed period (FP)}. A gameweek where decisions have been implemented and are fixed for the next sub-problem. These decisions are the players that are selected in a gameweek, $x$, the remaining budget variable, $v$, and the number of free transfers available, $q$.
     \item \textbf{Central period (CP)}. A gameweek where new decisions are implemented. The decisions include which players to include in the selected squad, $x$, determining the starting line-up, $y$, the choice of captain, $f$,  vice-captain, $h$, whether to use a gamechip or not and which substitution priority, $g$, to assign.  
-    \item \textbf{Predicted period (PP)}. To avoid making too myopic decisions, a predefined number of gameweeks are selected and input data such as expected points, variance and correlation are generated based on information available at that point in time. Decisions are made for these gameweeks, but not implemented.  The decisions are subject to change when new and updated information is available. The FP, CP and PP in a sub-problem are illustrated graphically in figure \ref{fig:rolling_horizon}. In the figure, the predicted part overlaps the central part in order to illustrate that the input data in the central part is also predicted.
+    \item \textbf{Forecasting period (PP)}. To avoid making too myopic decisions, a predefined number of gameweeks are selected and input data such as expected points, variance and correlation are generated based on information available at that point in time. Decisions are made for these gameweeks, but not implemented.  The decisions are subject to change when new and updated information is available. The FP, CP and PP in a sub-problem are illustrated graphically in figure \ref{fig:rolling_horizon}. In the figure, the predicted part overlaps the central part in order to illustrate that the input data in the central part is also predicted.
 \end{itemize}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale = 0.47]{fig/chapter_5/rolling_horizon.png}
-    \caption{Fixed-, central- and predicted part in a sub-problem.}
+    \caption{Fixed-, central- and forecasting period in a sub-problem.}
     \label{fig:rolling_horizon}
 \end{figure}
 
 \newpar
 
-An important decision is that of determining the length of the sub-horizon. Ideally, the sub-horizon should be for the remaining length of the season. However, due to the uncertainty of the predictions, this is not necessarily ideal. Thus, several alternatives concerning the length of the sub-horizon should be tested in order to see what gives the best result.
-
-
-
-
-
-
-
-
-
+An important decision is that of determining the length of the sub-horizon. Ideally, the sub-horizon should be for the remaining length of the season. However, due to the uncertainty of the predictions, this is not necessarily ideal. Thus, several alternatives concerning the length of the sub-horizon should be tested in order to see what gives the best result. Algorithm \ref{alg:forecast_based_opt_model} gives the pseudo code for the \textit{forecast-based optimization model}. 
 
 
 \newpar
 
+\begin{comment}
 
 \textbf{Description of the forecast-based optimization model}
 
@@ -140,6 +131,10 @@ An important decision is that of determining the length of the sub-horizon. Idea
 \newline
 \textit{Step 5}. Acquire new and updated information such as realized points, injuries and suspensions for current gameweek, and go to step 1 and solve for for next sub-problem where you fix $x$, $v$ and $q$ from solution of previous sub-problem. Continue until $\mathcal{T}$ sub-problems are solved.
 
+\end{comment}
+
+
+
 \newpar
 
 \begin{algorithm}
@@ -148,16 +143,17 @@ An important decision is that of determining the length of the sub-horizon. Idea
 \begin{algorithmic}
 \State{$t$ = 0} 
 \While{($t = t+1$) $\leq$ $\mathcal{|T|}$}
-    \State{Generate input data: expected points, variance and correlation for $TP_{t}$}
-    \If{any gw in $TP_{t}$ is \textit{double} or \textit{blank}}
+    \State{Generate input data: expected points, variance and correlation for $TP_{t}^{C}$ and $TP_{t}^{F}$}
+    \If{a gameweek in $TP_{t}^{F}$ is \textit{double} or \textit{blank}}
         \State{Implement gamechip strategy}
-    \ElsIf{$TP_{t}$ reach last part of first quarter of season}
+    \ElsIf{a gameweek in $TP_{t}^{F}$ according to Wildcard strategy}
         \State{Implement Wildcard strategy}
     \EndIf
     \State{Solve the mathematical model for the problem defined by $TP^{C}_{t}$ and $TP^{F}_{t}$}
     \State{Fix variables $x_{pt}$, $v_{t}$ and $q_{t}$ in central period $TP^{C}_{t}$}
 \EndWhile
 \end{algorithmic}
+\label{alg:forecast_based_opt_model}
 \end{algorithm}
 
 
@@ -587,7 +583,11 @@ The first Wildcard, which has to be played within the first half of the season, 
 
 
 \subsection{Triple Captain}
-It is wise to play the triple captain in a double gameweek as it is reasonable to assume players are expected to gain more points when featured twice. Thus, the model is given the opportunity to play the triple captain in the first double gameweek of the season. 
+It is wise to play the Triple Captain in a double gameweek as it is reasonable to assume players are expected to gain more points when featured twice. Thus, the model is given the opportunity to play the Triple Captain in the first double gameweek of the season. 
+
+\newpar
+
+More quantitative approaches could be to use the financial metric, Sharpe Ratio \cite{Sharpe}. Another interesting approach could be to model it as the Secretary Problem
 
 \subsection{Second Wildcard and Bench Boost}
 The second Wildcard should be played with caution, as it is wise to also consider the Bench Boost when using it. As the Bench Boost allows each player in the squad to collect points, and not only the starting line-up, the Bench Boost should be played in a double gameweek. Therefore, the model is set to play the second Wildcard in the gameweek ahead of a double gameweek.
@@ -626,7 +626,7 @@ The other gamechips are implemented in a similar way as the Wildcard.
 
 \section{Risk Handling} \label{Ch.5_Variance_tradeoff}
 
-\subsection{Variance}
+\subsection{Player Variance}
 Variance refers to the variability in each player's realized points. Some midfielders are for instance known to be consistently starting, but seldom contribute in terms of assists or goals. It is reasonable to assume that such players have a low expected value of points, but also a low variability in points earned. Other players might contribute a lot in terms of assists and goals when they are playing, but are perhaps often injured. Such players could have a high predicted value, but also a high variance in points obtained. \newpar
 
 \subsection{Correlation}
